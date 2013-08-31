@@ -1,0 +1,50 @@
+hr.myhr {
+    border:1px solid #ccc;
+}
+ul.cfooter {
+    text-align:center;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+ul.cfooter li {
+    text-decoration:none;
+}
+ul.cfooter li a {
+    font-family:'Roboto', sans-serif;
+    color:#fff;
+    font-size:16px;
+    font-weight:;
+    line-height:20px;
+}
+ul.cfooter li a:hover {
+    opacity:.80;
+    text-decoration:none;
+}
+p.lb {
+    margin-right:20px;
+    margin-top:27px;
+}
+h2.myh {
+    text-align:center;
+}
+p.myf {
+    padding-top:20px;
+    color:#fff;
+}
+h1.number {
+    font-size:220px;
+    text-align:center;
+    line-height:220px;
+    /*width:100%;height:100%;*/
+}
+h1.number:hover {
+    color:#A84A5C;
+}
+h2.stitle {
+    color:#A84A5C;
+}
+#myfooter {
+    background:#47a3da;
+    margin-top:60px;
+}
