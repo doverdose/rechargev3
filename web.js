@@ -12,6 +12,7 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'assets')));
 
 app.get('/dashboard', routes.dashboard);
+app.get('/form', routes.form);
 app.get('/', routes.index);
 
 app.listen(8080);

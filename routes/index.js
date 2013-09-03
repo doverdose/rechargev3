@@ -6,3 +6,7 @@ exports.dashboard = function(req, res) {
     res.render('dashboard.html');
 };
 
+exports.form = function(req, res) {
+    res.render('form.html');
+};
+
