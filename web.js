@@ -1,6 +1,7 @@
 var express = require('express')
   , routes = require('./routes')
-  , path = require('path');
+  , path = require('path')
+  , mongoose = require('mongoose');
 
 var app = express();
 

@@ -3,7 +3,8 @@
     "private": true, 
     "dependencies": {
 	"express" : "3.x.x",
-	"ejs" : "*"
+	"ejs" : "*",
+	"mongoose" : "*"
     }
 }
 	
