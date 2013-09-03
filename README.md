@@ -1,4 +1,4 @@
-learnnode
+Recharge v3
 =========
 
-Testing out mongodb and session stores
+Building out demo-ready ReCharge app using mongodb + express + node stack
