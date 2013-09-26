@@ -6,6 +6,9 @@
 	"ejs" : "*",
 	"mongoose" : "*",
 	"crypto" : "*",
+	"expresso" : "*",
+	"assert" : "*",
+	"ejs-locals" : "*",
 	"connect-mongodb" : "*"
     }
 }
