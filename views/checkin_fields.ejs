@@ -1,13 +1,8 @@
-    <div class="container marketing">
-    <div class="row-fluid">
-        <div class="span6 offset3" id="rbody">
-             <h2 class="myh">Salt Reducer Checkin</h2>
 
-            <form method='post' action='/checkin' class="form-horizontal">
                 <div class="control-group">
                     <label class="control-label" for="inputStatus">How are you feeling today?</label>
                     <div class="controls">
-                        <input type="text" id="inputStatus" placeholder="Cheery? Concerned? Make note of it here!">
+                        <input type="text" name="checkin[data]" id="inputStatus" placeholder="Cheery? Concerned? Make note of it here!">
                     </div>
                 </div>
 		<div class="control-group">
@@ -16,6 +11,3 @@
                     <button type="submit" class="btn btn-primary">Note It</button>
                   </div>
                 </div>
-            </form>
-        </div>
-    </div>
