@@ -5,7 +5,7 @@ exports.index = function(req,res){
 }
 
 exports.dashboard = function(req, res) {
-    res.render('dashboard.html');
+    res.render('dashboard.ejs');
 }
 
 exports.checkin_update = function(req, res) {
