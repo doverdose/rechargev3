@@ -9,13 +9,13 @@ var app = express();
 
 module.exports = app;
 
-
 app.configure('test', function() {
     app.set('db-uri', 'mongodb://localhost/recharge-test');
 });
 
 app.configure('development', function() {
     app.set('db-uri', 'mongodb://localhost/recharge-development');
+    app.use(express.errorHandler({ dumpExceptions: true}));
 });
 
 app.configure('production', function() {
@@ -31,7 +31,13 @@ app.configure(function() {
     app.use(express.bodyParser());
     app.use(app.router);
     app.use(express.static(path.join(__dirname, '/assets')));
-
+    app.use(function(err, req, res, next) {
+	if (err instanceof routes.NotFound) {
+	    res.redirect('/checkin');
+	} else {
+	    next(err) 
+	}
+    });
     db.defineModels(mongoose, function() {
 	app.Checkin = Checkin = mongoose.model('Checkin');
 	app.User = User = mongoose.model('User');
@@ -39,8 +45,10 @@ app.configure(function() {
     })
 });
 
+
 app.get('/dashboard', routes.dashboard);
 app.put('/checkin/:id.:format?', routes.checkin_update);
+app.get('/checkin/:id.:format?/edit', routes.checkin_edit);
 app.post('/checkin.:format?', routes.checkin_create);
 app.get('/checkin/new', routes.checkin_new);
 app.get('/checkin', routes.checkin);

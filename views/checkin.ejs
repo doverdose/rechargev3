@@ -6,13 +6,33 @@
     <div class="row-fluid">
         <div class="span6 offset3" id="rbody">
           <h2 class="myh">Salt Reducer Checkins</h2>
-	  <ul>
-	  <% for (var i = 0; i<c.length; i++) { 
-               if (c[i].data) { %>
-	         <li><%= c[i].data %>?</li>
-	  <%   }
-             } %>    
-	  </ul>
+	  <table class="table">
+	    <thead>
+	      <tr>
+		<td>
+		  <b> Checkin </b>
+		</td>
+		<td>
+		  <b> Update </b>
+		</td>  
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <% for (var i = 0; i<c.length; i++) { 
+					     if (c[i].data) { %>
+	         <tr>
+		   <td>
+		     <a href='/checkin/<%=c[i].id%>'><%= c[i].data %></a>
+		   </td>
+		   <td>
+		     <a class="btn btn-primary", href='/checkin/<%=c[i].id%>/edit'> Edit </a>
+		     <a class="btn btn-danger", href='/checkin/<%=c[i].id%>'> Delete </a>
+		   </td>
+		 </tr>
+		 <%   }
+		      } %>  
+	    </tbody>
+	  </table>
 
         </div>
     </div>

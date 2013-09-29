@@ -1,4 +1,16 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
+  , util = require('util');
+
+// Error handling
+function NotFound(msg) {
+    this.name = "Not Found";
+    Error.call(this, msg);
+    Error.captureStackTrace(this, arguments.callee);
+}
+
+util.inherits(NotFound, Error);
+
+exports.NotFound = NotFound;
 
 exports.index = function(req,res){
     res.render('index.html');
@@ -23,11 +35,22 @@ exports.checkin_update = function(req, res) {
     });
 }
 
-exports.checkin_create = function(req, res) {
+exports.checkin_edit = function(req, res, next) {
     var Checkin = mongoose.model('Checkin');
+    Checkin.findOne({_id: req.params.id}, function(err, c) {
+	if (!c) return next(new NotFound('Checkin not found'));
+	switch (req.params.format) {
+	case 'json':
+	    res.send(c.__doc);
+	    break;
+	default:
+	    res.render('checkin_edit.ejs', {c: c, dummy: 1});
+	}
+    });
+}
+
+exports.checkin_create = function(req, res) {
     var c = new Checkin(req.body.checkin);
-    console.log(req.body);
-    console.log(c);
     c.save(function() {
 	switch (req.params.format) {
 	case 'json':
