@@ -21,7 +21,8 @@ exports.dashboard = function(req, res) {
 }
 
 exports.checkin_update = function(req, res) {
-    Checkin.findById(req.body.checkin.id, function(c) {
+    Checkin.findOne({_id: req.params.id}, function(err, c) {
+	if (!c) return next(new NotFound('Checkin not found'));
 	c.data = req.body.checkin.data;
 	c.save(function() {
 	    switch (req.params.format) {

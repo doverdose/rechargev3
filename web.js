@@ -27,8 +27,8 @@ app.configure(function() {
     app.engine('ejs', engine);
     app.set('views', path.join(__dirname, '/views'));
     app.use(express.logger('dev'));
-    app.use(express.methodOverride());
     app.use(express.bodyParser());
+    app.use(express.methodOverride());
     app.use(app.router);
     app.use(express.static(path.join(__dirname, '/assets')));
     app.use(function(err, req, res, next) {

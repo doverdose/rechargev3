@@ -7,9 +7,9 @@
     <div class="span6 offset3" id="rbody">
       <h2 class="myh">Salt Reducer Edit Checkin</h2>
       
-      <form method='post' action='/checkin/<%= c.id %>' class="form-horizontal">
-	<input name='checkin[id]' value=<%= c.id %> type='hidden'> 
-	<input name='_method' value='PUT' type='hidden'>
+      <form method="post" action='/checkin/<%= c.id %>' class="form-horizontal">
+	<input name='checkin[id]' value=<%= c.id %> type='hidden' /> 
+	<input type="hidden" name="_method" value="put"/>
 	<%- partial('checkin_fields', {}) %>
       </form>
     </div>
