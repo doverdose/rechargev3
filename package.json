@@ -6,7 +6,8 @@
 	"ejs" : "*",
 	"mongoose" : "*",
 	"crypto" : "*",
-	"expresso" : "*",
+	"mocha" : "*" ,
+	"request" : "*",
 	"assert" : "*",
 	"ejs-locals" : "*",
 	"connect-mongodb" : "*"
