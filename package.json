@@ -8,7 +8,7 @@
 	"crypto" : "*",
 	"mocha" : "*" ,
 	"request" : "*",
-	"assert" : "*",
+	"chai" : "*",
 	"ejs-locals" : "*",
 	"connect-mongodb" : "*"
     }
