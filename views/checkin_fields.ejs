@@ -1,13 +1,13 @@
 
-                <div class="control-group">
-                    <label class="control-label" for="inputStatus">How are you feeling today?</label>
-                    <div class="controls">
-                        <textarea name="checkin[data]" id="inputStatus"><%= c.data || "Cheery? Concerned? Make note of it here!" %></textarea>
-                    </div>
-                </div>
-		<div class="control-group">
-		  <div class="controls">
-                    <button type="reset" class="btn btn-warning">Reset</button>
-                    <input type="submit" class="btn btn-primary" value="Note it"/>
-                  </div>
-                </div>
+<div class="control-group">
+  <label class="control-label" for="inputStatus">How are you feeling today?</label>
+  <div class="controls">
+    <textarea name="checkin[data]" id="inputStatus"><%= c.data || "Make a note of how you feel!" %></textarea>
+  </div>
+</div>
+<div class="control-group">
+  <div class="controls">
+    <button type="reset" class="btn btn-warning">Reset</button>
+    <input type="submit" class="btn btn-primary" value="Note it"/>
+  </div>
+</div>

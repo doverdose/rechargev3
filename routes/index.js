@@ -37,7 +37,6 @@ exports.checkin_update = function(req, res) {
 }
 
 exports.checkin_edit = function(req, res, next) {
-    var Checkin = mongoose.model('Checkin');
     Checkin.findOne({_id: req.params.id}, function(err, c) {
 	if (!c) return next(new NotFound('Checkin not found'));
 	switch (req.params.format) {
@@ -45,7 +44,7 @@ exports.checkin_edit = function(req, res, next) {
 	    res.send(c.__doc);
 	    break;
 	default:
-	    res.render('checkin_edit.ejs', {c: c, dummy: 1});
+	    res.render('checkin_edit.ejs', {c: c});
 	}
     });
 }
@@ -65,7 +64,7 @@ exports.checkin_create = function(req, res) {
 }
 
 exports.checkin_new = function (req, res) {
-    res.render('checkin_new.ejs');
+    res.render('checkin_new.ejs', {c: {}});
 }
 
 exports.checkin = function(req, res) {
@@ -74,6 +73,5 @@ exports.checkin = function(req, res) {
 	if (err) throw err;
 	res.render('checkin.ejs', {c: checkins});
     });
-
 }
 
