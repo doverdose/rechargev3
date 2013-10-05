@@ -18,6 +18,10 @@ app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true}));
 });
 
+app.configure('staging', function() {
+    app.set('db-uri', 'mongodb://komodo:theonlylivingdragon@ds049548.mongolab.com:49548/heroku_app18503207');
+});
+
 app.configure('production', function() {
     app.set('db-uri', 'mongodb://localhost/recharge-production');
 });
