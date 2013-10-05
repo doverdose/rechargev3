@@ -59,7 +59,7 @@ app.get('/checkin', routes.checkin);
 app.get('/', routes.index);
 
 
-
-app.listen(8080);
+var port = process.env.PORT || 3000;
+app.listen(port);
 
 
