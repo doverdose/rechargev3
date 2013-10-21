@@ -152,9 +152,7 @@ h2.stitle {
       max-width: 550px;
       padding: 0 20px;
       margin-top: 200px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align:center;
+	  text-align:center;
     }
     .carousel-caption h1,
     .carousel-caption .lead {

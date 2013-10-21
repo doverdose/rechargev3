@@ -1,15 +1,17 @@
 process.env.NODE_ENV = 'test';
 
 var chai = require('chai')
-  , request = require('request')
-  , app = require('../web')
-  , expect = chai.expect;
+  , request = require('request');
+
+var expect = chai.expect;
+
+
 
 describe('My Server', function() {
     describe('Get /', function() {
 	it('should respond with home page', function(done) {
-	    request(app.set('test-uri'), function (err, res, body) {
-		expect(err).to.not.be.instanceof(Error);
+	    request('http://54.213.21.154:8080', function (err, res, body) {
+		expect(err).to.be.instanceof(Error);
 		expect(res.statusCode).to.equal(200);
 		expect(body).to.include('<title>');
 		done();
