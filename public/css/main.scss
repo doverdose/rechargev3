@@ -5,10 +5,20 @@
  */
 @import "../bower_components/bourbon/app/assets/stylesheets/_bourbon.scss";
 
+/* Variables
+ */
+$color1: #47a3da;
+$white: #fff;
+
 /* Bootstrap
  */
-@import "../bower_components/bootstrap-sass/lib/bootstrap.scss";
+$icon-font-path: "../bower_components/bootstrap-sass/fonts/";
 
+$navbar-height: 80px;
+$navbar-inverse-color: $white;
+$navbar-inverse-bg: $color1;
+
+@import "../bower_components/bootstrap-sass/lib/bootstrap.scss";
 
 /* Imports
  */
@@ -17,6 +27,61 @@
 /* General
  */
 
-html {
-	height: 100%;
+body {
+	padding-top: $navbar-height;
+
+	font-family: 'Roboto', sans-serif;
+}
+
+/* Navbar
+ */
+
+.navbar-inverse {
+
+	.navbar-nav > li > a {
+		color: $white;
+
+		&:hover {
+			background-color: darken($color1, 5%);
+		}
+	}
+
+	.navbar-brand {
+		margin: 0 auto;
+
+		color: $white;
+		font-size: emCalc(34);
+		font-weight: bold;
+	}
+}
+
+/* Footer
+ */
+
+footer {
+	background: $color1;
+	margin-top: 60px;
+}
+
+ul.cfooter {
+	text-align:center;
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+ul.cfooter li {
+	text-decoration:none;
+}
+
+ul.cfooter li a {
+	color: #fff;
+	font-size: 16px;
+	font-weight: normal;
+	line-height: 20px;
+}
+
+ul.cfooter li a:hover {
+	opacity:.80;
+	text-decoration:none;
 }

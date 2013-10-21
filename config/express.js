@@ -5,7 +5,8 @@ var express = require('express'),
 	flash = require('connect-flash'),
 	path = require('path'),
 	engine = require('ejs-locals'),
-	sass = require('node-sass');
+	sass = require('node-sass'),
+	fs = require('fs');
 
 module.exports = function(app, config, passport, env) {
  
@@ -32,10 +33,9 @@ module.exports = function(app, config, passport, env) {
 		if(env === 'development') {
 			app.use(
 				sass.middleware({
+					force: true,
 					src: config.root + '/public',
-					dest: config.root + '/public',
 					debug: true
-					//outputStyle: 'compressed'
 				})
 			);
 		}
@@ -48,18 +48,24 @@ module.exports = function(app, config, passport, env) {
         app.use(express.methodOverride())
 
         // express/mongo session storage
-        app.use(express.session({
-        secret: 'TODO: Most probably need to use a better secret string.',
-        store: new mongoStore({
-    //         url: config.db,
-            url: config.db,
-            collection : 'sessions'
-        })
-        }))
+		app.use(express.session({
+			secret: 'TODO: Most probably need to use a better secret string.',
+			store:
+				new mongoStore({
+					url: config.db,
+					collection : 'sessions'
+				})
+        }));
 
         // use passport session
         app.use(passport.initialize())
         app.use(passport.session())
+
+		// insert the user in all templates
+		app.use(function(req, res, next){
+			res.locals.user = req.user || false;
+			next();
+		});
 
         // connect flash for flash messages - should be declared after sessions
         app.use(flash())

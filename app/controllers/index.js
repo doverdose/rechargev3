@@ -13,7 +13,7 @@ util.inherits(NotFound, Error);
 exports.NotFound = NotFound;
 
 exports.index = function(req,res){
-    res.render('index.ejs');
+    res.render('../views/static/index.ejs');
 }
 
 exports.dashboard = function(req, res) {
