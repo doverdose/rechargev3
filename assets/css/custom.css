@@ -152,7 +152,9 @@ h2.stitle {
       max-width: 550px;
       padding: 0 20px;
       margin-top: 200px;
-	  text-align:center;
+      text-align:center;
+      margin-left:auto;
+      margin-right:auto;
     }
     .carousel-caption h1,
     .carousel-caption .lead {
@@ -160,7 +162,7 @@ h2.stitle {
       line-height: 1.25;
       color: #fff;
       text-shadow: 0 1px 1px rgba(0,0,0,.4);
-	  text-align:center;
+      text-align:center;
     }
     .carousel-caption .btn {
       margin-top: 10px;
