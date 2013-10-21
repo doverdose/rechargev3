@@ -1,19 +1,19 @@
 {
-    "name": "Test", 
-    "private": true, 
-    "dependencies": {
-        "express" : "3.x.x",
-        "ejs" : "*",
-        "mongoose" : "*",
-        "crypto" : "*",
-        "mocha" : "*" ,
-        "request" : "*",
-        "chai" : "*",
-        "ejs-locals" : "*",
-        "connect-mongodb" : "*",
-        "passport": "*",
-        "passport-local": "*",
-        "connect-flash": "*"
-    }
+	"name": "Test",
+	"private": true,
+	"dependencies": {
+		"express" : "3.x.x",
+		"ejs" : "*",
+		"mongoose" : "*",
+		"crypto" : "*",
+		"mocha" : "*" ,
+		"request" : "*",
+		"chai" : "*",
+		"ejs-locals" : "*",
+		"connect-mongodb" : "*",
+		"passport": "*",
+		"passport-local": "*",
+		"connect-flash": "*",
+		"node-sass": "*"
+	}
 }
-	
