@@ -1,0 +1,18 @@
+<% layout('../layout') -%>
+
+<form action="/users" method="post">
+    <input type='hidden' name='_csrf' value="#{csrf_token}">
+    <label>Full name</label>
+      <input id="name" type='text' name="name" placeholder='Full name' value=user.name>
+
+    <label>Email</label>
+    <input id="email" type='text' name="email" placeholder='Email' value=user.email>
+
+    <label>Username</label>
+      <input id="username" type='text' name="username" placeholder='Username' value=user.username>
+
+    <label> Password</label>
+      <input id="password" type='password' name="password" placeholder='Password'>
+
+    <button type="submit"> Sign up</button>
+</form>

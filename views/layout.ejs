@@ -26,6 +26,8 @@
     <link rel="shortcut icon" href="/ico/favicon.png">
   </head>
   <body>
+
+
     <!-- NAVBAR
     ================================================== -->
     <div class="navbar-wrapper">
@@ -34,6 +36,7 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
           <div class="navbar-inner">
             <!-- Responsive Navbar Part 1: Button for triggering responsive navbar (not covered in tutorial). Include responsive CSS to utilize. -->
+
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -41,7 +44,9 @@
             </button>
      	    <a class="brand" href="#">ReCharge Health</a>
 	    <p class="navbar-text pull-right lb">
-              <a class="btn btn-primary" href="#">Log In</a>
+
+              <a class="btn btn-primary" href="#">Log In <%= user.email %></a>
+
             </p>       
             <div class="nav-collapse collapse pull-right">
               <ul class="nav">
