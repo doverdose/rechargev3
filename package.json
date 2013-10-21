@@ -8,9 +8,14 @@
 	"crypto" : "*",
 	"mocha" : "*" ,
 	"request" : "*",
+	"supertest" : "*",
 	"chai" : "*",
 	"ejs-locals" : "*",
-	"connect-mongodb" : "*"
+	"connect-mongodb" : "*",
+	"winston" : "*"
+    },
+    "scripts": {
+	"test": "make test"
     }
 }
 	

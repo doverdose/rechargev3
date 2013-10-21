@@ -3,7 +3,8 @@ var express = require('express')
   , mongoose = require('mongoose')
   , path = require('path')
   , engine = require('ejs-locals')
-  , db = require('./db');
+  , db = require('./db')
+  , winston = require('winston');
 
 var app = express();
 
@@ -12,11 +13,13 @@ module.exports = app;
 app.configure('test', function() {
     app.set('db-uri', 'mongodb://localhost/recharge-test');
     app.set('test-uri', 'http://54.213.21.154:8080/');
+    process.env.PORT = 8080;
 });
 
 app.configure('development', function() {
     app.set('db-uri', 'mongodb://localhost/recharge-development');
     app.use(express.errorHandler({ dumpExceptions: true}));
+    process.env.PORT = 8080;
 });
 
 app.configure('staging', function() {
@@ -60,8 +63,16 @@ app.get('/checkin/new', routes.checkin_new);
 app.get('/checkin', routes.checkin);
 app.get('/', routes.index);
 
+console.log('Starting logger...');
+winston.add(winston.transports.File, {
+    filename: 'logs/api.log'
+});
+winston.handleExceptions(new winston.transports.File({
+    filename: 'logs/error.log'
+}));
 
+console.log('Logger started. Starting web server');
 var port = process.env.PORT || 3000;
 app.listen(port);
-
+console.log('Express server started, listening on port %d in %s mode', port, process.env.NODE_ENV);
 
