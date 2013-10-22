@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 	Checkin = mongoose.model('Checkin');
 
 exports.dashboard = function(req, res) {
-	res.render('../views/dashboard/dashboard.ejs');
+	res.render('dashboard/dashboard.ejs');
 }
 
 

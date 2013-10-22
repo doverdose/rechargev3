@@ -26,7 +26,7 @@ exports.checkin_edit = function(req, res, next) {
 			res.send(c.__doc);
 			break;
 		default:
-			res.render('../views/checkin/checkin_edit.ejs', {c: c});
+			res.render('checkin/checkin_edit.ejs', {c: c});
 		}
     });
 }
@@ -46,14 +46,14 @@ exports.checkin_create = function(req, res) {
 }
 
 exports.checkin_new = function (req, res) {
-	res.render('../views/checkin/checkin_new.ejs', {c: {}});
+	res.render('checkin/checkin_new.ejs', {c: {}});
 }
 
 exports.checkin = function(req, res) {
 	var Checkin = mongoose.model('Checkin');
 	Checkin.find({}, function(err, checkins){
 		if (err) throw err;
-		res.render('../views/checkin/checkin.ejs', {c: checkins});
+		res.render('checkin/checkin.ejs', {c: checkins});
 	});
 }
 
