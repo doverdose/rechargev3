@@ -1,5 +1,5 @@
 {
-	"name": "Test",
+	"name": "recharge-health",
 	"private": true,
 	"dependencies": {
 		"express" : "3.x.x",
@@ -14,6 +14,10 @@
 		"passport": "*",
 		"passport-local": "*",
 		"connect-flash": "*",
-		"node-sass": "*"
+		"node-sass": "*",
+		"winston" : "*"
+	},
+	"scripts": {
+		"test": "make test"
 	}
 }

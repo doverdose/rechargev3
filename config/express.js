@@ -10,24 +10,24 @@ var express = require('express'),
 
 module.exports = function(app, config, passport, env) {
  
-    app.configure(function() {
-        app.engine('html', engine);
-        app.engine('ejs', engine);
+	app.configure(function() {
+		app.engine('html', engine);
+		app.engine('ejs', engine);
 
-        // set views path, template engine and default layout
-        app.set('views', config.root + '/app/views')
-        app.set('view engine', 'ejs');
+		// set views path, template engine and default layout
+		app.set('views', config.root + '/app/views')
+		app.set('view engine', 'ejs');
 
-        app.use(express.logger('dev'));
+		app.use(express.logger('dev'));
 
-        app.use(express.static(config.root + '/public'));
-        app.use(function(err, req, res, next) {
-        if (err instanceof routes.NotFound) {
-            res.redirect('/checkin');
-        } else {
-            next(err)
-        }
-        });
+		app.use(express.static(config.root + '/public'));
+		app.use(function(err, req, res, next) {
+			if (err instanceof routes.NotFound) {
+				res.redirect('/checkin');
+			} else {
+				next(err)
+			}
+		});
 
 		// if in development, compile sass
 		if(env === 'development') {
@@ -40,26 +40,29 @@ module.exports = function(app, config, passport, env) {
 			);
 		}
 
-        // cookieParser should be above session
-        app.use(express.cookieParser())
+		// for testing
+		app.set('test-uri', 'http://54.213.21.154:8080/');
 
-        // bodyParser should be above methodOverride
-        app.use(express.bodyParser())
-        app.use(express.methodOverride())
+		// cookieParser should be above session
+		app.use(express.cookieParser())
 
-        // express/mongo session storage
+		// bodyParser should be above methodOverride
+		app.use(express.bodyParser())
+		app.use(express.methodOverride())
+
+		// express/mongo session storage
 		app.use(express.session({
-			secret: 'TODO: Most probably need to use a better secret string.',
+			secret: 're-health charge session token',
 			store:
 				new mongoStore({
 					url: config.db,
 					collection : 'sessions'
 				})
-        }));
+		}));
 
-        // use passport session
-        app.use(passport.initialize())
-        app.use(passport.session())
+		// use passport session
+		app.use(passport.initialize())
+		app.use(passport.session())
 
 		// insert the user in all templates
 		app.use(function(req, res, next){
@@ -67,18 +70,11 @@ module.exports = function(app, config, passport, env) {
 			next();
 		});
 
-        // connect flash for flash messages - should be declared after sessions
-        app.use(flash())
+		// connect flash for flash messages - should be declared after sessions
+		app.use(flash())
 
-//         db.defineModels(mongoose, function() {
-//             app.Checkin = Checkin = mongoose.model('Checkin');
-//             app.User = User = mongoose.model('User');
-//             db = mongoose.connect(app.set('db-uri'));
-//         });
-
-        app.use(app.router);
-    });
-
+		app.use(app.router);
+	});
 
 }
 

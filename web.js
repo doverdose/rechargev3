@@ -6,7 +6,8 @@ var express = require('express'),
 	flash = require('connect-flash'),
 	path = require('path'),
 	engine = require('ejs-locals'),
-	passport = require('passport');
+	passport = require('passport'),
+	winston = require('winston');
 
 var app = express();
 
@@ -33,5 +34,18 @@ require('./config/routes')(app, passport)
 
 module.exports = app;
 
-app.listen(8080);
+// if not in development, log to file
+if(env !== 'development') {
+	console.log('Starting logger...');
+	winston.add(winston.transports.File, {
+		filename: 'logs/api.log'
+	});
+
+	winston.handleExceptions(new winston.transports.File({
+		filename: 'logs/error.log'
+	}));
+}
+
+var port = process.env.PORT || 8080;
+app.listen(port);
 
