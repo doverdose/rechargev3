@@ -1,6 +1,7 @@
 var express = require('express'),
 	site = require('../app/controllers/site'),
 	dashboard = require('../app/controllers/dashboard'),
+	checkin = require('../app/controllers/checkin'),
 	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
@@ -23,11 +24,11 @@ module.exports = function(app, passport) {
 
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
-	app.put('/checkin/:id.:format?', auth.requiresLogin, dashboard.checkin_update);
-	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, dashboard.checkin_edit);
-	app.post('/checkin.:format?', auth.requiresLogin, dashboard.checkin_create);
-	app.get('/checkin/new', auth.requiresLogin, dashboard.checkin_new);
-	app.get('/checkin', auth.requiresLogin, dashboard.checkin);
+	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
+	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);
+	app.post('/checkin.:format?', auth.requiresLogin, checkin.checkin_create);
+	app.get('/checkin/new', auth.requiresLogin, checkin.checkin_new);
+	app.get('/checkin', auth.requiresLogin, checkin.checkin);
 
 	app.param('userId', users.user);
 

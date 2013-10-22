@@ -39,6 +39,15 @@
 
 		<div class="collapse navbar-collapse navbar-right">
 			<% if(user.email) { %>
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="/dashboard">Dashboard</a>
+					</li>
+					<li>
+						<a href="/checkin">Checkin</a>
+					</li>
+				</ul>
+
 				<p class="navbar-text">Signed in as <%= user.email %></p>
 
 				<a href="/logout" class="btn btn-default navbar-btn navbar-right">Sign out</a>
