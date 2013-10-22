@@ -3,17 +3,17 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , User = mongoose.model('User')
-  , util = require('util');
+var mongoose = require('mongoose'),
+	User = mongoose.model('User'),
+	util = require('util');
 
 var login = function (req, res) {
-  if (req.session.returnTo) {
-    res.redirect(req.session.returnTo)
-    delete req.session.returnTo
-    return
-  }
-  res.redirect('/')
+	if (req.session.returnTo) {
+		res.redirect(req.session.returnTo)
+		delete req.session.returnTo
+		return
+	}
+	res.redirect('/')
 }
 
 exports.signin = function (req, res) {}
@@ -29,10 +29,10 @@ exports.authCallback = login
  */
 
 exports.login = function (req, res) {
-  res.render('users/login', {
-    title: 'Login',
-    message: req.flash('error')
-  })
+	res.render('users/login', {
+		title: 'Login',
+		message: req.flash('error')
+	})
 }
 
 /**
@@ -40,10 +40,10 @@ exports.login = function (req, res) {
  */
 
 exports.signup = function (req, res) {
-  res.render('users/signup', {
-    title: 'Sign up',
-    user: new User()
-  })
+	res.render('users/signup', {
+		title: 'Sign up',
+		user: new User()
+	})
 }
 
 
@@ -52,23 +52,23 @@ exports.signup = function (req, res) {
  */
 
 exports.create = function (req, res) {
-  var user = new User(req.body)
-  user.provider = 'local'
-  user.save(function (err) {
-    if (err) {
-      return res.render('users/signup', {
-        errors: util.errors(err.errors),
-        user: user,
-        title: 'Sign up'
-      })
-    }
+	var user = new User(req.body)
+	user.provider = 'local'
+	user.save(function (err) {
+		if(err) {
+			return res.render('users/signup', {
+				errors: util.error(err.errors),
+				user: user,
+				title: 'Sign up'
+			})
+		}
 
-    // manually login the user once successfully signed up
-    req.logIn(user, function(err) {
-      if (err) return next(err)
-      return res.redirect('/')
-    })
-  })
+		// manually login the user once successfully signed up
+		req.logIn(user, function(err) {
+			if (err) return next(err)
+			return res.redirect('/')
+		})
+	})
 }
 
 
