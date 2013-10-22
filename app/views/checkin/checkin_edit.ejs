@@ -1,4 +1,4 @@
-<% layout('layout') -%>
+<% layout('../layouts/default') -%>
 
 <!-- Main form 
      ================================================== -->
@@ -6,8 +6,11 @@
 <div class="container marketing">
   <div class="row-fluid">
     <div class="span6 offset3" id="rbody">
-      <h2 class="myh">Salt Reducer Checkin</h2>
-      <form method='post' action='/checkin' class="form-horizontal">
+      <h2 class="myh">ReCharge Edit Checkin</h2>
+      
+      <form method="post" action='/checkin/<%= c.id %>' class="form-horizontal">
+	<input name='checkin[id]' value=<%= c.id %> type='hidden' /> 
+	<input type="hidden" name="_method" value="put"/>
 	<%- partial('checkin_fields', {}) %>
       </form>
     </div>

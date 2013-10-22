@@ -1,20 +1,6 @@
 var mongoose = require('mongoose'),
-	util = require('util');
-
-// Error handling
-function NotFound(msg) {
-	this.name = "Not Found";
-	Error.call(this, msg);
-	Error.captureStackTrace(this, arguments.callee);
-}
-
-util.inherits(NotFound, Error);
-
-exports.NotFound = NotFound;
-
-exports.index = function(req,res){
-	res.render('../views/static/index.ejs');
-}
+	util = require('util'),
+	Checkin = mongoose.model('Checkin');
 
 exports.dashboard = function(req, res) {
 	res.render('../views/dashboard/dashboard.ejs');
@@ -44,7 +30,7 @@ exports.checkin_edit = function(req, res, next) {
 			res.send(c.__doc);
 			break;
 		default:
-			res.render('checkin_edit.ejs', {c: c});
+			res.render('../views/checkin/checkin_edit.ejs', {c: c});
 		}
     });
 }
@@ -64,14 +50,14 @@ exports.checkin_create = function(req, res) {
 }
 
 exports.checkin_new = function (req, res) {
-	res.render('checkin_new.ejs', {c: {}});
+	res.render('../views/checkin/checkin_new.ejs', {c: {}});
 }
 
 exports.checkin = function(req, res) {
 	var Checkin = mongoose.model('Checkin');
 	Checkin.find({}, function(err, checkins){
 		if (err) throw err;
-		res.render('checkin.ejs', {c: checkins});
+		res.render('../views/checkin/checkin.ejs', {c: checkins});
 	});
 }
 

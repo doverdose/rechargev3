@@ -1,11 +1,6 @@
 var express = require('express'),
 	fs = require('fs'),
-	routes = require('./app/controllers/index'),
 	mongoose = require('mongoose'),
-	mongoStore = require('connect-mongodb'),
-	flash = require('connect-flash'),
-	path = require('path'),
-	engine = require('ejs-locals'),
 	passport = require('passport'),
 	winston = require('winston');
 

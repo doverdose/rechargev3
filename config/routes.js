@@ -1,17 +1,12 @@
 var express = require('express'),
-	routes = require('../app/controllers/index'),
+	site = require('../app/controllers/site'),
+	dashboard = require('../app/controllers/dashboard'),
 	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
 
-	// restricted logged-in routes
-	app.get('/dashboard', auth.requiresLogin, routes.dashboard);
-	app.put('/checkin/:id.:format?', auth.requiresLogin, routes.checkin_update);
-	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, routes.checkin_edit);
-	app.post('/checkin.:format?', auth.requiresLogin, routes.checkin_create);
-	app.get('/checkin/new', auth.requiresLogin, routes.checkin_new);
-	app.get('/checkin', auth.requiresLogin, routes.checkin);
-	app.get('/', routes.index);
+	// site
+	app.get('/', site.index);
 
 	// user routes
 	var users = require('../app/controllers/users');
@@ -25,6 +20,14 @@ module.exports = function(app, passport) {
 	}), users.session)
 
 	app.get('/logout', users.logout);
+
+	// restricted logged-in routes
+	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
+	app.put('/checkin/:id.:format?', auth.requiresLogin, dashboard.checkin_update);
+	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, dashboard.checkin_edit);
+	app.post('/checkin.:format?', auth.requiresLogin, dashboard.checkin_create);
+	app.get('/checkin/new', auth.requiresLogin, dashboard.checkin_new);
+	app.get('/checkin', auth.requiresLogin, dashboard.checkin);
 
 	app.param('userId', users.user);
 

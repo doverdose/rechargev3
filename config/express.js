@@ -1,5 +1,5 @@
 var express = require('express'),
-	routes = require('../app/controllers/index'),
+	site = require('../app/controllers/site'),
 	mongoose = require('mongoose'),
 	mongoStore = require('connect-mongodb'),
 	flash = require('connect-flash'),
@@ -22,7 +22,7 @@ module.exports = function(app, config, passport, env) {
 
 		app.use(express.static(config.root + '/public'));
 		app.use(function(err, req, res, next) {
-			if (err instanceof routes.NotFound) {
+			if (err instanceof site.NotFound) {
 				res.redirect('/checkin');
 			} else {
 				next(err)
