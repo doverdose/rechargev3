@@ -1,9 +1,12 @@
 var express = require('express'),
-	routes = require('../app/controllers/index');
+	routes = require('../app/controllers/index'),
+	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
 
-	app.get('/dashboard', routes.dashboard);
+// 	app.get('/dashboard', routes.dashboard);
+	app.get('/dashboard', auth.requiresLogin, routes.dashboard);
+
 	app.put('/checkin/:id.:format?', routes.checkin_update);
 	app.get('/checkin/:id.:format?/edit', routes.checkin_edit);
 	app.post('/checkin.:format?', routes.checkin_create);
