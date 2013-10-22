@@ -25,13 +25,13 @@ var UserSchema = new Schema({
  */
 
 UserSchema
-  .virtual('password')
-  .set(function(password) {
-    this._password = password
-    this.salt = this.makeSalt()
-    this.hashed_password = this.encryptPassword(password)
-  })
-  .get(function() { return this._password })
+	.virtual('password')
+	.set(function(password) {
+		this._password = password
+		this.salt = this.makeSalt()
+		this.hashed_password = this.encryptPassword(password)
+	})
+	.get(function() { return this._password })
 
 /**
  * Validations
@@ -41,8 +41,7 @@ var validatePresenceOf = function (value) {
 	return value && value.length
 }
 
-// the below 4 validations only apply if you are signing up traditionally
-
+// validate
 UserSchema.path('name').validate(function (name) {
 	return name.length
 }, 'Name cannot be blank')
@@ -52,22 +51,34 @@ UserSchema.path('email').validate(function (email) {
 }, 'Email cannot be blank')
 
 UserSchema.path('email').validate(function (email, fn) {
-	var User = mongoose.model('User')
+	var User = mongoose.model('User');
 
-  // Check only when it is a new user or when email field is modified
-  if (this.isNew || this.isModified('email')) {
-    User.find({ email: email }).exec(function (err, users) {
-      fn(!err && users.length === 0)
-    })
-  } else fn(true)
+	// Check only when it is a new user or when email field is modified
+	if (this.isNew || this.isModified('email')) {
+		User.find({ email: email }).exec(function (err, users) {
+			fn(!err && users.length === 0)
+		})
+	} else fn(true)
 }, 'Email already exists')
 
 UserSchema.path('username').validate(function (username) {
-  return username.length
-}, 'Username cannot be blank')
+	return username.length
+}, 'Username cannot be blank');
+
+UserSchema.path('username').validate(function(username, fn) {
+	var User = mongoose.model('User');
+
+	// Check only when it is a new user or when email field is modified
+	if (this.isNew || this.isModified('username')) {
+		User.find({ username: username }).exec(function (err, users) {
+			fn(!err && users.length === 0)
+		})
+	} else fn(true)
+}, 'Username already exists');
+
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
-  return hashed_password.length
+	return hashed_password.length
 }, 'Password cannot be blank')
 
 
@@ -76,12 +87,12 @@ UserSchema.path('hashed_password').validate(function (hashed_password) {
  */
 
 UserSchema.pre('save', function(next) {
-  if (!this.isNew) return next()
+	if (!this.isNew) return next()
 
-  if (!validatePresenceOf(this.password))
-    next(new Error('Invalid password'))
-  else
-    next()
+	if (!validatePresenceOf(this.password))
+		next(new Error('Invalid password'))
+	else
+		next()
 })
 
 /**
