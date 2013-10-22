@@ -76,11 +76,19 @@ UserSchema.path('username').validate(function(username, fn) {
 	} else fn(true)
 }, 'Username already exists');
 
-
 UserSchema.path('hashed_password').validate(function (hashed_password) {
 	return hashed_password.length
-}, 'Password cannot be blank')
+}, 'Password cannot be blank');
 
+UserSchema.path('hashed_password').validate(function(hashed_password) {
+	if(this._password) {
+		var re = /^[1-9][0-9]{0, 8}$/;
+
+		if(!re.test(this._password)) {
+			this.invalidate('password', 'Password must must be a PIN number with less than 10 digits.');
+		}
+	}
+}, null);
 
 /**
  * Pre-save hook
