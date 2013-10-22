@@ -4321,6 +4321,7 @@ body {
 /* Footer
  */
 footer {
+  display: block;
   background: #47a3da;
   margin-top: 60px; }
 

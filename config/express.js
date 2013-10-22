@@ -31,16 +31,23 @@ module.exports = function(app, config, passport, env) {
 
 		// if in development, compile sass
 		if(env === 'development') {
-			app.use(
-				sass.middleware({
-					force: true,
-					src: config.root + '/public',
-					debug: true
-				})
-			);
-		}
+			outFile = './public/css/main.css';
+			sass.render({
+				file: './public/css/main.scss',
+				success: function(css) {
 
-		// for testing
+					fs.writeFile(outFile, css, function(err) {
+						console.log(err);
+					});
+
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		};
+
+		// testing
 		app.set('test-uri', 'http://54.213.21.154:8080/');
 
 		// cookieParser should be above session
