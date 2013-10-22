@@ -8,8 +8,14 @@
 
 			<h2>Sign up</h2>
 
+			<% if (errors) errors.forEach(function(error, i) { %>
+
+				<%= error %>
+
+			<% }); %>
+
 			<form role="form" action="/users" method="post">
-				<input type="hidden" name="_csrf" value="#{csrf_token}">
+				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 
 				<div class="form-group">
 					<label for="name">Full name</label>

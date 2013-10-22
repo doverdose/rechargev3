@@ -80,6 +80,17 @@ module.exports = function(app, config, passport, env) {
 		// connect flash for flash messages - should be declared after sessions
 		app.use(flash())
 
+		// adds CSRF support
+		if (process.env.NODE_ENV !== 'test') {
+			app.use(express.csrf())
+
+			// This could be moved to view-helpers :-)
+			app.use(function(req, res, next){
+				res.locals.csrf_token = req.csrfToken()
+				next()
+			})
+		}
+
 		app.use(app.router);
 	});
 
