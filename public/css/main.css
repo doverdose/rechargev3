@@ -3081,10 +3081,10 @@ a.thumbnail:hover, a.thumbnail:focus {
 
 .alert-info {
   background-color: #d9edf7;
-  border-color: #bcebf1;
+  border-color: #bceaf1;
   color: #3a87ad; }
   .alert-info hr {
-    border-top-color: #a7e6ed; }
+    border-top-color: #a7e4ed; }
   .alert-info .alert-link {
     color: #2d6a87; }
 
@@ -3402,15 +3402,15 @@ a.list-group-item {
     border-bottom-color: #eed3d7; }
 
 .panel-info {
-  border-color: #bcebf1; }
+  border-color: #bceaf1; }
   .panel-info > .panel-heading {
     color: #3a87ad;
     background-color: #d9edf7;
-    border-color: #bcebf1; }
+    border-color: #bceaf1; }
     .panel-info > .panel-heading + .panel-collapse .panel-body {
-      border-top-color: #bcebf1; }
+      border-top-color: #bceaf1; }
   .panel-info > .panel-footer + .panel-collapse .panel-body {
-    border-bottom-color: #bcebf1; }
+    border-bottom-color: #bceaf1; }
 
 .well {
   min-height: 20px;
