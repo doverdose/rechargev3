@@ -52,13 +52,13 @@ exports.signup = function (req, res) {
  */
 
 exports.create = function (req, res) {
-	var user = new User(req.body)
+	var user = new User(req.body);
 	user.provider = 'local'
 	user.save(function (err) {
 		if(err) {
 			return res.render('users/signup', {
 				errors: err.errors,
-				user: user,
+				wrongUser: user,
 				title: 'Sign up'
 			})
 		}

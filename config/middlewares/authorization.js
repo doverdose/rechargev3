@@ -11,3 +11,13 @@ exports.requiresLogin = function (req, res, next) {
 	next()
 }
 
+/* If user is logged-in, don't redirect to dashboard.
+ * Used for Login and Register
+ */
+
+exports.isLoggedIn = function (req, res, next) {
+	if(req.isAuthenticated()) {
+		return res.redirect('/dashboard')
+	}
+	next()
+}

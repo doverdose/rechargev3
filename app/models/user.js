@@ -81,14 +81,9 @@ UserSchema.path('hashed_password').validate(function (hashed_password) {
 }, 'Password cannot be blank');
 
 UserSchema.path('hashed_password').validate(function(hashed_password) {
-	if(this._password) {
-		var re = /^[1-9][0-9]{0, 8}$/;
-
-		if(!re.test(this._password)) {
-			this.invalidate('password', 'Password must must be a PIN number with less than 10 digits.');
-		}
-	}
-}, null);
+	var re = /^[0-9]{0,10}$/;
+	return re.test(this._password);
+}, 'Password must must be a PIN number with less than 10 digits.');
 
 /**
  * Pre-save hook
@@ -109,47 +104,47 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.methods = {
 
-  /**
-   * Authenticate - check if the passwords are the same
-   *
-   * @param {String} plainText
-   * @return {Boolean}
-   * @api public
-   */
+	/**
+	* Authenticate - check if the passwords are the same
+	*
+	* @param {String} plainText
+	* @return {Boolean}
+	* @api public
+	*/
 
-  authenticate: function (plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
-  },
+	authenticate: function (plainText) {
+		return this.encryptPassword(plainText) === this.hashed_password
+	},
 
-  /**
-   * Make salt
-   *
-   * @return {String}
-   * @api public
-   */
+	/**
+	* Make salt
+	*
+	* @return {String}
+	* @api public
+	*/
 
-  makeSalt: function () {
-    return Math.round((new Date().valueOf() * Math.random())) + ''
-  },
+	makeSalt: function () {
+		return Math.round((new Date().valueOf() * Math.random())) + ''
+	},
 
-  /**
-   * Encrypt password
-   *
-   * @param {String} password
-   * @return {String}
-   * @api public
-   */
+	/**
+	* Encrypt password
+	*
+	* @param {String} password
+	* @return {String}
+	* @api public
+	*/
 
-  encryptPassword: function (password) {
-    if (!password) return ''
-    var encrypred
-    try {
-      encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex')
-      return encrypred
-    } catch (err) {
-      return ''
-    }
-  }
+	encryptPassword: function (password) {
+		if (!password) return ''
+		var encrypred
+		try {
+			encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex')
+			return encrypred
+		} catch (err) {
+			return ''
+		}
+	}
 }
 
 mongoose.model('User', UserSchema)
