@@ -26,11 +26,16 @@ module.exports = function(app, passport) {
 
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
+
 	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
 	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);
+
 	app.post('/checkin.:format?', auth.requiresLogin, checkin.checkin_create);
 	app.get('/checkin/new', auth.requiresLogin, checkin.checkin_new);
-	app.get('/checkin', auth.requiresLogin, checkin.checkin);
+
+	app.get('/checkin', auth.requiresLogin, checkin.list);
+	app.get('/checkin/:id', auth.requiresLogin, checkin.checkin);
+	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkin_delete);
 
 	app.param('userId', users.user);
 

@@ -1,43 +1,23 @@
 <% layout('../layouts/default') -%>
 
-    <!-- Main form 
-    ================================================== -->
-    <!-- Wrap the rest of the page in another container to center all the content. -->
-    <div class="container marketing">
-    <div class="row-fluid">
-        <div class="span6 offset3" id="rbody">
-          <h2 class="myh">Salt Reducer Checkins</h2>
-	  <table class="table">
-	    <thead>
-	      <tr>
-		<td>
-		  <b> Checkin </b>
-		</td>
-		<td>
-		  <b> Update </b>
-		</td>  
-	      </tr>
-	    </thead>
-	    <tbody>
-	      <% for (var i = 0; i<c.length; i++) { 
-					     if (c[i].data) { %>
-	         <tr>
-		   <td>
-		     <a href='/checkin/<%=c[i].id%>'><%= c[i].data %></a>
-		   </td>
-		   <td>
-		     <a class="btn btn-primary", href='/checkin/<%=c[i].id%>/edit'> Edit </a>
-		     <a class="btn btn-danger", href='/checkin/<%=c[i].id%>'> Delete </a>
-		   </td>
-		 </tr>
-		 <%   }
-		      } %>  
-	    </tbody>
-	  </table>
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
 
-        </div>
-    </div>
+			<div class="page-header">
+				<div class="btn-group pull-right">
+					<a href="/checkin/<%= c.id %>/edit" class="btn btn-default">Edit checkin</a>
+					<a href="/checkin/<%= c.id %>/delete" class="btn btn-danger">Delete checkin</a>
+				</div>
 
-    <!-- /END MAIN FORM  -->
+				<h2>View Checkin</h2>
+			</div>
+
+			<p>
+				<%= c.data %>
+			</p>
+
+		</div>
+	</div>
 </div>
-<!-- /.container -->
+

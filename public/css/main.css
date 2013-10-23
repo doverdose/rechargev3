@@ -4341,6 +4341,11 @@ body {
     margin-left: -1px;
     width: 66.66667%; }
 
+/* Checkin
+ */
+.page-header {
+  border-bottom: 0; }
+
 /* Footer
  */
 footer {

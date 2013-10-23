@@ -1,21 +1,20 @@
 <% layout('../layouts/default') -%>
 
-<!-- Main form 
-     ================================================== -->
-<!-- Wrap the rest of the page in another container to center all the content. -->
-<div class="container marketing">
-  <div class="row-fluid">
-    <div class="span6 offset3" id="rbody">
-      <h2 class="myh">ReCharge Edit Checkin</h2>
-      
-      <form method="post" action='/checkin/<%= c.id %>' class="form-horizontal">
-	<input name='checkin[id]' value=<%= c.id %> type='hidden' /> 
-	<input type="hidden" name="_method" value="put"/>
-	<%- partial('checkin_fields', {}) %>
-      </form>
-    </div>
-  </div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
 
-  <!-- /END MAIN FORM  -->
+			<div class="page-header">
+				<a href="/checkin/new" class="btn btn-default pull-right">New check-in</a>
+				<h2>Salt Reducer Checkins</h2>
+			</div>
+
+			<form method="post" action="/checkin/<%= c.id %>">
+				<input name="checkin[id]" value="<%= c.id %>" type="hidden">
+				<input type="hidden" name="_method" value="put">
+				<%- partial('checkin_fields', {}) %>
+			</form>
+
+		</div>
+  </div>
 </div>
-<!-- /.container -->

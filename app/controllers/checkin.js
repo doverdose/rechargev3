@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
 
 exports.checkin_update = function(req, res) {
 	Checkin.findOne({_id: req.params.id}, function(err, c) {
-		if (!c) return next(new NotFound('Checkin not found'));
+		if (!c) return res.redirect('/checkin');
+
 		c.data = req.body.checkin.data;
 		c.save(function() {
 			switch (req.params.format) {
@@ -20,7 +21,7 @@ exports.checkin_update = function(req, res) {
 
 exports.checkin_edit = function(req, res, next) {
     Checkin.findOne({_id: req.params.id}, function(err, c) {
-		if (!c) return next(new NotFound('Checkin not found'));
+		if (!c) return res.redirect('/checkin');
 		switch (req.params.format) {
 		case 'json':
 			res.send(c.__doc);
@@ -45,15 +46,44 @@ exports.checkin_create = function(req, res) {
     
 }
 
+exports.checkin_delete = function(req, res) {
+
+	Checkin.findOne({
+		_id: req.params.id
+	}, function(err, c) {
+		if (!c) return res.redirect('/checkin');
+
+		c.remove();
+
+		res.redirect('/checkin');
+    });
+
+
+}
+
 exports.checkin_new = function (req, res) {
 	res.render('checkin/checkin_new.ejs', {c: {}});
 }
 
 exports.checkin = function(req, res) {
+	Checkin.findOne({_id: req.params.id}, function(err, c) {
+		if (!c) return res.redirect('/checkin');
+
+		switch (req.params.format) {
+		case 'json':
+			res.send(c.__doc);
+			break;
+		default:
+			res.render('checkin/checkin.ejs', {c: c});
+		}
+    });
+}
+
+exports.list = function(req, res) {
 	var Checkin = mongoose.model('Checkin');
 	Checkin.find({}, function(err, checkins){
 		if (err) throw err;
-		res.render('checkin/checkin.ejs', {c: checkins});
+		res.render('checkin/list.ejs', {c: checkins});
 	});
 }
 

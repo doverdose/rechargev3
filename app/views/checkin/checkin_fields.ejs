@@ -1,13 +1,9 @@
+<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 
-<div class="control-group">
-  <label class="control-label" for="inputStatus">How are you feeling today?</label>
-  <div class="controls">
-    <textarea name="checkin[data]" id="inputStatus"><%= c.data || "Make a note of how you feel!" %></textarea>
-  </div>
+<div class="form-group">
+	<label for="inputStatus">How are you feeling today?</label>
+	<textarea name="checkin[data]" id="inputStatus" class="form-control" rows="3"><%= c.data || "Make a note of how you feel!" %></textarea>
 </div>
-<div class="control-group">
-  <div class="controls">
-    <button type="reset" class="btn btn-warning">Reset</button>
-    <input type="submit" class="btn btn-primary" value="Note it"/>
-  </div>
-</div>
+
+<button type="reset" class="btn btn-default">Reset</button>
+<button type="submit" class="btn btn-primary">Note it</button>
