@@ -22,17 +22,14 @@ describe('My Server', function() {
 
 describe('My Server', function() {
     describe('Get /register', function() {
-	it('should respond with login page', function(done) {
-	    request(app.set('test-uri'), function (err, res, body) {
-		expect(err).to.not.be.instanceof(Error);
-		expect(res.statusCode).to.equal(200);
-		expect(body).to.include('<h1> Register </h1>');
-		done();
-	    });
-	});
+        it('should respond with login page', function(done) {
+            request(app.set('test-uri'), function (err, res, body) {
+                expect(err).to.not.be.instanceof(Error);
+                expect(res.statusCode).to.equal(200);
+                expect(body).to.include('<h1> Register </h1>');
+                done();
+            });
+        });
     });
 });
-
-
-
 
