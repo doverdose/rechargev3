@@ -29,8 +29,6 @@ $navbar-inverse-bg: $color1;
 
 body {
 	padding-top: $navbar-height;
-
-	font-family: 'Roboto', sans-serif;
 }
 
 /* Navbar
@@ -51,7 +49,7 @@ body {
 
 		color: $white;
 		font-size: emCalc(34);
-		font-weight: bold;
+		font-weight: normal;
 	}
 }
 

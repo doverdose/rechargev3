@@ -4303,8 +4303,7 @@ th.visible-print, td.visible-print {
 /* General
  */
 body {
-  padding-top: 80px;
-  font-family: 'Roboto', sans-serif; }
+  padding-top: 80px; }
 
 /* Navbar
  */
@@ -4316,7 +4315,7 @@ body {
   margin: 0 auto;
   color: white;
   font-size: 2.125em;
-  font-weight: bold; }
+  font-weight: normal; }
 
 /* Footer
  */
