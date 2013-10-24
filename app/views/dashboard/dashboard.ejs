@@ -5,24 +5,32 @@
 		<div class="col-md-8 col-md-offset-2">
 
 			<div class="page-header">
-				<h2>
-					Dashboard
-					<small>This week</small>
-				</h2>
+				<h2>Dashboard</h2>
 			</div>
 
-			<div class="row">
-				<div class="col-sm-6">
-					<strong>Logged-in this week</strong>
-					<h1><span class="label label-success"><%= usersThisWeek %></span></h1>
+			<% for(var i = 0; i < stats.length; i++) { %>
+				<div class="row stats">
+					<div class="col-sm-4">
+						<h3 class="text-muted"><%= stats[i].name %></h3>
+					</div>
+					<div class="col-sm-4">
+						<strong>Logged-in</strong>
+						<span class="label label-success"><%= stats[i].users %></span>
+					</div>
+					<div class="col-sm-4">
+						<strong>Check-ins</strong>
+						<span class="label label-success"><%= stats[i].checkins %></span>
+					</div>
 				</div>
 
-				<div class="col-sm-6">
-					<strong>Check-ins this week</strong>
-					<h1><span class="label label-success"><%= checkinsThisWeek %></span></h1>
+				<div class="row stats">
+					<div class="col-sm-4 col-sm-offset-4">
+						<strong>Average # of words in checkins</strong>
+						<span class="label label-success"><%= stats[i].words %></span>
+					</div>
 				</div>
+			<% } %>
 
-			</div>
 		</div>
 	</div>
 </div>

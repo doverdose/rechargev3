@@ -16,7 +16,8 @@
 		"connect-flash": "*",
 		"node-sass": "*",
 		"winston" : "*",
-		"moment": "*"
+		"moment": "*",
+		"q": "*"
 	},
 	"scripts": {
 		"test": "make test"
