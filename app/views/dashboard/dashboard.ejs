@@ -5,22 +5,24 @@
 		<div class="col-md-8 col-md-offset-2">
 
 			<div class="page-header">
-				<h2>Dashboard</h2>
+				<h2>
+					Dashboard
+					<small>This week</small>
+				</h2>
 			</div>
 
 			<div class="row">
-
 				<div class="col-sm-6">
 					<strong>Logged-in this week</strong>
-					<h3><%= usersThisWeek %></h3>
+					<h1><span class="label label-success"><%= usersThisWeek %></span></h1>
 				</div>
 
 				<div class="col-sm-6">
-					right
+					<strong>Check-ins this week</strong>
+					<h1><span class="label label-success"><%= checkinsThisWeek %></span></h1>
 				</div>
 
 			</div>
-
 		</div>
 	</div>
 </div>
