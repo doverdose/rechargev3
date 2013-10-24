@@ -1,7 +1,7 @@
 var express = require('express'),
 	site = require('../app/controllers/site'),
 	dashboard = require('../app/controllers/dashboard'),
-	checkin = require('../app/controllers/checkin'),
+	checkin = require('../app/controllers/checkins'),
 	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
@@ -34,7 +34,7 @@ module.exports = function(app, passport) {
 	app.get('/checkin/new', auth.requiresLogin, checkin.checkin_new);
 
 	app.get('/checkin', auth.requiresLogin, checkin.list);
-	app.get('/checkin/:id', auth.requiresLogin, checkin.checkin);
+	app.get('/checkin/:id', auth.requiresLogin, checkin.checkin_view);
 	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkin_delete);
 
 	app.param('userId', users.user);

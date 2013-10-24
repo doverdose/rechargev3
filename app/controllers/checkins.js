@@ -65,16 +65,16 @@ exports.checkin_new = function (req, res) {
 	res.render('checkin/checkin_new.ejs', {c: {}});
 }
 
-exports.checkin = function(req, res) {
+exports.checkin_view = function(req, res) {
 	Checkin.findOne({_id: req.params.id}, function(err, c) {
 		if (!c) return res.redirect('/checkin');
 
 		switch (req.params.format) {
-		case 'json':
-			res.send(c.__doc);
-			break;
-		default:
-			res.render('checkin/checkin.ejs', {c: c});
+			case 'json':
+				res.send(c.__doc);
+				break;
+			default:
+				res.render('checkin/checkin.ejs', {c: c});
 		}
     });
 }

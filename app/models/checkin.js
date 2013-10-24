@@ -13,8 +13,11 @@ var mongoose = require('mongoose'),
 var CheckinSchema = new Schema({
 	'data': String,
 	'user_id': ObjectId,
-        'timestamp': { type: Date, default: Date.now }
-    });
+	'timestamp': {
+		type: Date,
+		default: Date.now
+	}
+});
 
 /**
  * Virtuals

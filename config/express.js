@@ -18,6 +18,13 @@ module.exports = function(app, config, passport, env) {
 		app.set('views', config.root + '/app/views')
 		app.set('view engine', 'ejs');
 
+		var ejs = require('ejs'),
+			moment = require('moment');
+
+		ejs.filters.fromNow = function(date){
+			return moment(date).fromNow();
+		}
+
 		app.use(express.logger('dev'));
 
 		app.use(express.static(config.root + '/public'));

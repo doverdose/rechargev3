@@ -4305,6 +4305,9 @@ th.visible-print, td.visible-print {
 body {
   padding-top: 80px; }
 
+.muted {
+  color: #cccccc; }
+
 /* Navbar
  */
 .navbar-inverse .navbar-nav > li > a {

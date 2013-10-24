@@ -15,7 +15,8 @@
 		"passport-local": "*",
 		"connect-flash": "*",
 		"node-sass": "*",
-		"winston" : "*"
+		"winston" : "*",
+		"moment": "*"
 	},
 	"scripts": {
 		"test": "make test"
