@@ -15,7 +15,6 @@ var CheckinSchema = new Schema({
 		'question': String,
 		'answer': String
 	}],
-	'data': String,
 	'user_id': ObjectId,
 	'timestamp': {
 		type: Date,
