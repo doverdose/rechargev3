@@ -17,7 +17,11 @@ var UserSchema = new Schema({
 	provider: { type: String, default: '' },
 	hashed_password: { type: String, default: '' },
 	salt: { type: String, default: '' },
-	authToken: { type: String, default: '' }
+	authToken: { type: String, default: '' },
+	last_login: {
+		type: Date,
+		default: Date.now
+	}
 })
 
 /**
@@ -82,7 +86,7 @@ UserSchema.path('hashed_password').validate(function (hashed_password) {
 
 UserSchema.path('hashed_password').validate(function(hashed_password) {
 	var re = /^[0-9]{0,10}$/;
-	return re.test(this._password);
+	return !this._password || re.test(this._password);
 }, 'Password must must be a PIN number with less than 10 digits.');
 
 /**

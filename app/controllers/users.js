@@ -8,6 +8,25 @@ var mongoose = require('mongoose'),
 	util = require('util');
 
 var login = function (req, res) {
+	// update last_login date
+	if(req.user && req.user.id) {
+		User.findById(req.user._id, function(err, u) {
+			if (!u)
+				return next(new Error('Could not find User'));
+			else {
+				// update last_login
+				u.last_login = new Date();
+
+				u.save(function(err) {
+					if (err)
+						console.log(err)
+					else
+						console.log('success')
+				});
+			}
+		});
+	}
+
 	if (req.session.returnTo) {
 		res.redirect(req.session.returnTo)
 		delete req.session.returnTo

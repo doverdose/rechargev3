@@ -31,7 +31,6 @@ exports.checkin_edit = function(req, res, next) {
 }
 
 exports.checkin_create = function(req, res) {
-	//var c = new Checkin(req.body.c);
 	var c = new Checkin(req.body);
 	c.user_id = req.user._id;
 
