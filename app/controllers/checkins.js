@@ -5,8 +5,6 @@ var mongoose = require('mongoose'),
 exports.checkin_update = function(req, res) {
 	Checkin.findOne({_id: req.params.id}, function(err, c) {
 		if (!c) return res.redirect('/checkin');
-
-		c.data = req.body.checkin.data;
 		c.save(function() {
 			switch (req.params.format) {
 			case 'json':
@@ -33,7 +31,10 @@ exports.checkin_edit = function(req, res, next) {
 }
 
 exports.checkin_create = function(req, res) {
-	var c = new Checkin(req.body.checkin);
+	//var c = new Checkin(req.body.c);
+	var c = new Checkin(req.body);
+	c.user_id = req.user._id;
+
 	c.save(function() {
 		switch (req.params.format) {
 			case 'json':
@@ -81,9 +82,13 @@ exports.checkin_view = function(req, res) {
 
 exports.list = function(req, res) {
 	var Checkin = mongoose.model('Checkin');
-	Checkin.find({}, function(err, checkins){
+	Checkin.find({
+		user_id: req.user._id
+	}, function(err, checkins) {
 		if (err) throw err;
-		res.render('checkin/list.ejs', {c: checkins});
+		res.render('checkin/list.ejs', {
+			c: checkins.reverse()
+		});
 	});
 }
 

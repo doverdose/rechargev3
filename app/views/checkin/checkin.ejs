@@ -10,14 +10,20 @@
 					<a href="/checkin/<%= c.id %>/delete" class="btn btn-danger">Delete checkin</a>
 				</div>
 
-				<h2>View Checkin</h2>
+				<small>View Checkin from</small>
+				<h3><abbr title="<%= Date(c.timestamp) %>"><%=: c.timestamp | fromNow %></abbr></h3>
 			</div>
 
-			<h4 class="muted">How you felt <abbr title="<%= Date(c.timestamp) %>"><%=: c.timestamp | fromNow %></abbr></h4>
-
-			<p>
-				<%= c.data %>
-			</p>
+			<% for(var i=0; i < c.questions.length; i++) { %>
+				<p class="muted">
+					<%= c.questions[i].question %>
+				</p>
+				<p>
+					<strong>
+						<%= c.questions[i].answer %>
+					</strong>
+				</p>
+			<% } %>
 
 		</div>
 	</div>

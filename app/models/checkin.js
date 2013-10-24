@@ -11,6 +11,10 @@ var mongoose = require('mongoose'),
  */
 
 var CheckinSchema = new Schema({
+	'questions': [{
+		'question': String,
+		'answer': String
+	}],
 	'data': String,
 	'user_id': ObjectId,
 	'timestamp': {

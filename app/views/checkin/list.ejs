@@ -14,7 +14,7 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<td>
+							<td class="col-md-9">
 								<strong>Checkin</strong>
 							</td>
 							<td>
@@ -23,24 +23,23 @@
 						</tr>
 					</thead>
 					<tbody>
-					<% for (var i = 0; i < c.length; i++) {
-									if (c[i].data) { %>
+					<% for (var i = 0; i < c.length; i++) { %>
 						<tr>
 							<td>
-								<a href='/checkin/<%=c[i].id%>'><%= c[i].data %></a>
+								<a href='/checkin/<%=c[i].id%>'><%=: c[i].timestamp | fromNow %>
 							</td>
 							<td>
 								<a class="btn btn-primary" href="/checkin/<%=c[i].id%>/edit"> Edit </a>
 								<a class="btn btn-danger" href="/checkin/<%=c[i].id%>/delete"> Delete </a>
 							</td>
 						</tr>
-					<% }} %>
+					<% } %>
 					</tbody>
 				</table>
 
 			<% } else { %>
 
-				<h4>No checkins available</h4>
+				<h4 class="text-center muted">No checkins available</h4>
 
 			<% } %>
 

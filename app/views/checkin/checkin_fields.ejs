@@ -1,9 +1,26 @@
 <input type="hidden" name="_csrf" value="<%= csrf_token %>">
 
-<div class="form-group">
-	<label for="inputStatus">How are you feeling today?</label>
-	<textarea name="checkin[data]" id="inputStatus" class="form-control" rows="3"><%= c.data || "Make a note of how you feel!" %></textarea>
-</div>
+<% if(!c.questions) {
+	// default new checkin
+	c.questions = [
+		{
+			question: 'How do you feel?',
+			answer: 'Make a note of how you feel!'
+		},
+		{
+			question: 'How do you really feel?',
+			answer: 'Make a note of how you really feel!'
+		}
+	];
+} %>
+
+<% for(var i=0; i < c.questions.length; i++) { %>
+	<div class="form-group">
+		<label for="q<%= i %>"><%= c.questions[i].question %></label>
+		<input type="hidden" value="<%= c.questions[i].question %>" name="questions[<%= i %>][question]">
+		<textarea name="questions[<%= i %>][answer]" id="q<%= i %>" class="form-control" rows="3"><%= c.questions[i].answer %></textarea>
+	</div>
+<% } %>
 
 <button type="reset" class="btn btn-default">Reset</button>
-<button type="submit" class="btn btn-primary">Note it</button>
+<button type="submit" class="btn btn-primary">Check-in</button>
