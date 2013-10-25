@@ -58,31 +58,19 @@ exports.dashboard = function(req, res) {
 	var stats = [
 		{
 			name: 'Last 7 days',
-			days: [7, 0],
-			users: 0,
-			checkins: 0,
-			words: 0
+			days: [7, 0]
 		},
 		{
 			name: 'Two weeks ago',
-			days: [14, 7],
-			users: 0,
-			checkins: 0,
-			words: 0
+			days: [14, 7]
 		},
 		{
 			name: 'Three weeks ago',
-			days: [21, 14],
-			users: 0,
-			checkins: 0,
-			words: 0
+			days: [21, 14]
 		},
 		{
 			name: 'Four weeks ago',
-			days: [28, 21],
-			users: 0,
-			checkins: 0,
-			words: 0
+			days: [28, 21]
 		}
 	];
 
@@ -106,18 +94,22 @@ exports.dashboard = function(req, res) {
 			stat.checkins = checkins.length
 
 			var sumWords = 0,
-				sumAnswers = 0;
+				sumQuestions = 0,
+				answeredQuestions = 0;
 
 			checkins.forEach(function(c) {
 				if(c.questions.length) {
 					c.questions.forEach(function(q) {
 						sumWords += countWords(q.answer);
-						sumAnswers++;
+						sumQuestions++;
+						if(q.answer.length) answeredQuestions++;
+						console.log(q.answer.length);
 					});
 				};
 			});
 
-			stat.words = parseInt(sumWords / sumAnswers) || 0;
+			stat.words = parseInt(sumWords / sumQuestions, 10) || 0;
+			stat.completion = parseFloat(Math.round((answeredQuestions / sumQuestions || 0) * 100) / 100).toFixed(1);
 
 			deferred.resolve();
 

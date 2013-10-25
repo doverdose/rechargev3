@@ -25,8 +25,12 @@
 
 				<div class="row stats">
 					<div class="col-sm-4 col-sm-offset-4">
-						<strong>Average # of words in checkins</strong>
+						<strong>Average # of words</strong>
 						<span class="label label-success"><%= stats[i].words %></span>
+					</div>
+					<div class="col-sm-4">
+						<strong>Completion rate</strong>
+						<span class="label label-success"><%= stats[i].completion %>%</span>
 					</div>
 				</div>
 			<% } %>
