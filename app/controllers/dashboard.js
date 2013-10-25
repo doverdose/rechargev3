@@ -5,13 +5,38 @@ var mongoose = require('mongoose'),
 	Checkin = mongoose.model('Checkin'),
 	dayMilliseconds = 24 * 60 * 60 * 1000;
 
-var loggedInDays = function(day1, day2) {
+var activeUsers = function(day1, day2) {
+
+	// get list of users who have logged-in between the two #daysago
+
 	var deferred = Q.defer();
 
 	User.find({
 		last_login: {
 			$gte: new Date().getTime() - (day1 * dayMilliseconds),
 			$lte: new Date().getTime() - (day2 * dayMilliseconds)
+		}
+	}, function(err, allUsers) {
+		if (err) {
+			deferred.reject(new Error(err));
+		} else {
+			deferred.resolve(allUsers.length);
+		}
+	});
+
+	return deferred.promise;
+
+};
+
+var inactiveUsers = function(days) {
+
+	// get list of users who have not logged-in for more than #days
+
+	var deferred = Q.defer();
+
+	User.find({
+		last_login: {
+			$lte: new Date().getTime() - (days * dayMilliseconds)
 		}
 	}, function(err, allUsers) {
 		if (err) {
@@ -81,10 +106,16 @@ exports.dashboard = function(req, res) {
 
 		return Q.resolve()
 		.then(function() {
-			return loggedInDays(stat.days[0], stat.days[1])
+			return inactiveUsers(stat.days[0]);
 		})
-		.then(function(lastWeekUsers) {
-			stat.users = lastWeekUsers;
+		.then(function(inactiveUsers) {
+			stat.inactiveUsers = inactiveUsers;
+		})
+		.then(function() {
+			return activeUsers(stat.days[0], stat.days[1])
+		})
+		.then(function(users) {
+			stat.users = users;
 
 			return checkinsDays(stat.days[0], stat.days[1])
 		})
@@ -103,7 +134,6 @@ exports.dashboard = function(req, res) {
 						sumWords += countWords(q.answer);
 						sumQuestions++;
 						if(q.answer.length) answeredQuestions++;
-						console.log(q.answer.length);
 					});
 				};
 			});

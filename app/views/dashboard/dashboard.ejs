@@ -15,22 +15,29 @@
 					</div>
 					<div class="col-sm-4">
 						<strong>Logged-in</strong>
-						<span class="label label-success"><%= stats[i].users %></span>
+						<span class="label label-<%= (stats[i].words) ? 'success' : 'default' %>"><%= stats[i].users %></span>
 					</div>
 					<div class="col-sm-4">
 						<strong>Check-ins</strong>
-						<span class="label label-success"><%= stats[i].checkins %></span>
+						<span class="label label-<%= (stats[i].words) ? 'success' : 'default' %>"><%= stats[i].checkins %></span>
 					</div>
 				</div>
 
 				<div class="row stats">
 					<div class="col-sm-4 col-sm-offset-4">
 						<strong>Average # of words</strong>
-						<span class="label label-success"><%= stats[i].words %></span>
+						<span class="label label-<%= (stats[i].words) ? 'success' : 'default' %>"><%= stats[i].words %></span>
 					</div>
 					<div class="col-sm-4">
 						<strong>Completion rate</strong>
-						<span class="label label-success"><%= stats[i].completion %>%</span>
+						<span class="label label-<%= (stats[i].words) ? 'success' : 'default' %>"><%= stats[i].completion %>%</span>
+					</div>
+				</div>
+
+				<div class="row stats">
+					<div class="col-sm-4 col-sm-offset-4">
+						<strong>Inactive users</strong>
+						<span class="label label-<%= (stats[i].words) ? 'success' : 'default' %>"><%= stats[i].inactiveUsers %></span>
 					</div>
 				</div>
 			<% } %>
