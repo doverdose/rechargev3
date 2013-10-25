@@ -2,6 +2,7 @@ var express = require('express'),
 	site = require('../app/controllers/site'),
 	dashboard = require('../app/controllers/dashboard'),
 	checkin = require('../app/controllers/checkins'),
+	users = require('../app/controllers/users'),
 	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
@@ -10,7 +11,6 @@ module.exports = function(app, passport) {
 	app.get('/', site.index);
 
 	// user routes
-	var users = require('../app/controllers/users');
 	app.get('/login', auth.isLoggedIn, users.login);
 	app.get('/signup', auth.isLoggedIn, users.signup);
 
@@ -22,7 +22,7 @@ module.exports = function(app, passport) {
 		}),
 		users.session);
 
-	app.get('/logout', auth.requiresLogin, users.logout);
+	app.get('/logout', users.logout);
 
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);

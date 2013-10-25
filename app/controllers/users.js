@@ -9,7 +9,7 @@ var mongoose = require('mongoose'),
 
 var login = function (req, res) {
 	// update last_login date
-	if(req.user && req.user.id) {
+	if(req.user) {
 		User.findById(req.user._id, function(err, u) {
 			if (!u)
 				return next(new Error('Could not find User'));
@@ -18,10 +18,7 @@ var login = function (req, res) {
 				u.last_login = new Date();
 
 				u.save(function(err) {
-					if (err)
-						console.log(err)
-					else
-						console.log('success')
+					if (err) return console.log(err)
 				});
 			}
 		});
@@ -35,7 +32,7 @@ var login = function (req, res) {
 	res.redirect('/')
 }
 
-exports.signin = function (req, res) {}
+//exports.signin = function (req, res) {}
 
 /**
  * Auth callback
