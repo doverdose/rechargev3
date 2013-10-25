@@ -17,7 +17,9 @@
 		"node-sass": "*",
 		"winston" : "*",
 		"moment": "*",
-		"q": "*"
+		"q": "*",
+		"nodemailer": "*",
+		"email-templates": "*"
 	},
 	"scripts": {
 		"test": "make test"
