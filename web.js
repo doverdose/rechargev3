@@ -33,11 +33,11 @@ module.exports = app;
 if(env !== 'development') {
 	console.log('Starting logger...');
 	winston.add(winston.transports.File, {
-		filename: 'logs/api.log'
+		filename: 'api.log'
 	});
 
 	winston.handleExceptions(new winston.transports.File({
-		filename: 'logs/error.log'
+		filename: 'error.log'
 	}));
 }
 

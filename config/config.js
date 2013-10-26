@@ -9,31 +9,48 @@ module.exports = function(app) {
 			db: 'mongodb://localhost/recharge-development',
 			root: rootPath,
 			mail: {
-				from: 'ReCharge Health <contact@rechargehealth.com>',
+				from: 'ReCharge Health <recharge@gmail.com>',
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
 					service: "Gmail",
 					auth: {
-						user: "donotreply@barandisolutions.ro",
-						pass: "Tn74_O0xsFZm"
+						user: "rechargeapp.donotreply@gmail.com",
+						pass: "thisisjustwhatweneeded"
 					}
 				}
 			},
 			app: {}
 		},
-		test: {
-			db: 'mongodb://localhost/recharge-test',
-			root: rootPath,
-			mail: {
-				from: 'ReCharge Health <contact@rechargehealth.com>',
+    nitrous: {
+      db: 'mongodb://kimodo:kimono@ds051868.mongolab.com:51868/recharge-dev',
+      root: rootPath,
+      mail: {
+				from: 'ReCharge Health <rechargeapp@gmail.com>',
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
 					service: "Gmail",
 					auth: {
-						user: "donotreply@barandisolutions.ro",
-						pass: "Tn74_O0xsFZm"
+						user: "rechargeapp.donotreply@gmail.com",
+						pass: "thisisjustwhatweneeded"
+					}
+				}
+			},
+      app: {}
+    },
+		test: {
+			db: 'mongodb://localhost/recharge-test',
+			root: rootPath,
+			mail: {
+				from: 'ReCharge Health <rechargeapp@gmail.com>',
+				type: 'SMTP',
+				transport: {
+					// nodemailer transport
+					service: "Gmail",
+					auth: {
+					    user: "rechargeapp.donotreply@gmail.com",
+						pass: "thisisjustwhatweneeded"
 					}
 				}
 			},
@@ -43,14 +60,14 @@ module.exports = function(app) {
 			db: 'mongodb://komodo:theonlylivingdragon@ds049548.mongolab.com:49548/heroku_app18503207',
 			root: rootPath,
 			mail: {
-				from: 'ReCharge Health <contact@rechargehealth.com>',
+			    from: 'ReCharge Health <rechargeapp@gmail.com>',
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
 					service: "Gmail",
 					auth: {
-						user: "donotreply@barandisolutions.ro",
-						pass: "Tn74_O0xsFZm"
+					    user: "rechargeapp.donotreply@gmail.com",
+						pass: "thisisjustwhatweneeded"
 					}
 				}
 			},
@@ -60,14 +77,14 @@ module.exports = function(app) {
 			db: 'mongodb://localhost/recharge-production',
 			root: rootPath,
 			mail: {
-				from: 'ReCharge Health <contact@rechargehealth.com>',
-				type: 'SMTP',
+			    from: 'ReCharge Health <rechargeapp@gmail.com>',
+			    type: 'SMTP',
 				transport: {
 					// nodemailer transport
 					service: "Gmail",
 					auth: {
-						user: "donotreply@barandisolutions.ro",
-						pass: "Tn74_O0xsFZm"
+					    user: "rechargeapp.donotreply@gmail.com",
+						pass: "thisisjustwhatweneeded"
 					}
 				}
 			},

@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
 	Checkin = mongoose.model('Checkin'),
 	Notification = mongoose.model('Notification'),
-	dayMilliseconds = 24 * 60 * 60 * 1000;
+	dayMilliseconds = 24 * 60 * 60 * 1000,
+  winston = require('winston');
 
 var path = require('path'),
 	templatesDir,
@@ -189,6 +190,7 @@ var sendNotifications = function(req, res) {
 module.exports = function(cfg) {
 
 	config = cfg;
+
 	smtpTransport = nodemailer.createTransport(config.mail.type, config.mail.transport);
 	templatesDir = config.root + '/app/views/email';
 
