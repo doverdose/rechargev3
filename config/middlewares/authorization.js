@@ -22,14 +22,13 @@ exports.isLoggedIn = function (req, res, next) {
 	next()
 }
 
-/* Require admin
+/* Require admin permission
  */
 exports.requiresAdmin = function(req, res, next) {
 
 	if(!req.user.permissions.admin) {
-		req.flash('error', 'You are not authorized');
 		req.session.returnTo = req.originalUrl;
-		return res.redirect('/login')
+		return res.redirect('/dashboard')
 	}
 	next()
 

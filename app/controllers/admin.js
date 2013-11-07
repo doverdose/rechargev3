@@ -7,11 +7,13 @@ var mongoose = require('mongoose'),
 
 var allUsers = function(day1, day2) {
 
-	// get list of users who have logged-in between the two #daysago
-
+	// get list of users who are not admins or providers
 	var deferred = Q.defer();
 
-	User.find({}, function(err, allUsers) {
+	User.find({
+		'permissions.admin': { $ne: true },
+		'permissions.provider': { $ne: true }
+	}, function(err, allUsers) {
 		if (err) {
 			deferred.reject(new Error(err));
 		} else {

@@ -8,10 +8,29 @@
 				<h2>Administration</h2>
 			</div>
 
+
+			<div class="row stats">
+				<div class="col-sm-8">
+					<h3>Patients</h3>
+				</div>
+				<div class="col-sm-4 text-right">
+					<a class="btn btn-default" href="/user/new">
+						<i class="glyphicon glyphicon-plus"></i>
+						Create new user
+					</a>
+				</div>
+			</div>
+
 			<% for(var i = 0; i < users.length; i++) { %>
 				<div class="row stats">
-					<div class="col-sm-4">
-						<h3 class="text-muted"><%= users[i].name %></h3>
+					<div class="col-sm-8">
+						<a href="/user/<%= users[i].id %>">
+							<%= users[i].name %>
+						</a>
+					</div>
+					<div class="col-sm-4 text-right">
+						<a class="btn btn-primary" href="/user/<%= users[i].id %>/edit"> Edit </a>
+						<a class="btn btn-danger" href="/user/<%= users[i].id %>/delete"> Delete </a>
 					</div>
 				</div>
 			<% } %>

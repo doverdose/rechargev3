@@ -22,6 +22,10 @@ var UserSchema = new Schema({
 		admin: {
 			type: Boolean,
 			default: 'false'
+		},
+		provider: {
+			type: Boolean,
+			default: 'false'
 		}
 	},
 	last_login: {

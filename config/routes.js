@@ -31,6 +31,8 @@ module.exports = function(app, passport) {
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
 
+	app.get('/user/:id', auth.requiresLogin, users.view);
+
 	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
 	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);
 

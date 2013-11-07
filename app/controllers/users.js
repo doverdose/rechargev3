@@ -32,8 +32,6 @@ var login = function (req, res) {
 	res.redirect('/')
 }
 
-//exports.signin = function (req, res) {}
-
 /**
  * Auth callback
  */
@@ -72,7 +70,10 @@ exports.create = function (req, res) {
 	user.provider = 'local';
 
 	// remove any sneaky permissions
-	delete user.permissions;
+	user.permissions = {
+		admin: false,
+		provider: (user.permissions) ? user.permissions.provider : false
+	};
 
 	user.save(function (err) {
 		if(err) {
@@ -120,3 +121,30 @@ exports.user = function (req, res, next, id) {
 			next()
 		})
 }
+
+/* View user
+ */
+
+exports.view = function (req, res, next) {
+
+	if(req.user.permissions.provider) {
+		// TODO if provider, see your own patients
+
+	} else if(!req.user.permissions.admin) {
+		// if patient, see only your profile
+		if (req.user.id !== id) return next(new Error('Failed to load User ' + id))
+	}
+
+	User.findOne({ _id : req.params.id })
+		.exec(function (err, user) {
+			if (err) return next(err)
+			if (!user) return next(new Error('Failed to load User ' + id))
+
+			res.render('users/profile.ejs', {
+				title: 'Profile',
+				profile: user
+			})
+
+		})
+
+};
