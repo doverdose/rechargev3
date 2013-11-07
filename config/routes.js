@@ -3,6 +3,7 @@ var express = require('express'),
 	dashboard = require('../app/controllers/dashboard'),
 	checkin = require('../app/controllers/checkins'),
 	users = require('../app/controllers/users'),
+	admin = require('../app/controllers/admin'),
 	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
@@ -23,6 +24,9 @@ module.exports = function(app, passport) {
 		users.session);
 
 	app.get('/logout', users.logout);
+
+	// admin
+	app.get('/admin', auth.requiresLogin, auth.requiresAdmin, admin.admin);
 
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);

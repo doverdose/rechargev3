@@ -18,6 +18,12 @@ var UserSchema = new Schema({
 	hashed_password: { type: String, default: '' },
 	salt: { type: String, default: '' },
 	authToken: { type: String, default: '' },
+	permissions: {
+		admin: {
+			type: Boolean,
+			default: 'false'
+		}
+	},
 	last_login: {
 		type: Date,
 		default: Date.now

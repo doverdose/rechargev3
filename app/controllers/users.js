@@ -69,7 +69,11 @@ exports.signup = function (req, res) {
 
 exports.create = function (req, res) {
 	var user = new User(req.body);
-	user.provider = 'local'
+	user.provider = 'local';
+
+	// remove any sneaky permissions
+	delete user.permissions;
+
 	user.save(function (err) {
 		if(err) {
 			return res.render('users/signup', {

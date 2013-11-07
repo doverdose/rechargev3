@@ -11,12 +11,12 @@ var mongoose = require('mongoose'),
  */
 
 var CheckinSchema = new Schema({
-	'questions': [{
-		'question': String,
-		'answer': String
+	questions: [{
+		question: String,
+		answer: String
 	}],
-	'user_id': ObjectId,
-	'timestamp': {
+	user_id: ObjectId,
+	timestamp: {
 		type: Date,
 		default: Date.now
 	}

@@ -1,5 +1,5 @@
 /*
- *  Restrict pages that require login
+ *  Restrict pages based on authentication and permissions
  */
 
 exports.requiresLogin = function (req, res, next) {
@@ -21,3 +21,16 @@ exports.isLoggedIn = function (req, res, next) {
 	}
 	next()
 }
+
+/* Require admin
+ */
+exports.requiresAdmin = function(req, res, next) {
+
+	if(!req.user.permissions.admin) {
+		req.flash('error', 'You are not authorized');
+		req.session.returnTo = req.originalUrl;
+		return res.redirect('/login')
+	}
+	next()
+
+};
