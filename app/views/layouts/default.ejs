@@ -46,10 +46,10 @@
 					  <a href="/checkin">Checkins</a>
 					</li>
 				</ul>
-			<p class="navbar-text">Signed in as <%= user.email %></p>
-			<ul class="nav navbar-nav">
-			  <a href="/logout" class="btn btn-default navbar-btn">Sign out</a>			
-			</ul>
+			<p class="navbar-text signed-in-text">
+				Signed in as <strong><%= user.email %></strong>
+			</p>
+			 <a href="/logout" class="btn btn-default navbar-btn navbar-right">Sign out</a>
 			
 			<% } else {%>
 				<ul class="nav navbar-nav">

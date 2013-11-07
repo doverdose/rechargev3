@@ -14,7 +14,7 @@ $white: #fff;
  */
 $icon-font-path: "../bower_components/bootstrap-sass/fonts/";
 
-$navbar-height: 80px;
+//$navbar-height: 80px;
 $navbar-inverse-color: $white;
 $navbar-inverse-bg: $color1;
 
@@ -42,15 +42,12 @@ body {
 
 	.navbar-nav > li > a {
 		&:hover {
-			background-color: darken($color1, 5%);
+			background-color: darken($white, 5%);
 		}
 	}
 
 	.navbar-brand {
 		margin: 0 auto;
-
-		font-size: emCalc(34);
-		font-weight: normal;
 	}
 
 	.btn {
@@ -67,6 +64,45 @@ body {
 		}
 	}
 
+	.signed-in-text {
+		float: none;
+
+		@include breakpoint(mama-bear) {
+			float: left;
+			overflow: hidden;
+			max-width: 200px;
+
+			white-space: nowrap;
+			text-align: left;
+			text-overflow: ellipsis;
+		}
+	}
+
+}
+
+/* Carousel
+ */
+.carousel {
+	.item {
+		overflow: hidden;
+		height: 380px;
+		width: 100%;
+
+		@include breakpoint(baby-bear) {
+			height: 320px;
+		}
+	}
+
+	img {
+		width: auto !important;
+		min-width: 100% !important;
+		min-height: 100% !important;
+		max-width: none !important;
+	}
+
+	.carousel-indicators {
+		bottom: 0;
+	}
 }
 
 /* Signup
