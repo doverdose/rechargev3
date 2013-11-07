@@ -38,11 +38,9 @@ body {
 /* Navbar
  */
 
-.navbar-inverse {
+.navbar {
 
 	.navbar-nav > li > a {
-		color: $white;
-
 		&:hover {
 			background-color: darken($color1, 5%);
 		}
@@ -51,10 +49,24 @@ body {
 	.navbar-brand {
 		margin: 0 auto;
 
-		color: $white;
 		font-size: emCalc(34);
 		font-weight: normal;
 	}
+
+	.btn {
+		display: block;
+
+		@include breakpoint(mama-bear) {
+			display: inline-block;
+		}
+	}
+
+	.navbar-nav {
+		@include breakpoint(mama-bear) {
+			margin-right: emCalc(4);
+		}
+	}
+
 }
 
 /* Signup
