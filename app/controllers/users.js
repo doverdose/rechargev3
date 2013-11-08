@@ -76,19 +76,36 @@ exports.create = function (req, res) {
 	};
 
 	user.save(function (err) {
-		if(err) {
-			return res.render('users/signup', {
-				errors: err.errors,
-				wrongUser: user,
-				title: 'Sign up'
+
+		if(req.body.admin) {
+
+			if(err && err.errors) {
+				return res.render('users/new', {
+					errors: err.errors,
+					wrongUser: user,
+					title: 'New user'
+				})
+			}
+
+			// return to the admin
+			return res.redirect('/admin')
+
+		} else {
+
+			if(err) {
+				return res.render('users/signup', {
+					errors: err.errors,
+					wrongUser: user,
+					title: 'Sign up'
+				})
+			}
+
+			// manually login the user once successfully signed up
+			req.logIn(user, function(err) {
+				if (err) return next(err)
+				return res.redirect('/')
 			})
 		}
-
-		// manually login the user once successfully signed up
-		req.logIn(user, function(err) {
-			if (err) return next(err)
-			return res.redirect('/')
-		})
 	})
 }
 
@@ -148,3 +165,87 @@ exports.view = function (req, res, next) {
 		})
 
 };
+
+/* New user
+ */
+
+exports.new = function (req, res, next) {
+
+
+	// TODO if provider, assign users to yourself
+	// if patient, see only your profile
+	// do this in the template
+
+	res.render('users/new.ejs', {
+		title: 'New user',
+		profile: new User()
+	})
+
+};
+
+/* Edit user
+ */
+
+exports.update = function (req, res) {
+
+	User.findOne({ _id : req.body.id })
+		.exec(function (err, user) {
+			if (err) return next(err)
+			if (!user) return next(new Error('Failed to load User ' + id))
+
+			if(req.body.name) user.name = req.body.name;
+			if(req.body.email) user.email = req.body.email;
+			if(req.body.username) user.username = req.body.username;
+			if(req.body.password) user.password = req.body.password;
+
+			user.save(function(err) {
+				if (err) return console.log(err)
+			});
+
+		})
+
+	res.redirect('/user/' + req.body.id);
+
+}
+
+exports.edit = function (req, res, next) {
+
+	if(req.user.permissions.provider) {
+		// TODO if provider, see your own patients
+
+	} else if(!req.user.permissions.admin) {
+		// if patient, see only your profile
+		if (req.user.id !== id) return next(new Error('Failed to load User ' + id))
+	}
+
+	User.findOne({ _id : req.params.id })
+		.exec(function (err, user) {
+			if (err) return next(err)
+			if (!user) return next(new Error('Failed to load User ' + id))
+
+			res.render('users/edit.ejs', {
+				title: 'Profile',
+				profile: user
+			})
+
+		})
+
+};
+
+/* Delete user
+ */
+
+exports.delete = function (req, res) {
+
+	User.findOne({ _id : req.params.id })
+		.exec(function (err, user) {
+			if (err) return next(err)
+			if (!user) return next(new Error('Failed to load User ' + id))
+
+			user.remove();
+
+		})
+
+	res.redirect('/admin');
+
+}
