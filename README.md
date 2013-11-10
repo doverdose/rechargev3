@@ -9,3 +9,6 @@ Building out demo-ready ReCharge app using mongodb + express + node stack
 	npm install -g nodemon
 	nodemon web.js
 
+## Run tests with
+
+	npm test
