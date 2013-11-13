@@ -6,18 +6,26 @@
 
 		<div class="col-md-4 col-md-offset-4">
 
-			<h2>Profile</h2>
+			<div class="page-header">
+				<h2>Profile</h2>
+			</div>
 
 			<h3>
 				<%= profile.username %>
 			</h3>
 
-			<ul>
+			<ul class="list-unstyled vcard">
 				<li>
-					<%= profile.name %>
+					<span class="fn n">
+						<strong>Full name: </strong>
+						<span class="given-name">
+							<%= profile.name %>
+						</span>
+					</span>
 				</li>
 				<li>
-					<%= profile.email %>
+					<strong>Email: </strong>
+					<a class="email" href="mailto:<%= profile.email %>"><%= profile.email %></a>
 				</li>
 			</ul>
 
