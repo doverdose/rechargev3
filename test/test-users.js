@@ -17,6 +17,15 @@ var count,
 		username: 'patient',
 		password: '123'
 	},
+	fakeProvider = {
+		email: 'provider@rechargehealth.com',
+		name: 'Provider',
+		username: 'provider',
+		password: '123',
+		permissions: {
+			provider: true
+		}
+	},
 	fakeAdmin = {
 		email: 'admin@rechargehealth.com',
 		name: 'Admin',
@@ -31,7 +40,7 @@ var count,
 
 describe('Users', function () {
 
-	describe('Create new patient', function () {
+	describe('Create new Patient', function () {
 
 		it('should register the new user and redirect to /', function (done) {
 			agent
@@ -41,7 +50,6 @@ describe('Users', function () {
 			.field('email', fakeUser.email)
 			.field('password', fakeUser.password)
 			.field('permissions[admin]', 'true')
-			.field('permissions[provider]', 'true')
 			.expect('Content-Type', /plain/)
 			.expect(302)
 			.expect('Location', '/')
@@ -70,11 +78,65 @@ describe('Users', function () {
 			.end(done)
 		})
 
-		it('should not be admin', function (done) {
+		it('should not have Admin permission', function (done) {
 
 			User.findOne({ username: fakeUser.username }).exec(function (err, user) {
 				should.not.exist(err)
 				user.permissions.admin.should.not.equal(true)
+				done()
+			})
+
+		})
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		})
+
+	})
+
+	describe('Create new Provider', function () {
+
+		it('should register the new user and redirect to /', function (done) {
+			agent
+			.post('/users')
+			.field('name', fakeProvider.name)
+			.field('username', fakeProvider.username)
+			.field('email', fakeProvider.email)
+			.field('password', fakeProvider.password)
+			.field('type', 'provider')
+			.expect('Content-Type', /plain/)
+			.expect(302)
+			.expect('Location', '/')
+			.end(done)
+		})
+
+		it('should save the user to the database', function (done) {
+
+			User.findOne({ username: fakeProvider.username }).exec(function (err, user) {
+				should.not.exist(err);
+				user.should.be.an.instanceOf(User);
+				user.email.should.equal(fakeProvider.email);
+				done();
+			});
+
+		});
+
+		it('should login the new user and redirect to /', function (done) {
+			agent
+			.post('/users/session')
+			.field('email', fakeProvider.email)
+			.field('password', fakeProvider.password)
+			.expect('Content-Type', /plain/)
+			.expect(302)
+			.expect('Location', '/')
+			.end(done)
+		})
+
+		it('should have Provider permission', function (done) {
+
+			User.findOne({ username: fakeProvider.username }).exec(function (err, user) {
+				should.not.exist(err)
+				user.permissions.provider.should.equal(true)
 				done()
 			})
 
@@ -102,7 +164,7 @@ describe('Users', function () {
 
 		})
 
-		context('When logged in', function () {
+		context('When logged in as edited user', function () {
 
 			before(function (done) {
 				// create a new patient user

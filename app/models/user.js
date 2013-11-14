@@ -28,6 +28,14 @@ var UserSchema = new Schema({
 			default: 'false'
 		}
 	},
+	providers: {
+		type: Array,
+		default: []
+	},
+	patients: {
+		type: Array,
+		default: []
+	},
 	last_login: {
 		type: Date,
 		default: Date.now
