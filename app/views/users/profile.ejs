@@ -12,6 +12,13 @@
 
 			<h3>
 				<%= profile.username %>
+				<small>
+					<% if(profile.permissions.provider) { %>
+						Provider
+					<% } else {%>
+						Patient
+					<% } %>
+				</small>
 			</h3>
 
 			<ul class="list-unstyled vcard">

@@ -69,10 +69,16 @@ exports.create = function (req, res) {
 	var user = new User(req.body);
 	user.provider = 'local';
 
+	var isProvider = false;
+
+	if(user.permissions && user.permissions.provider || req.body.type === 'provider') {
+		isProvider = true;
+	}
+
 	// remove any sneaky permissions
 	user.permissions = {
 		admin: false,
-		provider: (user.permissions) ? user.permissions.provider : false
+		provider: isProvider
 	};
 
 	user.save(function (err) {
