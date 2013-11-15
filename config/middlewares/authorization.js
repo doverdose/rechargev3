@@ -22,7 +22,7 @@ exports.isLoggedIn = function (req, res, next) {
 	next()
 }
 
-/* Require admin permission
+/* Require Admin permission
  */
 exports.requiresAdmin = function(req, res, next) {
 
@@ -33,3 +33,16 @@ exports.requiresAdmin = function(req, res, next) {
 	next()
 
 };
+
+/* Require Provider permission
+ */
+exports.requiresProvider = function(req, res, next) {
+
+	if(!req.user.permissions.provider) {
+		req.session.returnTo = req.originalUrl;
+		return res.redirect('/dashboard')
+	}
+	next()
+
+};
+

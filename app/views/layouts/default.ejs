@@ -41,14 +41,19 @@
 				<ul class="nav navbar-nav">
 					<% if(user.permissions.admin) { %>
 					<li>
-					  <a href="/admin">Admin</a>
+						<a href="/admin">Admin</a>
+					</li>
+					<% } %>
+					<% if(user.permissions.provider) { %>
+					<li>
+						<a href="/admin">Provider</a>
 					</li>
 					<% } %>
 					<li>
-					  <a href="/dashboard">Dashboard</a>
+						<a href="/dashboard">Dashboard</a>
 					</li>
 					<li>
-					  <a href="/checkin">Checkins</a>
+						<a href="/checkin">Checkins</a>
 					</li>
 				</ul>
 			<p class="navbar-text signed-in-text">
@@ -90,6 +95,7 @@
 	<script src="/bower_components/jquery/jquery.min.js"></script>
 	<script src="/bower_components/bootstrap-sass/dist/js/bootstrap.min.js"></script>
 	<script src="/js/numpad.js"></script>
+	<script src="/js/admin.js"></script>
 
 </body>
 </html>

@@ -3,7 +3,8 @@ module.exports = function() {
 
 	var mongoose = require('mongoose'),
 		User = mongoose.model('User'),
-		util = require('util');
+		util = require('util'),
+		Q = require('q');
 
 	var login = function (req, res) {
 		// update last_login date
@@ -131,17 +132,49 @@ module.exports = function() {
 			})
 	}
 
+
+	var getProviderPatients = function(patientIds) {
+
+		// get list of users who are not admins or providers
+		var deferred = Q.defer();
+
+		User.find({
+			'_id': { $in: patientIds }
+		}, function(err, docs){
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(providers);
+			}
+		});
+
+		return deferred.promise;
+
+	};
+
 	/* View user
 	*/
 
 	var view = function (req, res, next) {
 
-		if(req.user.permissions.provider) {
-			// TODO if provider, see your own patients
+		if(req.user.permissions.provider || req.user.permissions.admin) {
 
-		} else if(!req.user.permissions.admin) {
+			// if provider, only see your own patients
+			if(req.user.permissions.provider) {
+
+				var patientIds = [];
+
+				req.user.patients.forEach(function(patient, i){
+					patientIds.push(patient._id);
+				});
+
+				console.log(patientIds);
+
+			}
+
+		} else {
 			// if patient, see only your profile
-			if (req.user.id !== id) return next(new Error('Failed to load User ' + id))
+			if (req.user.id !== req.params.id) return next(new Error('You can only see your own profile'))
 		}
 
 		User.findOne({ _id : req.params.id })
@@ -201,25 +234,27 @@ module.exports = function() {
 
 	var edit = function (req, res, next) {
 
-		if(req.user.permissions.provider) {
-			// TODO if provider, see your own patients
+		// edit users only if admin
+		// only editing your own details
+		if(req.user.permissions.admin || req.user.id === req.params.id) {
 
-		} else if(!req.user.permissions.admin) {
-			// if patient, see only your profile
-			if (req.user.id !== id) return next(new Error('Failed to load User ' + id))
-		}
+			User.findOne({ _id : req.params.id })
+				.exec(function (err, user) {
+					if (err) return next(err)
+					if (!user) return next(new Error('Failed to load User ' + id))
 
-		User.findOne({ _id : req.params.id })
-			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
+					res.render('users/edit.ejs', {
+						title: 'Profile',
+						profile: user
+					})
 
-				res.render('users/edit.ejs', {
-					title: 'Profile',
-					profile: user
 				})
 
-			})
+		} else {
+			// if patient, see only your profile
+			 return next(new Error('Only admin can edit user details'))
+		}
+
 
 	};
 
@@ -241,6 +276,28 @@ module.exports = function() {
 
 	}
 
+	/* Remove user from provider
+	 */
+
+	var removeFromProvider = function (req, res) {
+
+		// remove user with id from list of patients
+		var foundUserIndex;
+		req.user.patients.forEach(function(patient, i) {
+			if(patient._id === req.params.id) {
+				foundUserIndex = i;
+				return false;
+			}
+		});
+
+		req.user.patients.splice(foundUserIndex, 1);
+
+		req.user.save();
+
+		res.redirect('/admin');
+
+	};
+
 	return {
 		authCallback: login,
 		session: login,
@@ -253,6 +310,7 @@ module.exports = function() {
 		view: view,
 		edit: edit,
 		update: update,
-		remove: remove
+		remove: remove,
+		removeFromProvider: removeFromProvider
 	}
 }();

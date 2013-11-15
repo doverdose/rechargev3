@@ -7,15 +7,30 @@ module.exports = function() {
 		Checkin = mongoose.model('Checkin'),
 		dayMilliseconds = 24 * 60 * 60 * 1000;
 
-	var getPatients = function() {
+	var getPatients = function(req) {
+
+		var patientConditions = {
+			'permissions.admin': { $ne: true },
+			'permissions.provider': { $ne: true }
+		};
+
+		// if provider, only see your own patients
+		if(req.user.permissions.provider) {
+
+			var patientIds = [];
+
+			req.user.patients.forEach(function(patient, i){
+				patientIds.push(patient._id);
+			});
+
+			patientConditions['_id'] = { $in: patientIds };
+
+		}
 
 		// get list of users who are not admins or providers
 		var deferred = Q.defer();
 
-		User.find({
-			'permissions.admin': { $ne: true },
-			'permissions.provider': { $ne: true }
-		}, function(err, patients) {
+		User.find(patientConditions, function(err, patients) {
 			if (err) {
 				deferred.reject(new Error(err));
 			} else {
@@ -51,7 +66,7 @@ module.exports = function() {
 		var patients = [],
 			providers = [];
 
-		getPatients()
+		getPatients(req)
 		.then(function(allPatients) {
 			patients = allPatients;
 			return getProviders()
@@ -59,10 +74,21 @@ module.exports = function() {
 		.then(function(allProviders) {
 			providers = allProviders;
 
-			res.render('admin/admin.ejs', {
-				patients: patients,
-				providers: providers
-			});
+			var templateVars = {
+				patients: patients
+			};
+
+			if(req.user.permissions.admin) {
+				templateVars.providers = providers;
+			}
+
+			var adminTemplate = 'admin/admin';
+			if(req.user.permissions.provider) {
+				adminTemplate = 'admin/provider';
+			};
+
+
+			res.render(adminTemplate, templateVars);
 
 			return;
 		});
