@@ -12,7 +12,7 @@ module.exports = function(app, passport) {
 	app.get('/', site.index);
 
 	// user routes
-	app.get('/login', auth.isLoggedIn, users.login);
+	app.get('/login', auth.isLoggedIn, users.signin);
 	app.get('/signup', auth.isLoggedIn, users.signup);
 
 	app.post('/users', users.create);
@@ -26,16 +26,18 @@ module.exports = function(app, passport) {
 	app.get('/logout', users.logout);
 
 	// admin
-	app.get('/admin', auth.requiresLogin, auth.requiresAdmin, admin.admin);
+	app.get('/admin', auth.requiresLogin, auth.requiresProvider, admin.admin);
 
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
 
 	app.post('/user/update', auth.requiresLogin, users.update);
-	app.get('/user/new', auth.requiresLogin, auth.requiresAdmin, users.new);
+	app.get('/user/new', auth.requiresLogin, auth.requiresAdmin, users.newView);
 	app.get('/user/:id', auth.requiresLogin, users.view);
 	app.get('/user/:id/edit', auth.requiresLogin, users.edit);
-	app.get('/user/:id/delete', auth.requiresLogin, users.delete);
+	app.get('/user/:id/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
+
+	app.get('/provider/user/:id/remove', auth.requiresLogin, users.removeFromProvider);
 
 	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
 	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);
