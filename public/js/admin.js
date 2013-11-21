@@ -6,17 +6,25 @@
 
 	var admin = function() {
 
-		var $container = $('.js-admin-container');
+		var $container,
+			$popover,
+			userSearchTemplate;
 
 		var init = function() {
 
-			var $popover = $('[rel="popover"]', $container);
+			$container = $('.js-admin-container'),
+			$popover = $('[rel="popover"]', $container);
+			userSearchTemplate = $('.js-usersearch-template', $container).html();
 
-			$popover.popover();
+			$popover.popover({
+				content: userSearchTemplate
+			});
 
-			$popover.on('show.bs.popover', function () {
-				// do something…
-				 console.log('show');
+			$popover.on('shown.bs.popover', function () {
+				var $userSearch = $('.js-usersearch');
+
+				// init select2
+				$userSearch.select2();
 			})
 
 		};

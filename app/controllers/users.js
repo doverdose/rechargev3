@@ -281,18 +281,97 @@ module.exports = function() {
 
 	var removeFromProvider = function (req, res) {
 
-		// remove user with id from list of patients
-		var foundUserIndex;
-		req.user.patients.forEach(function(patient, i) {
-			if(patient._id === req.params.id) {
-				foundUserIndex = i;
-				return false;
+		var foundUserIndex = false,
+			provider;
+
+		// check if admin
+		if(req.user.permissions.admin) {
+			// allow editing on any provider
+
+			User.findOne({ _id : req.body.providerId })
+				.exec(function (err, user) {
+					if (err) return next(err)
+					if (!user) return next(new Error('Failed to load User ' + id))
+
+					provider = user;
+				})
+
+		} else if(req.user.permissions.provider) {
+
+			// allow editing only on your provider account
+			if(req.body.providerId === req.user.id) {
+				provider = req.user;
 			}
-		});
 
-		req.user.patients.splice(foundUserIndex, 1);
+		}
 
-		req.user.save();
+		if(req.user.permissions.admin || req.user.permissions.provider) {
+
+			// remove user with id from list of patients
+			provider.patients.forEach(function(patient, i) {
+				if(patient.id === req.body.userId) {
+					foundUserIndex = i;
+					return false;
+				}
+			});
+
+			if(foundUserIndex !== false) {
+				provider.patients.splice(foundUserIndex, 1);
+				provider.save();
+			}
+		}
+
+		res.redirect('/admin');
+
+	};
+
+	/* Add user to a provider
+	 */
+
+	var addToProvider = function (req, res) {
+
+		var provider;
+
+		// check if admin
+		if(req.user.permissions.admin) {
+			// allow editing on any provider
+
+			User.findOne({ _id : req.body.providerId })
+				.exec(function (err, user) {
+					if (err) return next(err)
+					if (!user) return next(new Error('Failed to load User ' + id))
+
+					provider = user;
+				})
+
+		} else if(req.user.permissions.provider) {
+
+			// allow editing only on your provider account
+			if(req.body.providerId === req.user.id) {
+				provider = req.user;
+			}
+
+		}
+
+		if(req.user.permissions.admin || req.user.permissions.provider) {
+
+			var patientExists = false;
+			provider.patients.forEach(function(patient, i) {
+				if(patient.id === req.body.userId) {
+					patientExists = true;
+					return false;
+				}
+			});
+
+			// if user already exists, don't add him again
+			if(!patientExists) {
+				provider.patients.push({
+					id: req.body.userId
+				});
+				provider.save();
+			}
+
+		}
 
 		res.redirect('/admin');
 
@@ -311,6 +390,7 @@ module.exports = function() {
 		edit: edit,
 		update: update,
 		remove: remove,
-		removeFromProvider: removeFromProvider
+		removeFromProvider: removeFromProvider,
+		addToProvider: addToProvider
 	}
 }();

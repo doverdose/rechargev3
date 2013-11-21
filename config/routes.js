@@ -37,7 +37,8 @@ module.exports = function(app, passport) {
 	app.get('/user/:id/edit', auth.requiresLogin, users.edit);
 	app.get('/user/:id/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
 
-	app.get('/provider/user/:id/remove', auth.requiresLogin, users.removeFromProvider);
+	app.post('/provider/user/remove', auth.requiresLogin, users.removeFromProvider);
+	app.post('/provider/user/add', auth.requiresLogin, users.addToProvider);
 
 	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
 	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);

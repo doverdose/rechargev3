@@ -4363,8 +4363,8 @@ th.hidden-lg, td.hidden-lg {
 body {
   padding-top: 50px; }
 
-.muted {
-  color: #cccccc; }
+.js-template {
+  display: none; }
 
 /* Navbar
  */
@@ -4450,6 +4450,11 @@ body {
  */
 .page-header {
   border-bottom: 0; }
+
+/* Provider admin
+ */
+.select2-container.usersearch-field {
+  display: block; }
 
 /* Footer
  */
