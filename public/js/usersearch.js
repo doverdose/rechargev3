@@ -1,4 +1,4 @@
-/* Admin
+/* Usersearch
  */
 
 (function() {
@@ -12,7 +12,7 @@
 
 		var init = function() {
 
-			$container = $('.js-admin-container'),
+			$container = $('.js-usersearch-container'),
 			$popover = $('[rel="popover"]', $container);
 			userSearchTemplate = $('.js-usersearch-template', $container).html();
 

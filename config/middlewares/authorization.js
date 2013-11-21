@@ -3,6 +3,11 @@
  */
 
 exports.requiresLogin = function (req, res, next) {
+
+	if(req.method === 'GET') {
+		req.session.lastUrl = req.url;
+	}
+
 	if (!req.isAuthenticated()) {
 		req.flash('error', 'You are not authorized');
 		req.session.returnTo = req.originalUrl
@@ -19,6 +24,7 @@ exports.isLoggedIn = function (req, res, next) {
 	if(req.isAuthenticated()) {
 		return res.redirect('/dashboard')
 	}
+
 	next()
 }
 

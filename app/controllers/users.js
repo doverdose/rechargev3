@@ -157,19 +157,19 @@ module.exports = function() {
 
 	var view = function (req, res, next) {
 
+		var providerPatients = [],
+			allPatients = [],
+			patientIds = [];
+
 		if(req.user.permissions.provider || req.user.permissions.admin) {
 
 			// if provider, only see your own patients
 			if(req.user.permissions.provider) {
-
-				var patientIds = [];
-
 				req.user.patients.forEach(function(patient, i){
-					patientIds.push(patient._id);
+					patientIds.push(patient.id);
 				});
 
-				console.log(patientIds);
-
+				if(patientIds.indexOf(req.params.id) === -1) return next(new Error('You can only see your own profile'))
 			}
 
 		} else {
@@ -182,10 +182,63 @@ module.exports = function() {
 				if (err) return next(err)
 				if (!user) return next(new Error('Failed to load User ' + id))
 
-				res.render('users/profile.ejs', {
-					title: 'Profile',
-					profile: user
-				})
+				if(user.permissions.provider) {
+
+					// get list of provider's patients
+					var patientConditions = {
+						'permissions.admin': { $ne: true },
+						'permissions.provider': { $ne: true }
+					};
+
+					// get your own patients
+					var patientIds = [];
+					user.patients.forEach(function(patient, i){
+						patientIds.push(patient.id);
+					});
+					patientConditions['_id'] = { $in: patientIds };
+
+					// get current providers patients
+					User.find(patientConditions, function(err, patients) {
+						if (err) {
+							//
+						} else {
+							providerPatients = patients;
+
+							// get all possible patients
+							// those that are not already added to the provider
+							User.find({
+								'permissions.admin': { $ne: true },
+								'permissions.provider': { $ne: true },
+								'_id': { $nin: patientIds }
+							}, function(err, patients) {
+								if (err) {
+									//
+								} else {
+
+									allPatients = patients;
+
+									res.render('users/profile.ejs', {
+										title: 'Profile',
+										profile: user,
+										providerPatients: providerPatients,
+										allPatients: allPatients
+									})
+
+								}
+							});
+
+						}
+					});
+
+				} else {
+
+					res.render('users/profile.ejs', {
+						title: 'Profile',
+						profile: user
+					})
+
+				}
+
 
 			})
 
@@ -283,28 +336,7 @@ module.exports = function() {
 		var foundUserIndex = false,
 			provider;
 
-		// check if admin
-		if(req.user.permissions.admin) {
-			// allow editing on any provider
-
-			User.findOne({ _id : req.body.providerId })
-				.exec(function (err, user) {
-					if (err) return next(err)
-					if (!user) return next(new Error('Failed to load User ' + id))
-
-					provider = user;
-				})
-
-		} else if(req.user.permissions.provider) {
-
-			// allow editing only on your provider account
-			if(req.body.providerId === req.user.id) {
-				provider = req.user;
-			}
-
-		}
-
-		if(req.user.permissions.admin || req.user.permissions.provider) {
+		var removeUser = function() {
 
 			// remove user with id from list of patients
 			provider.patients.forEach(function(patient, i) {
@@ -318,18 +350,10 @@ module.exports = function() {
 				provider.patients.splice(foundUserIndex, 1);
 				provider.save();
 			}
-		}
 
-		res.redirect('/admin');
+			res.redirect(req.session.lastUrl || '/admin');
 
-	};
-
-	/* Add user to a provider
-	 */
-
-	var addToProvider = function (req, res) {
-
-		var provider;
+		};
 
 		// check if admin
 		if(req.user.permissions.admin) {
@@ -341,6 +365,8 @@ module.exports = function() {
 					if (!user) return next(new Error('Failed to load User ' + id))
 
 					provider = user;
+
+					removeUser();
 				})
 
 		} else if(req.user.permissions.provider) {
@@ -348,31 +374,72 @@ module.exports = function() {
 			// allow editing only on your provider account
 			if(req.body.providerId === req.user.id) {
 				provider = req.user;
+
+				removeUser();
 			}
 
 		}
 
-		if(req.user.permissions.admin || req.user.permissions.provider) {
+	};
 
-			var patientExists = false;
-			provider.patients.forEach(function(patient, i) {
-				if(patient.id === req.body.userId) {
-					patientExists = true;
-					return false;
-				}
-			});
+	/* Add user to provider
+	 */
 
-			// if user already exists, don't add him again
-			if(!patientExists) {
-				provider.patients.push({
-					id: req.body.userId
+	var addToProvider = function (req, res) {
+
+		var provider;
+
+		var addUser = function() {
+
+			// check for empty id
+			if(req.body.userId) {
+				var patientExists = false;
+				provider.patients.forEach(function(patient, i) {
+					if(patient.id === req.body.userId) {
+						patientExists = true;
+						return false;
+					}
 				});
-				provider.save();
+
+				// if user already exists, don't add him again
+				if(!patientExists) {
+					provider.patients.push({
+						id: req.body.userId
+					});
+					provider.save();
+				}
+
+			}
+
+			res.redirect(req.session.lastUrl || '/admin');
+
+		};
+
+		// check if admin
+		if(req.user.permissions.admin) {
+			// allow editing on any provider
+
+			User.findOne({ _id : req.body.providerId })
+				.exec(function (err, user) {
+					if (err) return next(err)
+					if (!user) return next(new Error('Failed to load User ' + id))
+
+					provider = user;
+
+					addUser();
+				})
+
+		} else if(req.user.permissions.provider) {
+
+			// allow editing only on your provider account
+			if(req.body.providerId === req.user.id) {
+				provider = req.user;
+				addUser();
 			}
 
 		}
 
-		res.redirect('/admin');
+
 
 	};
 
