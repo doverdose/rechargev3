@@ -263,14 +263,13 @@ module.exports = function() {
 
 	var remove = function (req, res) {
 
-		User.findOne({ _id : req.params.id })
+		User.findOne({ _id : req.body.userId })
 			.exec(function (err, user) {
 				if (err) return next(err)
 				if (!user) return next(new Error('Failed to load User ' + id))
 
 				user.remove();
-
-			})
+			});
 
 		res.redirect('/admin');
 

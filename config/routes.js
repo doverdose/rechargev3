@@ -31,11 +31,12 @@ module.exports = function(app, passport) {
 	// restricted logged-in routes
 	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
 
-	app.post('/user/update', auth.requiresLogin, users.update);
 	app.get('/user/new', auth.requiresLogin, auth.requiresAdmin, users.newView);
 	app.get('/user/:id', auth.requiresLogin, users.view);
 	app.get('/user/:id/edit', auth.requiresLogin, users.edit);
-	app.get('/user/:id/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
+
+	app.post('/user/update', auth.requiresLogin, users.update);
+	app.post('/user/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
 
 	app.post('/provider/user/remove', auth.requiresLogin, users.removeFromProvider);
 	app.post('/provider/user/add', auth.requiresLogin, users.addToProvider);

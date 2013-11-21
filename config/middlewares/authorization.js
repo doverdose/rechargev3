@@ -38,7 +38,7 @@ exports.requiresAdmin = function(req, res, next) {
  */
 exports.requiresProvider = function(req, res, next) {
 
-	if(!req.user.permissions.provider) {
+	if(!req.user.permissions.provider && !req.user.permissions.admin) {
 		req.session.returnTo = req.originalUrl;
 		return res.redirect('/dashboard')
 	}
