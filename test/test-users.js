@@ -229,7 +229,8 @@ describe('Users', function () {
 
 			it('should redirect to /login', function (done) {
 				agent
-				.get('/user/' + userId + '/delete')
+				.post('/user/delete')
+				.field('userId', userId)
 				.expect('Content-Type', /plain/)
 				.expect(302)
 				.expect('Location', '/login')
@@ -252,7 +253,8 @@ describe('Users', function () {
 
 			it('should redirect to /dashboard', function (done) {
 				agent
-				.get('/user/' + userId + '/delete')
+				.post('/user/delete')
+				.field('userId', userId)
 				.expect('Content-Type', /plain/)
 				.expect(302)
 				.expect('Location', '/dashboard')
@@ -293,7 +295,8 @@ describe('Users', function () {
 
 			it('should delete and redirect to /admin', function (done) {
 				agent
-				.get('/user/' + userId + '/delete')
+				.post('/user/delete')
+				.field('userId', userId)
 				.expect('Content-Type', /plain/)
 				.expect(302)
 				.expect('Location', '/admin')
