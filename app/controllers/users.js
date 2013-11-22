@@ -378,6 +378,9 @@ module.exports = function() {
 				removeUser();
 			}
 
+		} else {
+			// redirect patient to dashboard
+			res.redirect(req.session.lastUrl || '/dashboard');
 		}
 
 	};
@@ -437,9 +440,10 @@ module.exports = function() {
 				addUser();
 			}
 
+		} else {
+			// redirect patient to dashboard
+			res.redirect(req.session.lastUrl || '/dashboard');
 		}
-
-
 
 	};
 
