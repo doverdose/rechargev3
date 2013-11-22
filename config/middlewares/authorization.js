@@ -4,9 +4,9 @@
 
 exports.requiresLogin = function (req, res, next) {
 
-	if(req.method === 'GET') {
-		req.session.lastUrl = req.url;
-	}
+// 	if(req.method === 'GET') {
+// 		req.session.lastUrl = req.url;
+// 	}
 
 	if (!req.isAuthenticated()) {
 		req.flash('error', 'You are not authorized');

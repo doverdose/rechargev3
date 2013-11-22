@@ -9,7 +9,7 @@ var express = require('express'),
 	fs = require('fs');
 
 module.exports = function(app, config, passport, env) {
- 
+
 	app.configure(function() {
 		app.engine('html', engine);
 		app.engine('ejs', engine);
@@ -81,7 +81,12 @@ module.exports = function(app, config, passport, env) {
 		app.use(flash())
 
 		// adds CSRF support
-		if (process.env.NODE_ENV !== 'test') {
+		if(process.env.NODE_ENV === 'test') {
+			app.use(function(req, res, next){
+				res.locals.csrf_token = '';
+				next()
+			})
+		} else {
 			app.use(express.csrf())
 
 			app.use(function(req, res, next){
