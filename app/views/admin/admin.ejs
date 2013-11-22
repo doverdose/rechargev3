@@ -28,8 +28,15 @@
 						</a>
 					</div>
 					<div class="col-xs-6 text-right">
-						<a class="btn btn-primary" href="/user/<%= providers[i].id %>/edit"> Edit </a>
-						<a class="btn btn-danger" href="/user/<%= providers[i].id %>/delete"> Delete </a>
+						<form action="/user/delete" method="post">
+							<a class="btn btn-primary" href="/user/<%= providers[i].id %>/edit"> Edit </a>
+
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="userId" id="userId" value="<%= providers[i].id %>">
+							<button type="submit" class="btn btn-danger">
+								Delete
+							</button>
+						</form>
 					</div>
 				</div>
 			<% } %>

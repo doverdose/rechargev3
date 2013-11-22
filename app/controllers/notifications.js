@@ -196,7 +196,7 @@ module.exports = function(cfg) {
 
 	// send notifications that are not sent
 	// on server restart
-	sendNotifications();
+	//sendNotifications();
 	scheduleNotifications();
 
 	// run the interval every 24h

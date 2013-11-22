@@ -31,8 +31,8 @@ body {
 	padding-top: $navbar-height;
 }
 
-.muted {
-	color: #ccc;
+.js-template {
+	display: none;
 }
 
 /* Navbar
@@ -171,6 +171,13 @@ body {
  */
 .page-header {
 	border-bottom: 0;
+}
+
+/* Provider admin
+ */
+
+.select2-container.usersearch-field {
+	display: block;
 }
 
 /* Footer

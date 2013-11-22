@@ -22,6 +22,7 @@ var count,
 		name: 'Provider',
 		username: 'provider',
 		password: '123',
+		patients: [],
 		permissions: {
 			provider: true
 		}
@@ -36,7 +37,8 @@ var count,
 		}
 	},
 	newName = 'Patient2',
-	userId;
+	userId,
+	providerId;
 
 describe('Users', function () {
 
@@ -164,7 +166,7 @@ describe('Users', function () {
 
 		})
 
-		context('When logged in as edited user', function () {
+		context('When logged in as user to be edited', function () {
 
 			before(function (done) {
 				// create a new patient user
@@ -229,7 +231,8 @@ describe('Users', function () {
 
 			it('should redirect to /login', function (done) {
 				agent
-				.get('/user/' + userId + '/delete')
+				.post('/user/delete')
+				.field('userId', userId)
 				.expect('Content-Type', /plain/)
 				.expect(302)
 				.expect('Location', '/login')
@@ -239,7 +242,7 @@ describe('Users', function () {
 
 		})
 
-		context('When logged in as patient', function () {
+		context('When logged in as Patient', function () {
 
 			before(function (done) {
 				// login the user
@@ -252,7 +255,8 @@ describe('Users', function () {
 
 			it('should redirect to /dashboard', function (done) {
 				agent
-				.get('/user/' + userId + '/delete')
+				.post('/user/delete')
+				.field('userId', userId)
 				.expect('Content-Type', /plain/)
 				.expect(302)
 				.expect('Location', '/dashboard')
@@ -274,7 +278,7 @@ describe('Users', function () {
 
 		})
 
-		context('When logged in as admin', function () {
+		context('When logged in as Admin', function () {
 
 			before(function (done) {
 				// create a new admin user
@@ -293,7 +297,8 @@ describe('Users', function () {
 
 			it('should delete and redirect to /admin', function (done) {
 				agent
-				.get('/user/' + userId + '/delete')
+				.post('/user/delete')
+				.field('userId', userId)
 				.expect('Content-Type', /plain/)
 				.expect(302)
 				.expect('Location', '/admin')
@@ -313,6 +318,352 @@ describe('Users', function () {
 
 			})
 
+		})
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		})
+
+	})
+
+	describe('Add Patient to Provider', function () {
+
+		before(function (done) {
+
+			// create a new patient user
+			var user = new User(fakeUser);
+			user.save(function(err, user) {
+				userId = user._id + '';
+				done();
+			})
+
+		});
+
+		context('When not logged in', function () {
+
+			it('should redirect to /login', function (done) {
+				agent
+				.post('/provider/user/add')
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/login')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Patient', function () {
+
+			before(function (done) {
+				// login the user
+				agent
+				.post('/users/session')
+				.field('email', fakeUser.email)
+				.field('password', fakeUser.password)
+				.end(done)
+			})
+
+			it('should redirect to /dashboard', function (done) {
+				agent
+				.post('/provider/user/add')
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/dashboard')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Provider', function () {
+
+			before(function (done) {
+				// create a new admin user
+				var user = new User(fakeProvider);
+				user.save(function(err, user) {
+
+					providerId = user._id + '';
+
+					// login the admin
+					agent
+					.post('/users/session')
+					.field('email', fakeProvider.email)
+					.field('password', fakeProvider.password)
+					.end(done)
+
+				})
+			})
+
+			it('should add user to provider and redirect to /admin', function (done) {
+				agent
+				.post('/provider/user/add')
+				.field('userId', userId)
+				.field('providerId', providerId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/admin')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+			it('should contain the patient', function (done) {
+
+				User.findOne({
+					username: fakeProvider.username
+				}).exec(function (err, user) {
+
+					var patientIds = [];
+					user.patients.forEach(function(patient, i) {
+						patientIds.push(patient.id);
+					});
+
+					patientIds.should.include(userId);
+
+					done()
+				})
+
+			})
+
+		})
+
+		context('When logged in as Admin', function () {
+
+			before(function (done) {
+				// create a new admin user
+				var user = new User(fakeAdmin);
+				user.save(function(err, user) {
+
+					// login the admin
+					agent
+					.post('/users/session')
+					.field('email', fakeAdmin.email)
+					.field('password', fakeAdmin.password)
+					.end(done)
+
+				})
+			})
+
+			it('should add user to provider and redirect to /admin', function (done) {
+				agent
+				.post('/provider/user/add')
+				.field('userId', userId)
+				.field('providerId', providerId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/admin')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+			it('should contain the patient', function (done) {
+
+				User.findOne({
+					username: fakeProvider.username
+				}).exec(function (err, user) {
+
+					var patientIds = [];
+					user.patients.forEach(function(patient, i) {
+						patientIds.push(patient.id);
+					});
+
+					patientIds.should.include(userId);
+
+					done()
+				})
+
+			})
+
+		})
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		})
+
+	})
+
+	describe('Remove Patient from Provider', function () {
+
+		before(function (done) {
+
+			// create a new patient user
+			var user = new User(fakeUser);
+			user.save(function(err, user) {
+				userId = user._id + '';
+				done();
+			})
+
+		});
+
+		context('When not logged in', function () {
+
+			it('should redirect to /login', function (done) {
+				agent
+				.post('/provider/user/remove')
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/login')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Patient', function () {
+
+			before(function (done) {
+				// login the user
+				agent
+				.post('/users/session')
+				.field('email', fakeUser.email)
+				.field('password', fakeUser.password)
+				.end(done)
+			})
+
+			it('should redirect to /dashboard', function (done) {
+				agent
+				.post('/provider/user/remove')
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/dashboard')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Provider', function () {
+
+			before(function (done) {
+
+				var provider = JSON.parse(JSON.stringify(fakeProvider));
+				provider.patients.push({
+					id: userId
+				});
+
+				// create a new provider user
+				var user = new User(provider);
+				user.save(function(err, user) {
+
+					providerId = user._id + '';
+
+					// login the provider
+					agent
+					.post('/users/session')
+					.field('email', fakeProvider.email)
+					.field('password', fakeProvider.password)
+					.end(done)
+
+				})
+			})
+
+			it('should remove user from provider and redirect to /admin', function (done) {
+				agent
+				.post('/provider/user/remove')
+				.field('userId', userId)
+				.field('providerId', providerId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/admin')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+			it('should not contain the patient', function (done) {
+
+				User.findOne({
+					username: fakeProvider.username
+				}).exec(function (err, user) {
+
+					var patientIds = [];
+					user.patients.forEach(function(patient, i) {
+						patientIds.push(patient.id);
+					});
+
+					patientIds.should.not.include(userId);
+
+					done()
+				})
+
+			})
+
+			after(function(done) {
+
+				// delete provider
+				User.findOne({
+					username: fakeProvider.username
+				}).exec(function (err, user) {
+					user.remove(done);
+				});
+
+			});
+
+		})
+
+		context('When logged in as Admin', function () {
+
+			before(function (done) {
+				// create a new admin user
+				var user = new User(fakeAdmin);
+				user.save(function(err, user) {
+
+					var provider = JSON.parse(JSON.stringify(fakeProvider));
+					provider.patients.push({
+						id: userId
+					});
+
+					// create a new provider user
+					var user = new User(provider);
+					user.save(function(err, user) {
+
+						providerId = user._id + '';
+
+						// login the admin
+						agent
+						.post('/users/session')
+						.field('email', fakeAdmin.email)
+						.field('password', fakeAdmin.password)
+						.end(done)
+
+					})
+
+				})
+			})
+
+			it('should remove user from provider and redirect to /admin', function (done) {
+				agent
+				.post('/provider/user/remove')
+				.field('userId', userId)
+				.field('providerId', providerId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/admin')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+			it('should not contain the patient', function (done) {
+
+				User.findOne({
+					username: fakeProvider.username
+				}).exec(function (err, user) {
+
+					var patientIds = [];
+					user.patients.forEach(function(patient, i) {
+						patientIds.push(patient.id);
+					});
+
+					patientIds.should.not.include(userId);
+
+					done()
+				})
+
+			})
+
+		})
+
+		after(function (done) {
+			require('./helper').clearDb(done);
 		})
 
 	})
