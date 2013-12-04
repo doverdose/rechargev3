@@ -28,10 +28,10 @@ var UserSchema = new Schema({
 			default: 'false'
 		}
 	},
-	patients: {
-		type: Array,
-		default: []
-	},
+	patients: [{
+		id: String,
+		approved: Boolean
+	}],
 	last_login: {
 		type: Date,
 		default: Date.now

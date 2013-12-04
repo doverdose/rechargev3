@@ -59,26 +59,42 @@ module.exports = function() {
 	 */
 	var providers = function(req, res, next) {
 
-		// TODO get providers
-
+		// get providers for current patient
 		User.find({
-			'permissions.provider': { $ne: true }
-			//'patients': { $in: user.id }
-		}, function(err, patients) {
+			'permissions.admin': { $ne: true },
+			'permissions.provider': true,
+			'patients': {
+				$elemMatch: {
+					id: req.user.id
+				}
+			}
+		}, function(err, providers) {
 			if (err) {
-				//
+				console.log(err);
 			} else {
 
+				// see approved providers
+				var approved = [];
+				providers.forEach(function(provider, i) {
+
+					provider.patients.forEach(function(patient, j) {
+
+						if(patient.approved === true) {
+							approved[i] = true;
+						} else {
+							approved[i] = false;
+						}
+
+					});
+
+				});
+
+				res.render('settings/providers.ejs', {
+					title: 'Providers',
+					providers: providers,
+					approved: approved
+				});
 			}
-
-			console.log(err);
-			console.log(patients);
-
-		});
-
-		res.render('settings/providers.ejs', {
-			title: 'Providers',
-			providers: []
 		});
 
 	};
