@@ -71,9 +71,13 @@ module.exports = function(app, config, passport, env) {
 		app.use(passport.initialize())
 		app.use(passport.session())
 
-		// insert the user in all templates
 		app.use(function(req, res, next){
+			// insert the user in templates
 			res.locals.user = req.user || false;
+
+			// insert active page in templates
+			res.locals.activePage = req.path || false;
+
 			next();
 		});
 

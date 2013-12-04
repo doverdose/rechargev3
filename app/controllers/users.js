@@ -217,8 +217,8 @@ module.exports = function() {
 
 									allPatients = patients;
 
-									res.render('users/profile.ejs', {
-										title: 'Profile',
+									res.render('users/view.ejs', {
+										title: 'Details',
 										profile: user,
 										providerPatients: providerPatients,
 										allPatients: allPatients
@@ -232,8 +232,8 @@ module.exports = function() {
 
 				} else {
 
-					res.render('users/profile.ejs', {
-						title: 'Profile',
+					res.render('users/view.ejs', {
+						title: 'Details',
 						profile: user
 					})
 

@@ -1,0 +1,29 @@
+<% layout('../layouts/settings') -%>
+
+<h2>Your providers</h2>
+
+<% if(typeof errors !== 'undefined') { %>
+	<div class="alert alert-danger">
+		<% for(error in errors) { %>
+
+			<p>
+				<%= errors[error].type %>
+			</p>
+
+		<% } %>
+	</div>
+<% } %>
+
+<% if(providers.length) { %>
+
+	<ul class="list-group">
+		<% for(var i = 0; i < providers.length; i++) { %>
+			<li class="list-group-item">Cras justo odio</li>
+		<% } %>
+	</ul>
+
+<% } else { %>
+
+	<h4 class="text-muted text-center">You have no providers. </h4>
+
+<% } %>

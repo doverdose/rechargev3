@@ -4456,6 +4456,11 @@ body {
 .select2-container.usersearch-field {
   display: block; }
 
+/* Settings
+ */
+.settings-nav {
+  margin-top: 1.25em; }
+
 /* Footer
  */
 footer {
