@@ -1,0 +1,48 @@
+<% layout('../layouts/default') -%>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+
+			<div class="page-header">
+				<a href="/checkin/new" class="btn btn-default pull-right">New check-in</a>
+				<h2>Salt Reducer Checkins</h2>
+			</div>
+
+			<% if(c.length) { %>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<td class="col-md-9">
+								<strong>Checkin</strong>
+							</td>
+							<td>
+								<strong>Update </strong>
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+					<% for (var i = 0; i < c.length; i++) { %>
+						<tr>
+							<td>
+								<a href="/checkin/<%=c[i].id%>"><%=: c[i].timestamp | fromNow %>
+							</a></td>
+							<td>
+								<a class="btn btn-primary" href="/checkin/<%=c[i].id%>/edit"> Edit </a>
+								<a class="btn btn-danger" href="/checkin/<%=c[i].id%>/delete"> Delete </a>
+							</td>
+						</tr>
+					<% } %>
+					</tbody>
+				</table>
+
+			<% } else { %>
+
+				<h4 class="text-center muted">No checkins available</h4>
+
+			<% } %>
+
+		</div>
+	</div>
+</div>

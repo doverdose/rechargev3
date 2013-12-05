@@ -5,7 +5,6 @@ var express = require('express'),
 	flash = require('connect-flash'),
 	path = require('path'),
 	engine = require('ejs-locals'),
-	sass = require('node-sass'),
 	fs = require('fs');
 
 module.exports = function(app, config, passport, env) {
@@ -15,7 +14,11 @@ module.exports = function(app, config, passport, env) {
 		app.engine('ejs', engine);
 
 		// set views path, template engine and default layout
-		app.set('views', config.root + '/app/views')
+		if(env === 'production') {
+			app.set('views', config.root + '/public/views');
+		} else {
+			app.set('views', config.root + '/app/views');
+		}
 		app.set('view engine', 'ejs');
 
 		var ejs = require('ejs'),
@@ -27,25 +30,16 @@ module.exports = function(app, config, passport, env) {
 
 		app.use(express.logger('dev'));
 
-		app.use(express.static(config.root + '/public'));
-
-		// if in development, compile sass
 		if(env === 'development') {
-			outFile = './public/css/main.css';
-			sass.render({
-				file: './public/css/main.scss',
-				success: function(css) {
+			app.use(require('connect-livereload')({
+				port: 35729
+			}));
 
-					fs.writeFile(outFile, css, function(err) {
-						console.log(err);
-					});
+			app.use(express.static(config.root + '/app'));
+			app.use(express.static(config.root + '/.tmp'));
+		}
 
-				},
-				error: function(error) {
-					console.log(error);
-				}
-			});
-		};
+		app.use(express.static(config.root + '/public'));
 
 		// testing
 		app.set('test-uri', 'http://54.213.21.154:8080/');
@@ -85,7 +79,7 @@ module.exports = function(app, config, passport, env) {
 		app.use(flash())
 
 		// adds CSRF support
-		if(process.env.NODE_ENV === 'test') {
+		if(env === 'test') {
 			app.use(function(req, res, next){
 				res.locals.csrf_token = '';
 				next()
