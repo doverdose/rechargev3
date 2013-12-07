@@ -1,0 +1,83 @@
+<% layout('../layouts/settings') -%>
+
+<h2>Your profile</h2>
+
+<% if(typeof errors !== 'undefined') { %>
+	<div class="alert alert-danger">
+		<% for(error in errors) { %>
+
+			<p>
+				<%= errors[error].type %>
+			</p>
+
+		<% } %>
+	</div>
+<% } %>
+
+<form role="form" action="/user/update" method="post" class="js-form-numpad">
+	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+	<input type="hidden" name="id" value="<%= user.id %>">
+
+	<div class="form-group">
+		<label for="name">Full name</label>
+		<input type="text" class="form-control" id="name" name="name" value="<%= user.name %>">
+	</div>
+
+	<div class="form-group">
+		<label for="email">Email address</label>
+		<input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value="<%= user.email %>">
+	</div>
+
+	<div class="form-group">
+		<label for="username">Username</label>
+		<input type="text" class="form-control" id="username" name="username" value="<%= user.username %>">
+	</div>
+
+	<div class="form-group js-password-container">
+		<label for="password">PIN Password</label>
+		<p>Change your password by entering a new PIN password with the keypad bellow. </p>
+		<p>Leave it empty to keep your current password. </p>
+		<div class="input-group">
+
+			<input type="hidden" class="form-control js-password-real" id="password" name="password" maxlength="10">
+
+			<input type="text" class="form-control js-password" maxlength="10" readonly>
+
+			<span class="input-group-btn">
+				<button class="btn btn-default js-btn-delete-char" type="button" title="Clear PIN">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+				</button>
+			</span>
+		</div>
+	</div>
+
+
+	<div class="password-keypad form-group js-password-keypad">
+
+		<div class="btn-group btn-group-lg">
+			<button type="button" class="btn btn-default">7</button>
+			<button type="button" class="btn btn-default">8</button>
+			<button type="button" class="btn btn-default">9</button>
+		</div>
+
+		<div class="btn-group btn-group-lg">
+			<button type="button" class="btn btn-default">4</button>
+			<button type="button" class="btn btn-default">5</button>
+			<button type="button" class="btn btn-default">6</button>
+		</div>
+
+		<div class="btn-group btn-group-lg">
+			<button type="button" class="btn btn-default">1</button>
+			<button type="button" class="btn btn-default">2</button>
+			<button type="button" class="btn btn-default">3</button>
+		</div>
+
+		<div class="btn-group btn-group-lg">
+			<button type="button" class="btn btn-default">0</button>
+			<button type="button" class="btn btn-default btn-reveal js-btn-reveal">Reveal password</button>
+		</div>
+
+	</div>
+
+	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">Update your profile</button>
+</form>

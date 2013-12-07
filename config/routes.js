@@ -3,6 +3,8 @@ var express = require('express'),
 	dashboard = require('../app/controllers/dashboard'),
 	checkin = require('../app/controllers/checkins'),
 	users = require('../app/controllers/users'),
+	settings = require('../app/controllers/settings'),
+	providers = require('../app/controllers/providers'),
 	admin = require('../app/controllers/admin'),
 	auth = require('./middlewares/authorization');
 
@@ -38,8 +40,10 @@ module.exports = function(app, passport) {
 	app.post('/user/update', auth.requiresLogin, users.update);
 	app.post('/user/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
 
-	app.post('/provider/user/remove', auth.requiresLogin, users.removeFromProvider);
-	app.post('/provider/user/add', auth.requiresLogin, users.addToProvider);
+	app.post('/provider/user/remove', auth.requiresLogin, providers.removePatient);
+	app.post('/provider/user/add', auth.requiresLogin, providers.addPatient);
+	app.post('/provider/approve', auth.requiresLogin, providers.approve);
+	app.post('/provider/revoke', auth.requiresLogin, providers.revoke);
 
 	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
 	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);
@@ -50,6 +54,9 @@ module.exports = function(app, passport) {
 	app.get('/checkin', auth.requiresLogin, checkin.list);
 	app.get('/checkin/:id', auth.requiresLogin, checkin.checkin_view);
 	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkin_delete);
+
+	app.get('/settings/profile', auth.requiresLogin, settings.profile);
+	app.get('/settings/providers', auth.requiresLogin, settings.providers);
 
 	app.param('userId', users.user);
 
