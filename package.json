@@ -17,7 +17,9 @@
 		"q": "~0",
 		"nodemailer": "~0",
 		"email-templates": "~0",
-		"async": "~0"
+		"async": "~0",
+		"connect-livereload" : "*",
+		"mquery" : "*"
 	},
 	"devDependencies": {
 		"supertest": "latest",
@@ -36,7 +38,13 @@
 		"grunt-contrib-watch": "~0.5",
 		"grunt-usemin": "~2",
 		"matchdep": "~0.3",
-		"grunt-sass": "~0"
+		"grunt-sass": "~0",
+		"lodash" : "~1.0.1",
+		"glob" : "~3.1.21",
+		"minimatch" : "*",
+		"grunt-lib-contrib" : "*",
+		"underscore" : "*",
+		"uglify-js" : "*"
 	},
 	"scripts": {
 		"start": "NODE_ENV=development node web.js",
