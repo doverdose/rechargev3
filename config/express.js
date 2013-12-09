@@ -14,10 +14,10 @@ module.exports = function(app, config, passport, env) {
 		app.engine('ejs', engine);
 
 		// set views path, template engine and default layout
-		if(env === 'production') {
-			app.set('views', config.root + '/public/views');
-		} else {
+		if(env === 'development') {
 			app.set('views', config.root + '/app/views');
+		} else {
+			app.set('views', config.root + '/public/views');
 		}
 		app.set('view engine', 'ejs');
 
