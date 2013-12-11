@@ -1,0 +1,31 @@
+<% layout('../layouts/default') -%>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+
+			<div class="page-header">
+				<div class="btn-group pull-right">
+					<a href="/checkin/<%= c.id %>/edit" class="btn btn-default">Edit checkin</a>
+					<a href="/checkin/<%= c.id %>/delete" class="btn btn-danger">Delete checkin</a>
+				</div>
+
+				<small>View Checkin from</small>
+				<h3><abbr title="<%= Date(c.timestamp) %>"><%=: c.timestamp | fromNow %></abbr></h3>
+			</div>
+
+			<% for(var i=0; i < c.questions.length; i++) { %>
+				<p class="muted">
+					<%= c.questions[i].question %>
+				</p>
+				<p>
+					<strong>
+						<%= c.questions[i].answer %>
+					</strong>
+				</p>
+			<% } %>
+
+		</div>
+	</div>
+</div>
+

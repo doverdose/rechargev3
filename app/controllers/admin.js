@@ -5,6 +5,7 @@ module.exports = function() {
 		Q = require('q'),
 		User = mongoose.model('User'),
 		Checkin = mongoose.model('Checkin'),
+		CheckinTemplate = mongoose.model('CheckinTemplate'),
 		dayMilliseconds = 24 * 60 * 60 * 1000;
 
 	var getPatients = function(req) {
@@ -94,6 +95,23 @@ module.exports = function() {
 
 	};
 
+	var getCheckinTemplates = function() {
+
+		// get list of users who are not admins or providers
+		var deferred = Q.defer();
+
+		CheckinTemplate.find({}, function(err, checkinTemplates) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(checkinTemplates);
+			}
+		});
+
+		return deferred.promise;
+
+	};
+
 	var admin = function(req, res) {
 
 		var patients = [],
@@ -111,10 +129,14 @@ module.exports = function() {
 		})
 		.then(function(allProviders) {
 			providers = allProviders;
+			return getCheckinTemplates()
+		})
+		.then(function(checkinTemplates) {
 
 			var templateVars = {
 				patients: patients,
-				yourPatients: yourPatients
+				yourPatients: yourPatients,
+				checkinTemplates: checkinTemplates
 			};
 
 			if(req.user.permissions.admin) {

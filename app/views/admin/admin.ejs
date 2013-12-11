@@ -75,6 +75,36 @@
 				<h4 class="text-muted text-center">There are no patients. </h4>
 			<% } %>
 
+			<div class="row stats">
+				<div class="col-xs-6">
+					<h3>Checkin Templates</h3>
+				</div>
+				<div class="col-xs-6 text-right">
+					<a class="btn btn-default" href="/checkintemplate/new">
+						<i class="glyphicon glyphicon-plus"></i>
+						New checkin template
+					</a>
+				</div>
+			</div>
+
+			<% for(var i = 0; i < checkinTemplates.length; i++) { %>
+				<div class="row stats">
+					<div class="col-xs-6">
+						<a href="/checkintemplate/<%= checkinTemplates[i].id %>">
+							<%= checkinTemplates[i].name %>
+						</a>
+					</div>
+					<div class="col-xs-6 text-right">
+						<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit"> Edit </a>
+						<a class="btn btn-danger" href="/checkintemplate/<%= checkinTemplates[i].id %>/delete"> Delete </a>
+					</div>
+				</div>
+			<% } %>
+
+			<% if(!checkinTemplates.length) { %>
+				<h4 class="text-muted text-center">There are no checkin templates. </h4>
+			<% } %>
+
 
 
 		</div>
