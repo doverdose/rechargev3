@@ -1,0 +1,216 @@
+/* Bourbon
+ */
+@import "../bower_components/bourbon/app/assets/stylesheets/_bourbon.scss";
+
+/* Variables
+ */
+$color1: #47a3da;
+$white: #fff;
+
+/* Bootstrap
+ */
+$icon-font-path: "../bower_components/bootstrap-sass/fonts/";
+
+//$navbar-height: 80px;
+$navbar-inverse-color: $white;
+$navbar-inverse-bg: $color1;
+
+@import "../bower_components/bootstrap-sass/lib/bootstrap.scss";
+
+/* Imports
+ */
+@import "utils";
+
+/* General
+ */
+
+body {
+	padding-top: $navbar-height;
+}
+
+.js-template {
+	display: none;
+}
+
+/* Navbar
+ */
+
+.navbar {
+
+	.navbar-nav > li > a {
+		&:hover {
+			background-color: darken($white, 5%);
+		}
+	}
+
+	.navbar-brand {
+		margin: 0 auto;
+	}
+
+	.btn {
+		display: block;
+
+		@include breakpoint(mama-bear) {
+			display: inline-block;
+		}
+	}
+
+	.navbar-nav {
+		@include breakpoint(mama-bear) {
+			margin-right: emCalc(4);
+		}
+	}
+
+	.signed-in-text {
+		float: none;
+
+		@include breakpoint(mama-bear) {
+			float: left;
+			overflow: hidden;
+			max-width: 200px;
+
+			white-space: nowrap;
+			text-align: left;
+			text-overflow: ellipsis;
+		}
+	}
+
+}
+
+/* Carousel
+ */
+.carousel {
+	.item {
+		overflow: hidden;
+		height: 380px;
+		width: 100%;
+
+		@include breakpoint(baby-bear) {
+			height: 320px;
+		}
+	}
+
+	img {
+		width: auto !important;
+		min-width: 100% !important;
+		min-height: 100% !important;
+		max-width: none !important;
+	}
+
+	.carousel-indicators {
+		bottom: 0;
+	}
+}
+
+/* Signup
+ */
+.password-keypad {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+
+	.btn-group {
+		width: 100.5%;
+		margin-top: -1px;
+
+		&:first-child .btn {
+			border-top: 0;
+		}
+
+		&:last-child .btn {
+			border-bottom: 0;
+		}
+
+		.btn:first-child {
+			border-left: 0;
+		}
+
+		.btn:last-child {
+			border-right: 0;
+		}
+	}
+
+	.btn {
+		width: (100%/3);
+		border-radius: 0;
+	}
+
+	.btn.btn-reveal {
+		margin-left: -1px;
+		width: (100%/3 * 2);
+	}
+}
+
+/* Dashboard
+ */
+.stats {
+	padding: emCalc(24) 0;
+
+	h3 {
+		margin: 0;
+	}
+
+	strong {
+		display: block;
+	}
+
+	.label {
+		display: inline-block;
+		margin: 0;
+
+		font-size: emCalc(40);
+		font-weight: bold;
+	}
+
+}
+
+/* Checkin
+ */
+.page-header {
+	border-bottom: 0;
+}
+
+/* Provider admin
+ */
+
+.popover-content .select2-container {
+	display: block;
+}
+
+/* Settings
+ */
+.settings-nav {
+	margin-top: emCalc(20);
+}
+
+/* Footer
+ */
+
+footer {
+	display: block;
+	background: $color1;
+	margin-top: 60px;
+}
+
+ul.cfooter {
+	text-align:center;
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+ul.cfooter li {
+	text-decoration:none;
+}
+
+ul.cfooter li a {
+	color: #fff;
+	font-size: 16px;
+	font-weight: normal;
+	line-height: 20px;
+}
+
+ul.cfooter li a:hover {
+	opacity:.80;
+	text-decoration:none;
+}

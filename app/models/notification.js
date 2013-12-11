@@ -11,18 +11,18 @@ var mongoose = require('mongoose'),
  */
 
 var NotificationSchema = new Schema({
-	'user_id': ObjectId,
-	'timestamp': {
+	user_id: ObjectId,
+	timestamp: {
 		type: Date,
 		default: Date.now
 	},
-	'sent': {
+	sent: {
 		type: Boolean,
 		default: false
 	},
-	'sent_timestamp': {
+	sent_timestamp: {
 		type: Date,
-		default: ""
+		default: ''
 	}
 });
 

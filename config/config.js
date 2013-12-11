@@ -22,23 +22,23 @@ module.exports = function(app) {
 			},
 			app: {}
 		},
-    nitrous: {
-      db: 'mongodb://kimodo:kimono@ds051868.mongolab.com:51868/recharge-dev',
-      root: rootPath,
-      mail: {
-				from: 'ReCharge Health <rechargeapp@gmail.com>',
-				type: 'SMTP',
-				transport: {
-					// nodemailer transport
-					service: "Gmail",
-					auth: {
-						user: "rechargeapp.donotreply@gmail.com",
-						pass: "thisisjustwhatweneeded"
-					}
-				}
-			},
-      app: {}
-    },
+		nitrous: {
+			db: 'mongodb://kimodo:kimono@ds051868.mongolab.com:51868/recharge-dev',
+			root: rootPath,
+			mail: {
+						from: 'ReCharge Health <rechargeapp@gmail.com>',
+						type: 'SMTP',
+						transport: {
+							// nodemailer transport
+							service: "Gmail",
+							auth: {
+								user: "rechargeapp.donotreply@gmail.com",
+								pass: "thisisjustwhatweneeded"
+							}
+						}
+					},
+			app: {}
+		},
 		test: {
 			db: 'mongodb://localhost/recharge-test',
 			root: rootPath,

@@ -132,11 +132,11 @@ var sendNotifications = function(req, res) {
 				_id: notification.user_id
 			}).exec(function (err, user) {
 
-				emailTemplates(templatesDir, function(err, template) {
+				emailTemplates(templatesDir, function(templateErr, template) {
 
-					if (err) {
-						console.log(err);
-					} else {
+					if (err || templateErr) {
+						console.log(err || templateErr);
+					} else if(user) {
 
 						// Prepare nodemailer transport object
 						var transport = nodemailer.createTransport(config.mail.type, config.mail.transport);
@@ -196,7 +196,7 @@ module.exports = function(cfg) {
 
 	// send notifications that are not sent
 	// on server restart
-	sendNotifications();
+	//sendNotifications();
 	scheduleNotifications();
 
 	// run the interval every 24h

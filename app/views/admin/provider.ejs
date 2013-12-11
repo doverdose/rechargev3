@@ -1,0 +1,68 @@
+<% layout('../layouts/default') -%>
+
+<div class="container js-usersearch-container">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+
+			<div class="page-header">
+				<h2>Provider administration</h2>
+			</div>
+
+			<div class="row stats">
+				<div class="col-xs-6">
+					<h3>Your patients</h3>
+				</div>
+				<div class="col-xs-6 text-right">
+					<a class="btn btn-default" rel="popover" data-placement="top" data-html="true" data-content="">
+						<i class="glyphicon glyphicon-plus"></i>
+						Add patient
+					</a>
+				</div>
+			</div>
+
+			<% for(var i = 0; i < yourPatients.length; i++) { %>
+				<div class="row stats">
+					<div class="col-xs-6">
+						<a href="/user/<%= yourPatients[i].id %>">
+							<%= yourPatients[i].name %>
+						</a>
+					</div>
+					<div class="col-xs-6 text-right">
+						<form action="/provider/user/remove" method="post">
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
+							<input type="hidden" name="userId" id="userId" value="<%= yourPatients[i].id %>">
+
+							<button type="submit" class="btn btn-danger">Remove</button>
+						</form>
+					</div>
+				</div>
+			<% } %>
+
+			<% if(!yourPatients.length) { %>
+				<h4 class="text-muted text-center">You have no patients. </h4>
+			<% } %>
+
+		</div>
+	</div>
+
+	<div class="js-template js-usersearch-template">
+		<form action="/provider/user/add" method="post">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+			<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
+
+			<div class="form-group">
+				<label for="userId">Search for users</label>
+				<select class="js-usersearch" id="userId" name="userId">
+					<% for(var i = 0; i < patients.length; i++) { %>
+						<option value="<%= patients[i].id %>"><%= patients[i].name %></option>
+					<% } %>
+				</select>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-block">
+				Add
+			</button>
+		</form>
+	</div>
+</div>

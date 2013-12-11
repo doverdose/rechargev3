@@ -7,15 +7,17 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<!-- Le styles -->
-	<link href="/css/main.css" rel="stylesheet">
-
 	<!-- Fav and touch icons -->
 	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">
 	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
 	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
 	<link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
 	<link rel="shortcut icon" href="/ico/favicon.png">
+
+	<!-- build:css({.tmp,app}) styles/main.css -->
+	<link href="/styles/main.css" rel="stylesheet">
+	<link href="/bower_components/select2/select2.css" rel="stylesheet">
+	<!-- endbuild -->
 </head>
 <body>
 
@@ -39,18 +41,31 @@
 
 			<% if(user.email) { %>
 				<ul class="nav navbar-nav">
+					<% if(user.permissions.admin) { %>
 					<li>
-					  <a href="/dashboard">Dashboard</a>
+						<a href="/admin">Admin</a>
+					</li>
+					<% } %>
+					<% if(user.permissions.provider) { %>
+					<li>
+						<a href="/admin">Provider</a>
+					</li>
+					<% } %>
+					<li>
+						<a href="/dashboard">Dashboard</a>
 					</li>
 					<li>
-					  <a href="/checkin">Checkins</a>
+						<a href="/checkin">Checkins</a>
+					</li>
+					<li>
+						<a href="/settings/profile">Settings</a>
 					</li>
 				</ul>
 			<p class="navbar-text signed-in-text">
 				Signed in as <strong><%= user.email %></strong>
 			</p>
 			 <a href="/logout" class="btn btn-default navbar-btn navbar-right">Sign out</a>
-			
+
 			<% } else {%>
 				<ul class="nav navbar-nav">
 					<li>
@@ -82,9 +97,17 @@
 		</div>
 	</footer>
 
+	<!-- build:js scripts/plugins.js -->
 	<script src="/bower_components/jquery/jquery.min.js"></script>
 	<script src="/bower_components/bootstrap-sass/dist/js/bootstrap.min.js"></script>
-	<script src="/js/numpad.js"></script>
+	<script src="/bower_components/select2/select2.min.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js scripts/scripts.js -->
+	<script src="/widgets/numpad.js"></script>
+	<script src="/widgets/usersearch.js"></script>
+	<script src="/widgets/checkinSelector.js"></script>
+	<!-- endbuild -->
 
 </body>
 </html>

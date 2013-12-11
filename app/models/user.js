@@ -18,6 +18,20 @@ var UserSchema = new Schema({
 	hashed_password: { type: String, default: '' },
 	salt: { type: String, default: '' },
 	authToken: { type: String, default: '' },
+	permissions: {
+		admin: {
+			type: Boolean,
+			default: 'false'
+		},
+		provider: {
+			type: Boolean,
+			default: 'false'
+		}
+	},
+	patients: [{
+		id: String,
+		approved: Boolean
+	}],
 	last_login: {
 		type: Date,
 		default: Date.now
