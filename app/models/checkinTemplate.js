@@ -14,6 +14,7 @@ module.exports = function() {
 	var CheckinTemplateSchema = new Schema({
 		type: String,
 		question: String,
+		title: String,
 		valid:  [{
 			value: String
 		}]

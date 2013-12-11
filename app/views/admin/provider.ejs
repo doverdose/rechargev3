@@ -53,7 +53,7 @@
 
 			<div class="form-group">
 				<label for="userId">Search for users</label>
-				<select class="js-usersearch usersearch-field" id="userId" name="userId">
+				<select class="js-usersearch" id="userId" name="userId">
 					<% for(var i = 0; i < patients.length; i++) { %>
 						<option value="<%= patients[i].id %>"><%= patients[i].name %></option>
 					<% } %>

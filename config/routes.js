@@ -45,15 +45,15 @@ module.exports = function(app, passport) {
 	app.post('/provider/approve', auth.requiresLogin, providers.approve);
 	app.post('/provider/revoke', auth.requiresLogin, providers.revoke);
 
-	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkin_update);
-	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkin_edit);
+	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkinUpdate);
+	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkinEdit);
 
-	app.post('/checkin.:format?', auth.requiresLogin, checkin.checkin_create);
-	app.get('/checkin/new', auth.requiresLogin, checkin.checkin_new);
+	app.post('/checkin.:format?', auth.requiresLogin, checkin.checkinCreate);
+	app.get('/checkin/new', auth.requiresLogin, checkin.checkinNew);
 
 	app.get('/checkin', auth.requiresLogin, checkin.list);
-	app.get('/checkin/:id', auth.requiresLogin, checkin.checkin_view);
-	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkin_delete);
+	app.get('/checkin/:id', auth.requiresLogin, checkin.checkinView);
+	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkinDelete);
 
 	app.get('/settings/profile', auth.requiresLogin, settings.profile);
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
