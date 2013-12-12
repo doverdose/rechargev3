@@ -99,8 +99,49 @@ module.exports = function() {
 
 	};
 
+	var following = function (req, res, next) {
+
+		// get following users for current patient
+		User.find({
+			'patients': {
+				$elemMatch: {
+					id: req.user.id
+				}
+			}
+		}, function(err, providers) {
+			if (err) {
+				console.log(err);
+			} else {
+
+				// see approved providers
+				var approved = [];
+				providers.forEach(function(provider, i) {
+
+					provider.patients.forEach(function(patient, j) {
+
+						if(patient.approved === true) {
+							approved[i] = true;
+						} else {
+							approved[i] = false;
+						}
+
+					});
+
+				});
+
+				res.render('settings/following.ejs', {
+					title: 'Following',
+					following: following
+				});
+			}
+		});
+
+
+	};
+
 	return {
 		profile: profile,
-		providers: providers
+		providers: providers,
+		following: following
 	}
 }();

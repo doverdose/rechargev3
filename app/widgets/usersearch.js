@@ -12,9 +12,11 @@
 
 		var init = function() {
 
-			$container = $('.js-usersearch-container'),
+			$container = $('.js-usersearch-container');
 			$popover = $('[rel="popover"]', $container);
 			userSearchTemplate = $('.js-usersearch-template', $container).html();
+
+			console.log(userSearchTemplate);
 
 			$popover.popover({
 				content: userSearchTemplate

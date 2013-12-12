@@ -29,11 +29,14 @@ module.exports = function (grunt) {
 				tasks: [ 'sass:server' ]
 			},
 			express: {
-				files:  ['{config,<%= yeoman.app %>}/**/*.js' ],
-				tasks:  [ 'express:dev' ],
+				files: [
+					'<%= yeoman.app %>/{controllers,models}/*.js',
+					'config/{,*/}*.js'
+				],
+				tasks: [ 'express:dev' ],
 				options: {
-					spawn: false,
-					livereload: true
+					spawn: false
+					//livereload: LIVERELOAD_PORT
 				}
 			},
 			livereload: {
@@ -42,16 +45,15 @@ module.exports = function (grunt) {
 				},
 				files: [
 					'<%= yeoman.app %>/**/*.{html,ejs}',
-					'{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
-					'{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
+					'{.tmp, <%= yeoman.app %>}/styles/{,*/}*.css',
+					'<%= yeoman.app %>/widgets/*.js',
 					'<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
 				]
 			}
 		},
 		express: {
 			options: {
-				port: 8080,
-				livereload: true
+				port: 8080
 			},
 			dev: {
 				options: {

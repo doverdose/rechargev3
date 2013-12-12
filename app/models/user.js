@@ -32,6 +32,10 @@ var UserSchema = new Schema({
 		id: String,
 		approved: Boolean
 	}],
+	following: [{
+		id: String,
+		approved: Boolean
+	}],
 	last_login: {
 		type: Date,
 		default: Date.now

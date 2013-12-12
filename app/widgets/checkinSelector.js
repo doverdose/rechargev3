@@ -12,22 +12,25 @@
 
 		var init = function() {
 
-			$container = $('.js-checkinselector-container'),
-			$popover = $('.js-checkinselector-btn', $container);
-			checkinSelectorTemplate = $('.js-checkinselector-template', $container).html();
+			$container = $('.js-checkinselector-container');
 
-			$popover.popover({
-				content: checkinSelectorTemplate
-			});
+			if($container) {
+				$popover = $('.js-checkinselector-btn', $container);
+				checkinSelectorTemplate = $('.js-checkinselector-template', $container).html();
 
-			console.log(checkinSelectorTemplate);
+				console.log(checkinSelectorTemplate);
 
-			$popover.on('shown.bs.popover', function () {
-				var $checkinSearch = $('.js-checkinsearch');
+				$popover.popover({
+					content: checkinSelectorTemplate
+				});
 
-				// init select2
-				$checkinSearch.select2();
-			})
+				$popover.on('shown.bs.popover', function () {
+					var $checkinSearch = $('.js-checkinsearch');
+
+					// init select2
+					$checkinSearch.select2();
+				})
+			}
 
 		};
 

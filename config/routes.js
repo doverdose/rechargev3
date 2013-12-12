@@ -65,6 +65,7 @@ module.exports = function(app, passport) {
 
 	app.get('/settings/profile', auth.requiresLogin, settings.profile);
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
+	app.get('/settings/following', auth.requiresLogin, settings.following);
 
 	app.param('userId', users.user);
 
