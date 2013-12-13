@@ -1,12 +1,12 @@
 <% layout('../layouts/settings') -%>
 
-<div class="row stats">
+<div class="row page-header">
 	<div class="col-xs-6">
 		<h3>Following</h3>
 	</div>
 	<div class="col-xs-6 text-right">
-	
-		<button type="button" class="btn btn-default pull-right" rel="popover" data-placement="bottom" data-html="true" data-template=".js-following-popover-template">
+
+		<button type="button" class="btn btn-default pull-right" rel="popover" data-placement="bottom" data-tpl=".js-following-popover-template">
 			Follow user
 		</button>
 	</div>
@@ -27,18 +27,20 @@
 
 <div class="js-template js-following-popover-template">
 	<form action="/provider/user/add" method="post">
-		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-		<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+			<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
 
-		<div class="form-group">
-			<label for="templateId">Select checkin type</label>
-			<select class="js-checkinsearch" id="templateId" name="templateId">
+			<div class="form-group">
+				<label for="userId">Search for users</label>
+				<select class="js-select2" id="userId" name="userId">
+					<% for(var i = 0; i < patients.length; i++) { %>
+						<option value="<%= patients[i].id %>"><%= patients[i].name %></option>
+					<% } %>
+				</select>
+			</div>
 
-			</select>
-		</div>
-
-		<button type="submit" class="btn btn-primary btn-block">
-			Check-in
-		</button>
-	</form>
+			<button type="submit" class="btn btn-primary btn-block">
+				Follow
+			</button>
+		</form>
 </div>

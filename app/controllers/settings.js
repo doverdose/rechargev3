@@ -99,43 +99,49 @@ module.exports = function() {
 
 	};
 
-	var following = function (req, res, next) {
+	/* Get all patients
+	 */
+	var getPatients = function(req) {
 
-		// get following users for current patient
-		User.find({
-			'patients': {
-				$elemMatch: {
-					id: req.user.id
-				}
-			}
-		}, function(err, providers) {
+		var deferred = Q.defer();
+
+		// get list of users who are not admins or providers
+		var patientConditions = {
+			'permissions.admin': { $ne: true },
+			'permissions.provider': { $ne: true }
+		};
+
+		// only see users that you are not already following
+		var patientIds = [];
+		req.user.following.forEach(function(patient, i){
+			patientIds.push(patient.id);
+		});
+		patientConditions['_id'] = { $nin: patientIds };
+
+		User.find(patientConditions, function(err, patients) {
 			if (err) {
-				console.log(err);
+				deferred.reject(new Error(err));
 			} else {
-
-				// see approved providers
-				var approved = [];
-				providers.forEach(function(provider, i) {
-
-					provider.patients.forEach(function(patient, j) {
-
-						if(patient.approved === true) {
-							approved[i] = true;
-						} else {
-							approved[i] = false;
-						}
-
-					});
-
-				});
-
-				res.render('settings/following.ejs', {
-					title: 'Following',
-					following: following
-				});
+				deferred.resolve(patients);
 			}
 		});
 
+		return deferred.promise;
+
+	};
+
+	var following = function (req, res, next) {
+
+		// get list of all patients
+		getPatients(req)
+		.then(function(patients) {
+
+			res.render('settings/following.ejs', {
+				title: 'Following',
+				patients: patients
+			});
+
+		}, function(error) {});
 
 	};
 

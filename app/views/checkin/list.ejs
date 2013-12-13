@@ -5,7 +5,7 @@
 		<div class="col-md-8 col-md-offset-2">
 
 			<div class="page-header">
-				<button type="button" class="btn btn-default pull-right js-checkinselector-btn" rel="popover" data-placement="bottom" data-html="true" data-content="">New check-in</button>
+				<button type="button" class="btn btn-default pull-right js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
 				<h2>Salt Reducer Checkins</h2>
 			</div>
 
@@ -53,7 +53,7 @@
 
 			<div class="form-group">
 				<label for="templateId">Select checkin type</label>
-				<select class="js-checkinsearch" id="templateId" name="templateId">
+				<select class="js-select2" id="templateId" name="templateId">
 					<% for(var i = 0; i < checkinTemplates.length; i++) { %>
 						<option value="<%= checkinTemplates[i].id %>">
 							<%= checkinTemplates[i].title %>

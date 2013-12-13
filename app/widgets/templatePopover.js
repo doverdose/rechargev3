@@ -6,26 +6,24 @@
 
 	var templatePopover = function() {
 
-		var $popover,
-			popoverTemplate;
+		var $popover;
 
 		var init = function() {
 
-			$popover = $('[rel="popover"][data-template]');
+			$popover = $('[rel=popover][data-tpl]');
 
 			$popover.each(function(i, elem) {
-				var $elem = $(elem);
-				popoverTemplate = $($elem.attr('data-template')).html();
-
-				console.log(popoverTemplate);
+				var $elem = $(elem),
+					popoverTemplate = $($elem.attr('data-tpl')).html();
 
 				$elem.popover({
+					html: true,
 					content: popoverTemplate
 				});
 
 				$elem.on('shown.bs.popover', function () {
-					var $select2 = $('.select2');
-
+					var $popover = $elem.siblings('.popover');
+					var $select2 = $('.js-select2', $popover);
 					// init select2
 					$select2.select2();
 				});
