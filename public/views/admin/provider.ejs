@@ -13,10 +13,10 @@
 					<h3>Your patients</h3>
 				</div>
 				<div class="col-xs-6 text-right">
-					<a class="btn btn-default" rel="popover" data-placement="top" data-html="true" data-content="">
+					<button class="btn btn-default" rel="popover" data-placement="top" data-tpl=".js-usersearch-template">
 						<i class="glyphicon glyphicon-plus"></i>
 						Add patient
-					</a>
+					</button>
 				</div>
 			</div>
 
@@ -53,7 +53,7 @@
 
 			<div class="form-group">
 				<label for="userId">Search for users</label>
-				<select class="js-usersearch usersearch-field" id="userId" name="userId">
+				<select class="js-select2" id="userId" name="userId">
 					<% for(var i = 0; i < patients.length; i++) { %>
 						<option value="<%= patients[i].id %>"><%= patients[i].name %></option>
 					<% } %>
