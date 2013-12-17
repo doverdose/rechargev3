@@ -130,15 +130,85 @@ module.exports = function() {
 
 	};
 
+	/* Get followers
+	 */
+	var getFollowers = function(req) {
+
+		var deferred = Q.defer();
+
+		// get list of users who are not admins or providers
+		var patientConditions = {
+			'permissions.admin': { $ne: true },
+			'permissions.provider': { $ne: true }
+		};
+
+		// parse ids of followers
+		var followerIds = [];
+		req.user.following.forEach(function(follower, i){
+			followerIds.push(follower.id);
+		});
+		patientConditions['_id'] = { $in: followerIds };
+
+		User.find(patientConditions, function(err, patients) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(patients);
+			}
+		});
+
+		return deferred.promise;
+
+	};
+
 	var following = function (req, res, next) {
 
+		var followers,
+			approved = [];
+
 		// get list of all patients
-		getPatients(req)
+		getFollowers(req)
+		.then(function(followerDetails) {
+
+			followers = followerDetails;
+			return getPatients(req);
+		}, function(err) {})
 		.then(function(patients) {
+
+			// see approved followers
+			var approved = [];
+			followers.forEach(function(follower, i) {
+
+				var followerFind = {
+					id: follower.id,
+					approved: true
+				};
+
+				console.log(patients.indexOf(followerFind));
+
+				if(patients.indexOf(followerFind) !== -1) {
+					approved[i] = true;
+				} else {
+					approved[i] = false;
+				}
+
+// 				req.user.following.forEach(function(patient, j) {
+//
+// 					if(patient.approved === true) {
+// 						approved[i] = true;
+// 					} else {
+// 						approved[i] = false;
+// 					}
+//
+// 				});
+
+			});
 
 			res.render('settings/following.ejs', {
 				title: 'Following',
-				patients: patients
+				patients: patients,
+				followers: followers,
+				approved: approved
 			});
 
 		}, function(error) {});

@@ -13,10 +13,28 @@
 </div>
 
 
-<% if(user.following.length) { %>
+<% if(followers.length) { %>
 
 	<ul class="list-group">
+		<% for(var i = 0; i < followers.length; i++) { %>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-xs-8">
+						<%= followers[i].name %>
+					</div>
 
+					<div class="col-xs-4">
+
+						<% if(approved[i] === true) { %>
+							<a class="btn btn-success disabled">Approved</a>
+						<% } else { %>
+							<a class="btn btn-danger disabled">Pending</a>
+						<% } %>
+
+					</div>
+				</div>
+			</li>
+		<% } %>
 	</ul>
 
 <% } else { %>
@@ -26,9 +44,8 @@
 <% } %>
 
 <div class="js-template js-following-popover-template">
-	<form action="/provider/user/add" method="post">
+	<form action="/user/follow" method="post">
 			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-			<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
 
 			<div class="form-group">
 				<label for="userId">Search for users</label>

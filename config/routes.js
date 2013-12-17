@@ -40,6 +40,7 @@ module.exports = function(app, passport) {
 
 	app.post('/user/update', auth.requiresLogin, users.update);
 	app.post('/user/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
+	app.post('/user/follow', auth.requiresLogin, users.follow);
 
 	app.post('/provider/user/remove', auth.requiresLogin, providers.removePatient);
 	app.post('/provider/user/add', auth.requiresLogin, providers.addPatient);

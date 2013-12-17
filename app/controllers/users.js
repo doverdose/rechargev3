@@ -328,6 +328,22 @@ module.exports = function() {
 
 	};
 
+	/* Follow user
+	 */
+
+	var follow = function (req, res) {
+
+		req.user.following.push({
+			id: req.body.userId,
+			approved: false
+		});
+
+		req.user.save();
+
+		res.redirect(req.session.lastUrl || '/');
+
+	};
+
 	return {
 		authCallback: login,
 		session: login,
@@ -340,6 +356,7 @@ module.exports = function() {
 		view: view,
 		edit: edit,
 		update: update,
-		remove: remove
+		remove: remove,
+		follow: follow
 	}
 }();
