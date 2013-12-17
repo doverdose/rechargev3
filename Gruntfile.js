@@ -169,6 +169,34 @@ module.exports = function (grunt) {
 				}]
 			}
 		},
+		concat: {
+			options: {
+				separator: '\n',
+				process: function (src, filepath) {
+					// Replace all relative urls in CSS with absolute urls
+					// mostly for bower_components like select2
+					
+					var cssPatt = new RegExp('app(\/.*\/).*\.css$');
+
+					//filter out everithing except css files
+					var file = cssPatt.exec(filepath);
+
+					if (file) {
+						var urlPatt = /url\(\'(.*)\'\)/g;
+
+					console.log('In file: ' + filepath);
+
+					//replace every url(...) with its absolute path
+					return src.replace(urlPatt, function (match, p1) {
+						console.log(' * ' + match + ' -> ' + 'url(\'' + file[1] + p1 + '\')');
+						return 'url(\'' + file[1] + p1 + '\')';
+					});
+					}
+
+					return src;
+				}
+			}
+		},
 		uglify: {
 			dist: {
 				files: {
