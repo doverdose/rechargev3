@@ -130,7 +130,7 @@ module.exports = function() {
 
 	};
 
-	/* Get followers
+	/* Get complete user details for users that the patient is following
 	 */
 	var getFollowingDetails = function(req) {
 
@@ -161,6 +161,8 @@ module.exports = function() {
 
 	};
 
+	/* Render the following page
+	 */
 	var following = function (req, res, next) {
 
 		var followers,
@@ -205,6 +207,34 @@ module.exports = function() {
 
 	};
 
+	/* Get complete user details for users that are following the current patient
+	 */
+	var getFollowersDetails = function(req) {
+
+		var deferred = Q.defer();
+
+		// get list of users who are not admins or providers
+		var patientConditions = {
+			'permissions.admin': { $ne: true },
+			'permissions.provider': { $ne: true }
+		};
+
+		patientConditions['following'] = { $all: { $elemMatch: { id: req.user.id }}};
+
+		User.find(patientConditions, function(err, patients) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(patients);
+			}
+		});
+
+		return deferred.promise;
+
+	};
+
+	/* Render the followers page
+	 */
 	var followers = function (req, res, next) {
 
 		// TODO get list of users following you,
@@ -214,51 +244,39 @@ module.exports = function() {
 			approved = [];
 
 		// get list of all patients
-		getFollowers(req)
+		getFollowersDetails(req)
 		.then(function(followerDetails) {
 
 			followers = followerDetails;
-			return getPatients(req);
-		}, function(err) {})
-		.then(function(patients) {
 
 			// see approved followers
 			var approved = [];
 			followers.forEach(function(follower, i) {
 
 				var followerFind = {
-					id: follower.id,
+					id: req.user.id,
 					approved: true
 				};
 
-				console.log(patients.indexOf(followerFind));
-
-				if(patients.indexOf(followerFind) !== -1) {
+				if(follower.following.indexOf(followerFind) !== -1) {
 					approved[i] = true;
 				} else {
 					approved[i] = false;
 				}
 
-// 				req.user.following.forEach(function(patient, j) {
-//
-// 					if(patient.approved === true) {
-// 						approved[i] = true;
-// 					} else {
-// 						approved[i] = false;
-// 					}
-//
-// 				});
-
 			});
 
 			res.render('settings/followers.ejs', {
-				title: 'Following',
-				patients: patients,
+				title: 'Followers',
 				followers: followers,
 				approved: approved
 			});
 
-		}, function(error) {});
+		}, function(err) {
+
+			console.log(err);
+
+		});
 
 	};
 

@@ -19,27 +19,26 @@
 		<% for(var i = 0; i < followers.length; i++) { %>
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col-xs-8">
+					<div class="col-xs-4 col-sm-7">
 						<%= followers[i].name %>
 					</div>
 
-					<div class="col-xs-4">
+					<div class="col-xs-8 col-sm-5 text-right">
 
 						<% if(approved[i] === true) { %>
 							<a class="btn btn-success disabled">Approved</a>
 						<% } else { %>
-							<a class="btn btn-danger disabled">Pending</a>
+							<a class="btn btn-danger disabled">Not approved</a>
 						<% } %>
 
-						<form action="/user/unfollow" method="post">
+						<form action="/user/unfollow" method="post" class="form-inline">
 							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 							<input type="hidden" name="userId" id="userId" value="<%= followers[i].id %>">
 
-							<button class="btn btn-default" title="Unfollow">
+							<button class="btn btn-link" title="Unfollow">
 								<i class="glyphicon glyphicon-remove-circle"></i>
 							</button>
 						</form>
-
 
 					</div>
 				</div>
