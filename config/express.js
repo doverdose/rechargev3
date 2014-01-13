@@ -1,7 +1,7 @@
 var express = require('express'),
 	site = require('../app/controllers/site'),
 	mongoose = require('mongoose'),
-	mongoStore = require('connect-mongodb'),
+	mongoStore = require('connect-mongo')(express),
 	flash = require('connect-flash'),
 	path = require('path'),
 	engine = require('ejs-locals'),
