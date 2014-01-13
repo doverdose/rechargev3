@@ -344,6 +344,24 @@ module.exports = function() {
 
 	};
 
+	/* Unfollow user
+	 */
+
+	var unfollow = function (req, res) {
+
+		req.user.following.forEach(function(following, i) {
+			if(following.id == req.body.userId) {
+				req.user.following.splice(i, 1);
+				return false;
+			}
+		});
+
+		req.user.save();
+
+		res.redirect(req.session.lastUrl || '/');
+
+	};
+
 	return {
 		authCallback: login,
 		session: login,
@@ -357,6 +375,7 @@ module.exports = function() {
 		edit: edit,
 		update: update,
 		remove: remove,
-		follow: follow
+		follow: follow,
+		unfollow: unfollow
 	}
 }();

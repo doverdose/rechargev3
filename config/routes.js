@@ -41,6 +41,7 @@ module.exports = function(app, passport) {
 	app.post('/user/update', auth.requiresLogin, users.update);
 	app.post('/user/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
 	app.post('/user/follow', auth.requiresLogin, users.follow);
+	app.post('/user/unfollow', auth.requiresLogin, users.unfollow);
 
 	app.post('/provider/user/remove', auth.requiresLogin, providers.removePatient);
 	app.post('/provider/user/add', auth.requiresLogin, providers.addPatient);
@@ -67,6 +68,7 @@ module.exports = function(app, passport) {
 	app.get('/settings/profile', auth.requiresLogin, settings.profile);
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
 	app.get('/settings/following', auth.requiresLogin, settings.following);
+	app.get('/settings/followers', auth.requiresLogin, settings.followers);
 
 	app.param('userId', users.user);
 

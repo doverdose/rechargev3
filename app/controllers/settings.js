@@ -112,7 +112,7 @@ module.exports = function() {
 		};
 
 		// only see users that you are not already following
-		var patientIds = [];
+		var patientIds = [ req.user.id ];
 		req.user.following.forEach(function(patient, i){
 			patientIds.push(patient.id);
 		});
@@ -132,7 +132,7 @@ module.exports = function() {
 
 	/* Get followers
 	 */
-	var getFollowers = function(req) {
+	var getFollowingDetails = function(req) {
 
 		var deferred = Q.defer();
 
@@ -162,6 +162,53 @@ module.exports = function() {
 	};
 
 	var following = function (req, res, next) {
+
+		var followers,
+			approved = [];
+
+		// get list of all patients
+		getFollowingDetails(req)
+		.then(function(followerDetails) {
+
+			followers = followerDetails;
+			return getPatients(req);
+		}, function(err) {
+			console.log(err);
+		})
+		.then(function(patients) {
+
+			// see approved followers
+			var approved = [];
+			followers.forEach(function(follower, i) {
+
+				var followerFind = {
+					id: follower.id,
+					approved: true
+				};
+
+				if(patients.indexOf(followerFind) !== -1) {
+					approved[i] = true;
+				} else {
+					approved[i] = false;
+				}
+
+			});
+
+			res.render('settings/following.ejs', {
+				title: 'Following',
+				patients: patients,
+				followers: followers,
+				approved: approved
+			});
+
+		}, function(error) {});
+
+	};
+
+	var followers = function (req, res, next) {
+
+		// TODO get list of users following you,
+		// approve or deny following you
 
 		var followers,
 			approved = [];
@@ -204,7 +251,7 @@ module.exports = function() {
 
 			});
 
-			res.render('settings/following.ejs', {
+			res.render('settings/followers.ejs', {
 				title: 'Following',
 				patients: patients,
 				followers: followers,
@@ -218,6 +265,7 @@ module.exports = function() {
 	return {
 		profile: profile,
 		providers: providers,
-		following: following
+		following: following,
+		followers: followers
 	}
 }();
