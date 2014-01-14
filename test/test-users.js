@@ -17,6 +17,12 @@ var count,
 		username: 'patient',
 		password: '123'
 	},
+	fakeUser2 = {
+		email: 'patient2@rechargehealth.com',
+		name: 'Patient2',
+		username: 'patient2',
+		password: '123'
+	},
 	fakeProvider = {
 		email: 'provider@rechargehealth.com',
 		name: 'Provider',
@@ -38,11 +44,12 @@ var count,
 	},
 	newName = 'Patient2',
 	userId,
+	userId2,
 	providerId;
 
 describe('Users', function () {
 
-	describe('Create new Patient', function () {
+	describe('Create new Patient/Signup', function () {
 
 		it('should register the new user and redirect to /', function (done) {
 			agent
@@ -58,16 +65,16 @@ describe('Users', function () {
 			.end(done)
 		})
 
-			it('should save the user to the database', function (done) {
+		it('should save the user to the database', function (done) {
 
-				User.findOne({ username: fakeUser.username }).exec(function (err, user) {
-					should.not.exist(err);
-					user.should.be.an.instanceOf(User);
-					user.email.should.equal(fakeUser.email);
-					done();
-				});
-
+			User.findOne({ username: fakeUser.username }).exec(function (err, user) {
+				should.not.exist(err);
+				user.should.be.an.instanceOf(User);
+				user.email.should.equal(fakeUser.email);
+				done();
 			});
+
+		});
 
 		it('should login the new user and redirect to /', function (done) {
 			agent
@@ -657,6 +664,89 @@ describe('Users', function () {
 
 					done()
 				})
+
+			})
+
+		})
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		})
+
+	})
+
+	describe('Follow patient', function () {
+
+		before(function (done) {
+
+			// create two new patient user
+			var user = new User(fakeUser);
+			user.save(function(err, user) {
+				userId = user._id + '';
+
+				var user2 = new User(fakeUser2);
+				user2.save(function(err, user2) {
+					userId2 = user2._id + '';
+
+					done();
+				});
+			});
+
+		});
+
+		context('When not logged in', function () {
+
+			it('should redirect to /login', function (done) {
+				agent
+				.post('/user/follow')
+				.field('userId', userId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/login')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Patient', function () {
+
+			before(function (done) {
+				// login the user
+				agent
+				.post('/users/session')
+				.field('email', fakeUser.email)
+				.field('password', fakeUser.password)
+				.end(function() {
+
+					agent
+					.post('/user/follow')
+					.field('userId', userId2)
+					.end(done);
+
+				})
+			})
+
+			it('should contain the followed user', function (done) {
+
+				User.findOne({
+					username: fakeUser.username
+				}).exec(function (err, user) {
+
+					var foundFollowing = false;
+
+					user.following.forEach(function(f, i) {
+						if(f.id === userId2) {
+							foundFollowing = true;
+							return false;
+						}
+					});
+
+					foundFollowing.should.be.true;
+
+				});
+
+				done();
 
 			})
 

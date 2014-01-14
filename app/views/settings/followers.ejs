@@ -12,11 +12,11 @@
 		<% for(var i = 0; i < followers.length; i++) { %>
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col-xs-8">
+					<div class="col-xs-4 col-sm-7">
 						<%= followers[i].name %>
 					</div>
 
-					<div class="col-xs-4">
+					<div class="col-xs-8 col-sm-5 text-right">
 
 						<% if(approved[followers[i].id] === true) { %>
 

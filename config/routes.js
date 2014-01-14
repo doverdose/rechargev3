@@ -67,6 +67,9 @@ module.exports = function(app, passport) {
 	app.get('/checkin/:id', auth.requiresLogin, checkin.checkinView);
 	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkinDelete);
 
+	app.get('/settings', auth.requiresLogin, function(req, res) {
+		res.redirect('/settings/profile');
+	});
 	app.get('/settings/profile', auth.requiresLogin, settings.profile);
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
 	app.get('/settings/following', auth.requiresLogin, settings.following);
