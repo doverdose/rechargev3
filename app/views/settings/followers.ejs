@@ -6,7 +6,6 @@
 	</div>
 </div>
 
-
 <% if(followers.length) { %>
 
 	<ul class="list-group">
@@ -19,10 +18,24 @@
 
 					<div class="col-xs-4">
 
-						<% if(approved[i] === true) { %>
-							<a class="btn btn-success">Approv</a>
+						<% if(approved[followers[i].id] === true) { %>
+
+							<form action="/follower/reject" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="followerId"  value="<%= followers[i].id %>">
+
+								<button type="submit" class="btn btn-danger">Reject</button>
+							</form>
+
 						<% } else { %>
-							<a class="btn btn-danger">Deny</a>
+
+							<form action="/follower/approve" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="followerId"  value="<%= followers[i].id %>">
+
+								<button type="submit" class="btn btn-success">Approve</button>
+							</form>
+
 						<% } %>
 
 					</div>
@@ -33,6 +46,6 @@
 
 <% } else { %>
 
-	<h4 class="text-muted text-center">You are not following any users. </h4>
+	<h4 class="text-muted text-center">No users are following you at this time. </h4>
 
 <% } %>

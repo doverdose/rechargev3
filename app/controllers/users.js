@@ -330,7 +330,6 @@ module.exports = function() {
 
 	/* Follow user
 	 */
-
 	var follow = function (req, res) {
 
 		req.user.following.push({
@@ -346,7 +345,6 @@ module.exports = function() {
 
 	/* Unfollow user
 	 */
-
 	var unfollow = function (req, res) {
 
 		req.user.following.forEach(function(following, i) {
@@ -362,6 +360,61 @@ module.exports = function() {
 
 	};
 
+	/* Approve follow
+	 */
+	var approveFollow = function (req, res) {
+
+		/* Find user with followerId.
+		 * Then find the current logged-in user in the users' following array
+		 * and set it's approved value to true
+		 */
+		User.findOne({ _id : req.body.followerId })
+			.exec(function (err, follower) {
+				if (err) return next(err)
+				if (!user) return next(new Error('Failed to load User ' + id))
+
+				follower.following.forEach(function(following, i) {
+					if(following.id === req.user.id) {
+						following.approved = true;
+						return false;
+					}
+				});
+
+				follower.save();
+				res.redirect(req.session.lastUrl || '/');
+
+			});
+
+	};
+
+	/* Reject follow
+	 */
+	var rejectFollow = function (req, res) {
+
+		/* Find user with followerId.
+		 * Then find the current logged-in user in the users' following array
+		 * and set it's approved value to false
+		 */
+		User.findOne({ _id : req.body.followerId })
+			.exec(function (err, follower) {
+				if (err) return next(err)
+				if (!user) return next(new Error('Failed to load User ' + id))
+
+				follower.following.forEach(function(following, i) {
+					if(following.id === req.user.id) {
+						following.approved = false;
+						return false;
+					}
+				});
+
+				follower.save();
+				res.redirect(req.session.lastUrl || '/');
+
+			});
+
+	};
+
+
 	return {
 		authCallback: login,
 		session: login,
@@ -376,6 +429,8 @@ module.exports = function() {
 		update: update,
 		remove: remove,
 		follow: follow,
+		approveFollow: approveFollow,
+		rejectFollow: rejectFollow,
 		unfollow: unfollow
 	}
 }();

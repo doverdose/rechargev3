@@ -165,14 +165,14 @@ module.exports = function() {
 	 */
 	var following = function (req, res, next) {
 
-		var followers,
-			approved = [];
+		var following,
+			approved = {};
 
 		// get list of all patients
 		getFollowingDetails(req)
 		.then(function(followerDetails) {
 
-			followers = followerDetails;
+			following = followerDetails;
 			return getPatients(req);
 		}, function(err) {
 			console.log(err);
@@ -180,26 +180,22 @@ module.exports = function() {
 		.then(function(patients) {
 
 			// see approved followers
-			var approved = [];
-			followers.forEach(function(follower, i) {
+			var approved = {};
+			following.forEach(function(patient, i) {
 
-				var followerFind = {
-					id: follower.id,
-					approved: true
-				};
-
-				if(patients.indexOf(followerFind) !== -1) {
-					approved[i] = true;
-				} else {
-					approved[i] = false;
-				}
+				req.user.following.forEach(function(f, i) {
+					if(f.id === patient.id && f.approved === true) {
+						approved[f.id] = true;
+						return false;
+					}
+				});
 
 			});
 
 			res.render('settings/following.ejs', {
 				title: 'Following',
 				patients: patients,
-				followers: followers,
+				following: following,
 				approved: approved
 			});
 
@@ -241,7 +237,7 @@ module.exports = function() {
 		// approve or deny following you
 
 		var followers,
-			approved = [];
+			approved = {};
 
 		// get list of all patients
 		getFollowersDetails(req)
@@ -250,22 +246,17 @@ module.exports = function() {
 			followers = followerDetails;
 
 			// see approved followers
-			var approved = [];
+			var approved = {};
 			followers.forEach(function(follower, i) {
 
-				var followerFind = {
-					id: req.user.id,
-					approved: true
-				};
-
-				if(follower.following.indexOf(followerFind) !== -1) {
-					approved[i] = true;
-				} else {
-					approved[i] = false;
-				}
+				follower.following.forEach(function(f, i) {
+					if(f.id === req.user.id && f.approved === true) {
+						approved[follower.id] = true;
+						return false;
+					}
+				});
 
 			});
-
 			res.render('settings/followers.ejs', {
 				title: 'Followers',
 				followers: followers,

@@ -13,27 +13,27 @@
 </div>
 
 
-<% if(followers.length) { %>
+<% if(following.length) { %>
 
 	<ul class="list-group">
-		<% for(var i = 0; i < followers.length; i++) { %>
+		<% for(var i = 0; i < following.length; i++) { %>
 			<li class="list-group-item">
 				<div class="row">
 					<div class="col-xs-4 col-sm-7">
-						<%= followers[i].name %>
+						<%= following[i].name %>
 					</div>
 
 					<div class="col-xs-8 col-sm-5 text-right">
 
-						<% if(approved[i] === true) { %>
-							<a class="btn btn-success disabled">Approved</a>
+						<% if(approved[following[i].id] === true) { %>
+							<span class="btn btn-success disabled">Approved</span>
 						<% } else { %>
-							<a class="btn btn-danger disabled">Not approved</a>
+							<span class="btn btn-danger disabled">Not approved</span>
 						<% } %>
 
 						<form action="/user/unfollow" method="post" class="form-inline">
 							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-							<input type="hidden" name="userId" id="userId" value="<%= followers[i].id %>">
+							<input type="hidden" name="userId" id="userId" value="<%= following[i].id %>">
 
 							<button class="btn btn-link" title="Unfollow">
 								<i class="glyphicon glyphicon-remove-circle"></i>
