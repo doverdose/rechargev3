@@ -758,6 +758,305 @@ describe('Users', function () {
 
 	})
 
+	describe('Unfollow patient', function () {
+
+		before(function (done) {
+
+			// create two new patient user
+			var user = new User(fakeUser);
+			user.save(function(err, user) {
+				userId = user._id + '';
+
+				var user2 = new User(fakeUser2);
+				user2.save(function(err, user2) {
+					userId2 = user2._id + '';
+
+					done();
+				});
+			});
+
+		});
+
+		context('When not logged in', function () {
+
+			it('should redirect to /login', function (done) {
+				agent
+				.post('/user/unfollow')
+				.field('userId', userId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/login')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Patient', function () {
+
+			before(function (done) {
+				// login the user
+				agent
+				.post('/users/session')
+				.field('email', fakeUser.email)
+				.field('password', fakeUser.password)
+				.end(function() {
+
+					// follow the second user
+					agent
+					.post('/user/follow')
+					.field('userId', userId2)
+					.end(function() {
+
+						// un follow the user
+						agent
+						.post('/user/unfollow')
+						.field('userId', userId2)
+						.end(done);
+
+					});
+
+				})
+			})
+
+			it('should not contain the followed user', function (done) {
+
+				User.findOne({
+					username: fakeUser.username
+				}).exec(function (err, user) {
+
+					var foundFollowing = false;
+
+					user.following.forEach(function(f, i) {
+						if(f.id === userId2) {
+							foundFollowing = true;
+							return false;
+						}
+					});
+
+					foundFollowing.should.be.false;
+
+					done();
+				});
+
+			})
+
+		});
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		});
+
+	});
+
+	describe('Approve Follower', function () {
+
+		before(function (done) {
+
+			// create two new patient user
+			var user = new User(fakeUser);
+			user.save(function(err, user) {
+				userId = user._id + '';
+
+				var user2 = new User(fakeUser2);
+				user2.save(function(err, user2) {
+					userId2 = user2._id + '';
+
+					done();
+				});
+			});
+
+		});
+
+		context('When not logged in', function () {
+
+			it('should redirect to /login', function (done) {
+				agent
+				.post('/user/follow')
+				.field('userId', userId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/login')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Patient', function () {
+
+			before(function (done) {
+				// login the user
+				agent
+				.post('/users/session')
+				.field('email', fakeUser.email)
+				.field('password', fakeUser.password)
+				.end(function() {
+					// follow the second user
+					agent
+					.post('/user/follow')
+					.field('userId', userId2)
+					.end(function() {
+
+						// login the followed user
+						agent
+						.get('/logout')
+						.end(function() {
+
+							agent
+							.post('/users/session')
+							.field('email', fakeUser2.email)
+							.field('password', fakeUser2.password)
+							.end(function() {
+
+								// approve the follower
+								agent
+								.post('/follower/approve')
+								.field('followerId', userId)
+								.end(done);
+
+							});
+
+						});
+
+					});
+				});
+			});
+
+			it('should contain the approved follower', function (done) {
+
+				User.findOne({
+					username: fakeUser.username
+				}).exec(function (err, user) {
+
+					user.following.forEach(function(f, i) {
+						if(f.id === userId2) {
+							f.approved.should.be.true;
+							return false;
+						}
+					});
+
+					done();
+				});
+
+			});
+
+		});
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		});
+
+	});
+
+	describe('Reject Follower', function () {
+
+		before(function (done) {
+
+			// create two new patient user
+			var user = new User(fakeUser);
+			user.save(function(err, user) {
+				userId = user._id + '';
+
+				var user2 = new User(fakeUser2);
+				user2.save(function(err, user2) {
+					userId2 = user2._id + '';
+
+					done();
+				});
+			});
+
+		});
+
+		context('When not logged in', function () {
+
+			it('should redirect to /login', function (done) {
+				agent
+				.post('/user/follow')
+				.field('userId', userId)
+				.expect('Content-Type', /plain/)
+				.expect(302)
+				.expect('Location', '/login')
+				.expect(/Moved Temporarily/)
+				.end(done)
+			})
+
+		})
+
+		context('When logged in as Patient', function () {
+
+			before(function (done) {
+				// login the user
+				agent
+				.post('/users/session')
+				.field('email', fakeUser.email)
+				.field('password', fakeUser.password)
+				.end(function() {
+					// follow the second user
+					agent
+					.post('/user/follow')
+					.field('userId', userId2)
+					.end(function() {
+
+						// login the followed user
+						agent
+						.get('/logout')
+						.end(function() {
+
+							agent
+							.post('/users/session')
+							.field('email', fakeUser2.email)
+							.field('password', fakeUser2.password)
+							.end(function() {
+
+								// approve the follower
+								agent
+								.post('/follower/approve')
+								.field('followerId', userId)
+								.end(function() {
+
+									// reject the follower
+									agent
+									.post('/follower/reject')
+									.field('followerId', userId)
+									.end(done);
+
+								});
+
+							});
+
+						});
+
+					});
+				});
+			});
+
+			it('should follower should not be approved', function (done) {
+
+				User.findOne({
+					username: fakeUser.username
+				}).exec(function (err, user) {
+
+					user.following.forEach(function(f, i) {
+						if(f.id === userId2) {
+							f.approved.should.be.false;
+							return false;
+						}
+					});
+
+					done();
+				});
+
+			});
+
+		});
+
+		after(function (done) {
+			require('./helper').clearDb(done);
+		});
+
+	});
+
 	after(function (done) {
 		require('./helper').clearDb(done);
 	})
