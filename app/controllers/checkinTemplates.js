@@ -10,67 +10,72 @@ module.exports = function() {
 	var remove = function(req, res) {
 
 		CheckinTemplate.findOne({
-			_id: req.params.id
+			_id: req.body.id
 		}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
+			if (!c) return res.redirect('/admin');
 
 			c.remove();
 
-			res.redirect('/checkin');
+			res.redirect('/admin');
 		});
 
 
-	}
+	};
 
 	var update = function(req, res) {
 
-		CheckinTemplate.findOne({_id: req.params.id}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
-			c.save(function() {
-				switch (req.params.format) {
-				case 'json':
-				res.send(c.__doc);
-				break;
-				default:
-				res.redirect('/checkin');
-				}
+		if(req.body.id) {
+
+			// update
+			CheckinTemplate.findOne({
+				_id: req.body.id
+			}, function(err, c) {
+				if (!c) return res.redirect('/admin');
+
+				c.type = req.body.type;
+				c.title = req.body.title;
+				c.question = req.body.question;
+
+				c.save(function() {
+					res.redirect('/checkintemplate/' + c.id);
+				});
 			});
-		});
+
+		} else {
+
+			// create
+			var c = new CheckinTemplate(req.body);
+
+			c.save(function(err, newCheckin) {
+				res.redirect('/checkintemplate/' + newCheckin.id);
+			});
+
+		}
 
 	}
 
 	var updateView = function(req, res, next) {
-		CheckinTemplate.findOne({_id: req.params.id}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
+
+		CheckinTemplate.findOne({
+			_id: req.params.id
+		}, function(err, c) {
+			if (!c) return res.redirect('/admin');
+
 			switch (req.params.format) {
 			case 'json':
 				res.send(c.__doc);
 				break;
 			default:
-				res.render('checkin/checkin_edit.ejs', {c: c});
+				res.render('checkinTemplates/checkinTemplateEdit.ejs', {
+					c: c
+				});
 			}
 		});
+
 	}
 
-	var create = function (req, res) {
-
-		var c = new CheckinTemplate(req.body);
-		c.user_id = req.user._id;
-
-		c.save(function() {
-			switch (req.params.format) {
-				case 'json':
-					res.send(c.__doc);
-					break;
-				default:
-					res.redirect('/checkin');
-			}
-		});
-
-	};
-
 	var createView = function (req, res) {
-		res.render('checkinTemplates/checkinTemplateNew.ejs', { c: {} });
+		res.render('checkinTemplates/checkinTemplateEdit.ejs', { c: {} });
 	}
 
 	var view = function(req, res) {
@@ -93,7 +98,6 @@ module.exports = function() {
 
 
 	return {
-		create: create,
 		createView: createView,
 		update: update,
 		updateView: updateView,

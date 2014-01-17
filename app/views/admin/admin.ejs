@@ -91,12 +91,18 @@
 				<div class="row stats">
 					<div class="col-xs-6">
 						<a href="/checkintemplate/<%= checkinTemplates[i].id %>">
-							<%= checkinTemplates[i].name %>
+							<%= checkinTemplates[i].title %>
 						</a>
 					</div>
 					<div class="col-xs-6 text-right">
-						<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit"> Edit </a>
-						<a class="btn btn-danger" href="/checkintemplate/<%= checkinTemplates[i].id %>/delete"> Delete </a>
+						<form action="/checkintemplate/remove" method="post" class="form-inline">
+							<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit">Edit</a>
+
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="id" id="id" value="<%= checkinTemplates[i].id %>">
+
+							<button type="submit" class="btn btn-danger">Remove</button>
+						</form>
 					</div>
 				</div>
 			<% } %>
@@ -104,8 +110,6 @@
 			<% if(!checkinTemplates.length) { %>
 				<h4 class="text-muted text-center">There are no checkin templates. </h4>
 			<% } %>
-
-
 
 		</div>
 	</div>

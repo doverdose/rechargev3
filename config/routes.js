@@ -50,8 +50,7 @@ module.exports = function(app, passport) {
 	app.post('/provider/approve', auth.requiresLogin, providers.approve);
 	app.post('/provider/revoke', auth.requiresLogin, providers.revoke);
 
-	app.post('/checkintemplate', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.create);
-	app.post('/checkintemplate/edit', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.update);
+	app.post('/checkintemplate', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.update);
 	app.post('/checkintemplate/remove', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.remove);
 	app.get('/checkintemplate/new', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.createView);
 	app.get('/checkintemplate/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.view);
@@ -65,7 +64,7 @@ module.exports = function(app, passport) {
 
 	app.get('/checkin', auth.requiresLogin, checkin.list);
 	app.get('/checkin/:id', auth.requiresLogin, checkin.checkinView);
-	app.get('/checkin/:id.:format?/delete', auth.requiresLogin, checkin.checkinDelete);
+	app.get('/checkin/:id/delete', auth.requiresLogin, checkin.checkinDelete);
 
 	app.get('/settings', auth.requiresLogin, function(req, res) {
 		res.redirect('/settings/profile');
