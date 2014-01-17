@@ -15,7 +15,7 @@ module.exports = function() {
 		type: String,
 		question: String,
 		title: String,
-		valid:  [{
+		answers:  [{
 			value: String
 		}]
 	});

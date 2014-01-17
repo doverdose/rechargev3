@@ -35,6 +35,13 @@ module.exports = function() {
 				c.type = req.body.type;
 				c.title = req.body.title;
 				c.question = req.body.question;
+				c.answers = [];
+
+				req.body.answers.forEach(function(a, i) {
+					c.answers.push({
+						value: a
+					});
+				});
 
 				c.save(function() {
 					res.redirect('/checkintemplate/' + c.id);

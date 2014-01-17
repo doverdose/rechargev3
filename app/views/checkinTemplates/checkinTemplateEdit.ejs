@@ -2,7 +2,7 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
+		<div class="col-lg-12">
 
 			<h2>
 				<% if(c.id) { %>
@@ -47,6 +47,40 @@
 					<textarea class="form-control" id="question" name="question"><%= c.question || '' %></textarea>
 				</div>
 
+				<div class="possible-answers js-clone-field" data-clone=".form-group">
+					<label>Possible answers</label>
+
+					<% if(c.answers.length) { %>
+
+						<% for(var i=0; i < c.answers.length; i++) { %>
+							<div class="input-group form-group">
+								<input type="text" class="form-control" name="answers[]" value="<%= c.answers[i].value %>">
+								<span class="input-group-btn">
+									<button class="btn btn-danger js-remove-field-btn" type="button" title="Remove answer">
+										<i class="glyphicon glyphicon-remove-circle"></i>
+									</button>
+								</span>
+							</div>
+						<% } %>
+
+					<% } else {%>
+
+						<div class="input-group form-group">
+							<input type="text" class="form-control" name="answers[]" value="">
+							<span class="input-group-btn">
+								<button class="btn btn-danger js-remove-field-btn" type="button" title="Remove answer">
+									<i class="glyphicon glyphicon-remove-circle"></i>
+								</button>
+							</span>
+						</div>
+
+					<% } %>
+
+					<button type="button" class="btn btn-default btn-block js-clone-field-btn">
+						<i class="glyphicon glyphicon-plus"></i>
+						Add new answer
+					</button>
+				</div>
 
 				<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
 					<% if(c.id) { %>
