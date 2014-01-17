@@ -2,8 +2,9 @@
 	"name": "recharge-health",
 	"version": "0.0.0",
 	"dependencies": {
-		"bourbon": "~3",
+		"bourbon": "~3.1",
 		"bootstrap-sass": "~3",
+		"select2": "~3",
 		"html5shiv": "~3"
 	},
 	"devDependencies": {}

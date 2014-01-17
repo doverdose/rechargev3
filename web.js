@@ -10,7 +10,7 @@ var env = process.env.NODE_ENV || 'development',
 	config = require('./config/config')(app)[env];
 
 // Bootstrap db connection
-mongoose.connect(config.db)
+mongoose.connect(config.db);
 
 // Bootstrap models
 var models_path = __dirname + '/app/models'
@@ -46,5 +46,3 @@ require('./app/controllers/notifications')(config);
 
 var port = process.env.PORT || 8080;
 app.listen(port);
-
-

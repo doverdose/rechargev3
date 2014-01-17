@@ -1,11 +1,11 @@
 <% layout('../layouts/default') -%>
 
-<div class="container">
+<div class="container js-checkinselector-container">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
 
 			<div class="page-header">
-				<a href="/checkin/new" class="btn btn-default pull-right">New check-in</a>
+				<button type="button" class="btn btn-default pull-right js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
 				<h2>Salt Reducer Checkins</h2>
 			</div>
 
@@ -44,5 +44,27 @@
 			<% } %>
 
 		</div>
+	</div>
+
+	<div class="js-template js-checkinselector-template">
+		<form action="/provider/user/add" method="post">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+			<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
+
+			<div class="form-group">
+				<label for="templateId">Select checkin type</label>
+				<select class="js-select2" id="templateId" name="templateId">
+					<% for(var i = 0; i < checkinTemplates.length; i++) { %>
+						<option value="<%= checkinTemplates[i].id %>">
+							<%= checkinTemplates[i].title %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-block">
+				Check-in
+			</button>
+		</form>
 	</div>
 </div>

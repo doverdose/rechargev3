@@ -1,0 +1,51 @@
+<% layout('../layouts/settings') -%>
+
+<div class="row page-header">
+	<div class="col-xs-6">
+		<h3>Followers</h3>
+	</div>
+</div>
+
+<% if(followers.length) { %>
+
+	<ul class="list-group">
+		<% for(var i = 0; i < followers.length; i++) { %>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-xs-4 col-sm-7">
+						<%= followers[i].name %>
+					</div>
+
+					<div class="col-xs-8 col-sm-5 text-right">
+
+						<% if(approved[followers[i].id] === true) { %>
+
+							<form action="/follower/reject" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="followerId"  value="<%= followers[i].id %>">
+
+								<button type="submit" class="btn btn-danger">Reject</button>
+							</form>
+
+						<% } else { %>
+
+							<form action="/follower/approve" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="followerId"  value="<%= followers[i].id %>">
+
+								<button type="submit" class="btn btn-success">Approve</button>
+							</form>
+
+						<% } %>
+
+					</div>
+				</div>
+			</li>
+		<% } %>
+	</ul>
+
+<% } else { %>
+
+	<h4 class="text-muted text-center">No users are following you at this time. </h4>
+
+<% } %>
