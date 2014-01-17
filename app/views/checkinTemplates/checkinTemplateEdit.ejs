@@ -29,11 +29,11 @@
 
 				<div class="form-group">
 					<label for="type">Checkin type</label>
-					<select class="form-control" name="type" id="type">
+					<select class="form-control js-visibility-select" name="type" id="type">
 						<option value="longtext" <%= c.type === 'longtext' && 'selected' %>>Long text</option>
 						<option value="shorttext" <%= c.type === 'shorttext' && 'selected' %>>Short text</option>
-						<option value="singlechoice" <%= c.type === 'singlechoice' && 'selected' %>>Single choice</option>
-						<option value="multiplechoice" <%= c.type === 'multiplechoice' && 'selected' %>>Multiple choice</option>
+						<option data-show=".possible-answers" value="singlechoice" <%= c.type === 'singlechoice' && 'selected' %>>Single choice</option>
+						<option data-show=".possible-answers" value="multiplechoice" <%= c.type === 'multiplechoice' && 'selected' %>>Multiple choice</option>
 					</select>
 				</div>
 
@@ -47,7 +47,7 @@
 					<textarea class="form-control" id="question" name="question"><%= c.question || '' %></textarea>
 				</div>
 
-				<div class="possible-answers js-clone-field" data-clone=".form-group">
+				<div class="possible-answers js-clone-field js-visibility-select-hide" data-clone=".form-group">
 					<label>Possible answers</label>
 
 					<% if(c.answers.length) { %>

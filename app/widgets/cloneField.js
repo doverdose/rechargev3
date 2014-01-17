@@ -1,4 +1,7 @@
 /* Clone field
+ *
+ * Clones an existing DOM node.
+ * Used in the Checkin Template editor.
  */
 
 (function() {
