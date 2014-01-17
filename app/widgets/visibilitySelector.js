@@ -37,6 +37,7 @@
 			});
 
 			$select.on('change', showElement);
+			$select.trigger('change');
 		};
 
 		return {

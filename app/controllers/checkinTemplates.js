@@ -38,9 +38,12 @@ module.exports = function() {
 				c.answers = [];
 
 				req.body.answers.forEach(function(a, i) {
-					c.answers.push({
-						value: a
-					});
+					// don't add if just whitespace
+					if(a.trim()) {
+						c.answers.push({
+							value: a
+						});
+					}
 				});
 
 				c.save(function() {
