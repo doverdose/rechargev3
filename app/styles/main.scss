@@ -6,6 +6,7 @@
  */
 $color1: #47a3da;
 $white: #fff;
+$black: #333;
 
 /* Bootstrap
  */
@@ -26,6 +27,11 @@ $navbar-inverse-bg: $color1;
 
 body {
 	padding-top: $navbar-height;
+	color: $black;
+}
+
+.container {
+	max-width: 600px;
 }
 
 .js-template {
@@ -35,6 +41,7 @@ body {
 .form-inline {
 	display: inline-block;
 }
+
 
 /* Navbar
  */
@@ -104,6 +111,11 @@ body {
 	.carousel-indicators {
 		bottom: 0;
 	}
+}
+
+.marketing {
+	padding-top: emCalc(40);
+	padding-bottom: emCalc(40);
 }
 
 /* Signup
@@ -194,13 +206,19 @@ body {
 	@include transition (all .1s ease-in-out);
 }
 
-/* Checkin
+/* Page header
  */
 .page-header {
+	overflow: hidden;
 	border-bottom: 0;
 
 	h3 {
+		float: left;
 		margin: 0;
+	}
+
+	.header-actions {
+		float: right;
 	}
 }
 
@@ -220,31 +238,15 @@ body {
 /* Footer
  */
 
-footer {
+.site-footer {
 	display: block;
+	margin-top: emCalc(80);
 	background: $color1;
-	margin-top: 60px;
-}
+	padding: emCalc(20);
 
-ul.cfooter {
-	text-align:center;
-	list-style-type: none;
-	padding: 0px;
-	margin: 0px;
-}
+	color: lighten($color1, 30%);
 
-ul.cfooter li {
-	text-decoration:none;
-}
-
-ul.cfooter li a {
-	color: #fff;
-	font-size: 16px;
-	font-weight: normal;
-	line-height: 20px;
-}
-
-ul.cfooter li a:hover {
-	opacity:.80;
-	text-decoration:none;
+	p {
+		color: lighten($color1, 20%);
+	}
 }

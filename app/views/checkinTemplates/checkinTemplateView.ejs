@@ -1,38 +1,31 @@
 <% layout('../layouts/default') -%>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
 
-			<div class="page-header">
-				<form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
-					<a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
+<div class="page-header">
+	<form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
+		<a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
 
-					<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-					<input type="hidden" name="id" id="id" value="<%= c.id %>">
+		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+		<input type="hidden" name="id" id="id" value="<%= c.id %>">
 
-					<button type="submit" class="btn btn-danger">Remove</button>
-				</form>
+		<button type="submit" class="btn btn-danger">Remove</button>
+	</form>
 
-				<h3><%= c.title %></h3>
-			</div>
-
-			<h4 class="text-muted">Question:</h4>
-			<p>
-				<%= c.question %>
-			</p>
-
-			<% if(c.answers && c.answers.length) { %>
-			<h4 class="text-muted">Possible answers:</h4>
-			<ul>
-				<% for(var i=0; i < c.answers.length; i++) { %>
-					<li>
-						<%= c.answers[i].text %>
-					</li>
-				<% } %>
-			<% }%>
-
-		</div>
-	</div>
+	<h3><%= c.title %></h3>
 </div>
+
+<h4 class="text-muted">Question:</h4>
+<p>
+	<%= c.question %>
+</p>
+
+<% if(c.answers && c.answers.length) { %>
+<h4 class="text-muted">Possible answers:</h4>
+<ul>
+	<% for(var i=0; i < c.answers.length; i++) { %>
+		<li>
+			<%= c.answers[i].text %>
+		</li>
+	<% } %>
+<% }%>
 
