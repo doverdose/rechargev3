@@ -17,9 +17,20 @@
 				<h3><%= c.title %></h3>
 			</div>
 
+			<h4 class="text-muted">Question:</h4>
 			<p>
 				<%= c.question %>
 			</p>
+
+			<% if(c.answers && c.answers.length) { %>
+			<h4 class="text-muted">Possible answers:</h4>
+			<ul>
+				<% for(var i=0; i < c.answers.length; i++) { %>
+					<li>
+						<%= c.answers[i].text %>
+					</li>
+				<% } %>
+			<% }%>
 
 		</div>
 	</div>
