@@ -50,11 +50,11 @@
 				<div class="possible-answers js-clone-field js-visibility-select-hide" data-clone=".form-group">
 					<label>Possible answers</label>
 
-					<% if(c.answers.length) { %>
+					<% if(c.answers && c.answers.length) { %>
 
 						<% for(var i=0; i < c.answers.length; i++) { %>
 							<div class="input-group form-group">
-								<input type="text" class="form-control" name="answers[]" value="<%= c.answers[i].value %>">
+								<input type="text" class="form-control" name="answers[]" value="<%= c.answers[i].text %>">
 								<span class="input-group-btn">
 									<button class="btn btn-danger js-remove-field-btn" type="button" title="Remove answer">
 										<i class="glyphicon glyphicon-remove-circle"></i>

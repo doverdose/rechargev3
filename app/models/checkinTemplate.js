@@ -15,8 +15,8 @@ module.exports = function() {
 		type: String,
 		question: String,
 		title: String,
-		answers:  [{
-			value: String
+		answers: [{
+			text: String
 		}]
 	});
 
@@ -27,7 +27,6 @@ module.exports = function() {
 	CheckinTemplateSchema.virtual('id').get(function() {
 		return this._id.toHexString();
 	});
-
 
 	mongoose.model('CheckinTemplate', CheckinTemplateSchema)
 

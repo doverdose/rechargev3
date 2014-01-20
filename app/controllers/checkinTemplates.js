@@ -22,6 +22,27 @@ module.exports = function() {
 
 	};
 
+	var parseForm = function(form) {
+
+		var newAnswers = [];
+
+		if(form.answers) {
+			form.answers.forEach(function(answer, i) {
+				// don't add if just whitespace
+				if(answer.trim()) {
+					newAnswers.push({
+						text: answer
+					});
+				}
+			});
+		};
+
+		form.answers = newAnswers;
+
+		return form;
+
+	};
+
 	var update = function(req, res) {
 
 		if(req.body.id) {
@@ -35,16 +56,7 @@ module.exports = function() {
 				c.type = req.body.type;
 				c.title = req.body.title;
 				c.question = req.body.question;
-				c.answers = [];
-
-				req.body.answers.forEach(function(a, i) {
-					// don't add if just whitespace
-					if(a.trim()) {
-						c.answers.push({
-							value: a
-						});
-					}
-				});
+				c.answers = parseForm(req.body).answers;
 
 				c.save(function() {
 					res.redirect('/checkintemplate/' + c.id);
@@ -53,10 +65,16 @@ module.exports = function() {
 
 		} else {
 
+			var formParams = parseForm(req.body);
+
 			// create
-			var c = new CheckinTemplate(req.body);
+			var c = new CheckinTemplate(formParams);
 
 			c.save(function(err, newCheckin) {
+				 if (err) {
+					console.log(err);
+					res.redirect('/admin');
+				}
 				res.redirect('/checkintemplate/' + newCheckin.id);
 			});
 
