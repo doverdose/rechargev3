@@ -56,15 +56,17 @@ module.exports = function(app, passport) {
 	app.get('/checkintemplate/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.view);
 	app.get('/checkintemplate/:id/edit', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.updateView);
 
-	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkinUpdate);
-	app.get('/checkin/:id.:format?/edit', auth.requiresLogin, checkin.checkinEdit);
+	//app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkinUpdate);
+	//app.get('/checkin/new', auth.requiresLogin, checkin.checkinNew);
+// 	app.get('/checkin/:id/delete', auth.requiresLogin, checkin.checkinDelete);
 
-	app.post('/checkin.:format?', auth.requiresLogin, checkin.checkinCreate);
-	app.get('/checkin/new', auth.requiresLogin, checkin.checkinNew);
+	app.post('/checkin', auth.requiresLogin, checkin.update);
+	app.post('/checkin/remove', auth.requiresLogin, checkin.remove);
 
+	app.post('/checkin/new', auth.requiresLogin, checkin.createView);
 	app.get('/checkin', auth.requiresLogin, checkin.list);
 	app.get('/checkin/:id', auth.requiresLogin, checkin.checkinView);
-	app.get('/checkin/:id/delete', auth.requiresLogin, checkin.checkinDelete);
+	app.get('/checkin/:id/edit', auth.requiresLogin, checkin.checkinEdit);
 
 	app.get('/settings', auth.requiresLogin, function(req, res) {
 		res.redirect('/settings/profile');

@@ -1,0 +1,42 @@
+<% layout('../layouts/default') -%>
+
+<div class="page-header">
+	<h2>
+		<% if(checkin.id) { %>
+			Edit checkin
+		<% } else { %>
+			New checkin
+		<% } %>
+	</h2>
+</div>
+
+<form role="form" action="/checkin" method="post">
+	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+	<input type="hidden" name="id" value="<%= checkin.id || '' %>">
+
+	<p>
+		<%= template.title %>
+	</p>
+
+	<h3>
+		<%= template.question %>
+	</h3>
+
+	<% if(template.answers && template.answers.length) { %>
+	<ul>
+		<% for(var i=0; i < template.answers.length; i++) { %>
+			<li>
+				<%= template.answers[i].text %>
+			</li>
+		<% } %>
+	</ul>
+	<% }%>
+
+	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+		<% if(checkin.id) { %>
+			Update checkin
+		<% } else { %>
+			Make new checkin
+		<% } %>
+	</button>
+</form>

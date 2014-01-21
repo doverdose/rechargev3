@@ -1,59 +1,56 @@
 <% layout('../layouts/default') -%>
 
-<div class="container js-checkinselector-container">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
+<div class="js-checkinselector-container">
 
-			<div class="page-header">
-				<button type="button" class="btn btn-default pull-right js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
-				<h2>Salt Reducer Checkins</h2>
-			</div>
+	<div class="page-header">
+		<h2>Checkins</h2>
 
-			<% if(c.length) { %>
-
-				<table class="table">
-					<thead>
-						<tr>
-							<td class="col-md-9">
-								<strong>Checkin</strong>
-							</td>
-							<td>
-								<strong>Update </strong>
-							</td>
-						</tr>
-					</thead>
-					<tbody>
-					<% for (var i = 0; i < c.length; i++) { %>
-						<tr>
-							<td>
-								<a href='/checkin/<%=c[i].id%>'><%=: c[i].timestamp | fromNow %>
-							</td>
-							<td>
-								<a class="btn btn-primary" href="/checkin/<%=c[i].id%>/edit"> Edit </a>
-								<a class="btn btn-danger" href="/checkin/<%=c[i].id%>/delete"> Delete </a>
-							</td>
-						</tr>
-					<% } %>
-					</tbody>
-				</table>
-
-			<% } else { %>
-
-				<h4 class="text-center muted">No checkins available</h4>
-
-			<% } %>
-
+		<div class="header-actions">
+			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
 		</div>
 	</div>
 
+	<% if(c.length) { %>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<td class="col-md-9">
+						<strong>Checkin</strong>
+					</td>
+					<td>
+						<strong>Update </strong>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+			<% for (var i = 0; i < c.length; i++) { %>
+				<tr>
+					<td>
+						<a href='/checkin/<%=c[i].id%>'><%=: c[i].timestamp | fromNow %>
+					</td>
+					<td>
+						<a class="btn btn-primary" href="/checkin/<%=c[i].id%>/edit"> Edit </a>
+						<a class="btn btn-danger" href="/checkin/<%=c[i].id%>/delete"> Delete </a>
+					</td>
+				</tr>
+			<% } %>
+			</tbody>
+		</table>
+
+	<% } else { %>
+
+		<h4 class="text-center text-muted">No checkins available</h4>
+
+	<% } %>
+
 	<div class="js-template js-checkinselector-template">
-		<form action="/provider/user/add" method="post">
+		<form action="/checkin/new" method="post">
 			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-			<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
 
 			<div class="form-group">
 				<label for="templateId">Select checkin type</label>
-				<select class="js-select2" id="templateId" name="templateId">
+				<select class="js-select2" id="id" name="id">
 					<% for(var i = 0; i < checkinTemplates.length; i++) { %>
 						<option value="<%= checkinTemplates[i].id %>">
 							<%= checkinTemplates[i].title %>
@@ -67,4 +64,5 @@
 			</button>
 		</form>
 	</div>
+
 </div>

@@ -5,19 +5,14 @@ module.exports = function() {
 
 	var mongoose = require('mongoose'),
 		util = require('util'),
-		Checkin = mongoose.model('Checkin');
+		Checkin = mongoose.model('Checkin'),
+		CheckinTemplate = mongoose.model('CheckinTemplate');
 
 	var checkinUpdate = function(req, res) {
 		Checkin.findOne({_id: req.params.id}, function(err, c) {
 			if (!c) return res.redirect('/checkin');
 			c.save(function() {
-				switch (req.params.format) {
-				case 'json':
-				res.send(c.__doc);
-				break;
-				default:
 				res.redirect('/checkin');
-				}
 			});
 		});
 	}
@@ -106,9 +101,94 @@ module.exports = function() {
 			});
 
 		});
-	}
+	};
+
+
+
+	var update = function(req, res) {
+
+		if(req.body.id) {
+
+// 			// update
+// 			Checkin.findOne({
+// 				_id: req.body.id
+// 			}, function(err, c) {
+// 				if (!c) return res.redirect('/checkin');
+//
+// 				c.type = req.body.type || c.type;
+// 				c.title = req.body.title || c.title;
+// 				c.question = req.body.question || c.question;
+//
+// 				if(req.body.answers && req.body.answers.length) {
+// 					c.answers = parseForm(req.body).answers;
+// 				};
+//
+// 				c.save(function() {
+// 					res.redirect('/checkin/' + c.id);
+// 				});
+// 			});
+
+		} else {
+
+			var formParams = parseForm(req.body);
+
+			// create
+			var c = new Checkin(formParams);
+
+			c.save(function(err, newCheckin) {
+				 if(err) {
+					console.log(err);
+					res.redirect('/admin');
+				}
+
+				res.redirect('/checkin/' + newCheckin.id);
+			});
+
+		}
+
+	};
+
+	var updateView = function(req, res) {
+
+		Checkin.findOne({
+			_id: req.params.id
+		}, function(err, checkin) {
+			if (!c) return res.redirect('/checkin');
+			res.render('checkin/checkinEdit.ejs', {
+				checkin: checkin
+			});
+		});
+
+	};
+
+	var createView = function (req, res) {
+
+		CheckinTemplate.findOne({
+			_id: req.body.id
+		}, function(err, template) {
+			if (!template) return res.redirect('/checkin');
+
+			res.render('checkin/checkinEdit.ejs', {
+				checkin: {},
+				template: template
+			});
+
+		});
+
+	};
+
+	var remove = function(req, res) {
+
+
+
+	};
 
 	return {
+		createView: createView,
+		update: update,
+		updateView: updateView,
+		remove: remove,
+
 		checkinNew: checkinNew,
 		checkinCreate: checkinCreate,
 		checkinEdit: checkinEdit,
