@@ -19,7 +19,6 @@
 <% } %>
 
 <form role="form" action="/checkintemplate" method="post">
-	<input type="hidden" name="admin" value="true">
 	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 	<input type="hidden" name="id" value="<%= c.id || '' %>">
 

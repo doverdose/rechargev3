@@ -53,10 +53,13 @@ module.exports = function() {
 			}, function(err, c) {
 				if (!c) return res.redirect('/admin');
 
-				c.type = req.body.type;
-				c.title = req.body.title;
-				c.question = req.body.question;
-				c.answers = parseForm(req.body).answers;
+				c.type = req.body.type || c.type;
+				c.title = req.body.title || c.title;
+				c.question = req.body.question || c.question;
+
+				if(req.body.answers && req.body.answers.length) {
+					c.answers = parseForm(req.body).answers;
+				};
 
 				c.save(function() {
 					res.redirect('/checkintemplate/' + c.id);
@@ -75,6 +78,7 @@ module.exports = function() {
 					console.log(err);
 					res.redirect('/admin');
 				}
+
 				res.redirect('/checkintemplate/' + newCheckin.id);
 			});
 
