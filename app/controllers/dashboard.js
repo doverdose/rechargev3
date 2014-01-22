@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
 	Q = require('q'),
 	User = mongoose.model('User'),
 	Checkin = mongoose.model('Checkin'),
+	CheckinTemplate = mongoose.model('CheckinTemplate'),
 	dayMilliseconds = 24 * 60 * 60 * 1000;
 
 var activeUsers = function(day1, day2) {
@@ -78,6 +79,25 @@ var checkinsDays = function(day1, day2) {
 
 };
 
+var checkinTemplatesCount = function(days) {
+
+	// get list of users who have not logged-in for more than #days
+
+	var deferred = Q.defer();
+
+	CheckinTemplate.count({},
+	function(err, checkinTemplatesCount) {
+		if (err) {
+			deferred.reject(new Error(err));
+		} else {
+			deferred.resolve(checkinTemplatesCount);
+		}
+	});
+
+	return deferred.promise;
+
+};
+
 exports.dashboard = function(req, res) {
 
 	var stats = [
@@ -117,6 +137,12 @@ exports.dashboard = function(req, res) {
 		.then(function(users) {
 			stat.users = users;
 
+			return checkinTemplatesCount()
+		})
+		.then(function(checkinTemplates) {
+			// count checkin templates
+			stat.checkinTemplates = checkinTemplates;
+
 			return checkinsDays(stat.days[0], stat.days[1])
 		})
 		.then(function(checkins) {
@@ -124,22 +150,16 @@ exports.dashboard = function(req, res) {
 
 			stat.checkins = checkins.length
 
-			var sumWords = 0,
-				sumQuestions = 0,
-				answeredQuestions = 0;
+			var sumWords = 0;
 
 			checkins.forEach(function(c) {
-				if(c.questions.length) {
-					c.questions.forEach(function(q) {
-						sumWords += countWords(q.answer);
-						sumQuestions++;
-						if(q.answer.length) answeredQuestions++;
-					});
-				};
+				c.answers.forEach(function(answer) {
+					sumWords += countWords(answer.text);
+				});
 			});
 
-			stat.words = parseInt(sumWords / sumQuestions, 10) || 0;
-			stat.completion = parseFloat(Math.round((answeredQuestions / sumQuestions || 0) * 100) / 100).toFixed(1);
+			stat.words = parseInt(sumWords / stat.checkins, 10) || 0;
+			stat.completion = parseFloat(Math.round(stat.checkins / (stat.users * stat.checkinTemplates) * 100)) || 0;
 
 			deferred.resolve();
 
@@ -157,6 +177,8 @@ exports.dashboard = function(req, res) {
 				i++;
 				return iterateUntil(endValue);
 			}
+		}, function(err) {
+			console.log(err);
 		});
 	}
 
