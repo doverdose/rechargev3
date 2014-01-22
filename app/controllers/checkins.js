@@ -8,74 +8,14 @@ module.exports = function() {
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
-	var checkinUpdate = function(req, res) {
+	var view = function(req, res) {
 		Checkin.findOne({_id: req.params.id}, function(err, c) {
 			if (!c) return res.redirect('/checkin');
-			c.save(function() {
-				res.redirect('/checkin');
+
+			res.render('checkin/checkinView.ejs', {
+				c: c,
+				choice: (c.type === 'multiplechoice' || c.type === 'singlechoice')
 			});
-		});
-	}
-
-	var checkinEdit = function(req, res, next) {
-		Checkin.findOne({_id: req.params.id}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
-			switch (req.params.format) {
-			case 'json':
-				res.send(c.__doc);
-				break;
-			default:
-				res.render('checkin/checkin_edit.ejs', {c: c});
-			}
-		});
-	}
-
-	var checkinCreate = function(req, res) {
-		var c = new Checkin(req.body);
-		c.user_id = req.user._id;
-
-		c.save(function() {
-			switch (req.params.format) {
-				case 'json':
-					res.send(c.__doc);
-					break;
-				default:
-					res.redirect('/checkin');
-			}
-		});
-
-	}
-
-	var checkinDelete = function(req, res) {
-
-		Checkin.findOne({
-			_id: req.params.id
-		}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
-
-			c.remove();
-
-			res.redirect('/checkin');
-		});
-
-
-	}
-
-	var checkinNew = function (req, res) {
-		res.render('checkin/checkin_new.ejs', {c: {}});
-	}
-
-	var checkinView = function(req, res) {
-		Checkin.findOne({_id: req.params.id}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
-
-			switch (req.params.format) {
-				case 'json':
-					res.send(c.__doc);
-					break;
-				default:
-					res.render('checkin/checkin.ejs', {c: c});
-			}
 		});
 	}
 
@@ -103,7 +43,26 @@ module.exports = function() {
 		});
 	};
 
+	var parseForm = function(form) {
 
+		var newAnswers = [];
+
+		if(form.answers) {
+			form.answers.forEach(function(answer, i) {
+				// don't add if just whitespace
+				if(answer.trim()) {
+					newAnswers.push({
+						text: answer
+					});
+				}
+			});
+		};
+
+		form.answers = newAnswers;
+
+		return form;
+
+	};
 
 	var update = function(req, res) {
 
@@ -132,13 +91,14 @@ module.exports = function() {
 
 			var formParams = parseForm(req.body);
 
-			// create
+			// create new checkin
 			var c = new Checkin(formParams);
+			c.user_id = req.user.id;
 
 			c.save(function(err, newCheckin) {
 				 if(err) {
 					console.log(err);
-					res.redirect('/admin');
+					res.redirect('/checkin');
 				}
 
 				res.redirect('/checkin/' + newCheckin.id);
@@ -179,7 +139,15 @@ module.exports = function() {
 
 	var remove = function(req, res) {
 
+		Checkin.findOne({
+			_id: req.body.id
+		}, function(err, c) {
+			if (!c) return res.redirect('/checkin');
 
+			c.remove();
+
+			res.redirect('/checkin');
+		});
 
 	};
 
@@ -188,13 +156,7 @@ module.exports = function() {
 		update: update,
 		updateView: updateView,
 		remove: remove,
-
-		checkinNew: checkinNew,
-		checkinCreate: checkinCreate,
-		checkinEdit: checkinEdit,
-		checkinUpdate: checkinUpdate,
-		checkinView: checkinView,
-		checkinDelete: checkinDelete,
+		view: view,
 		list: list
 	}
 

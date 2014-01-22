@@ -18,9 +18,7 @@
 					<td class="col-md-9">
 						<strong>Checkin</strong>
 					</td>
-					<td>
-						<strong>Update </strong>
-					</td>
+					<td></td>
 				</tr>
 			</thead>
 			<tbody>
@@ -30,8 +28,12 @@
 						<a href='/checkin/<%=c[i].id%>'><%=: c[i].timestamp | fromNow %>
 					</td>
 					<td>
-						<a class="btn btn-primary" href="/checkin/<%=c[i].id%>/edit"> Edit </a>
-						<a class="btn btn-danger" href="/checkin/<%=c[i].id%>/delete"> Delete </a>
+						<form action="/checkin/remove" method="post" class="pull-right">
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="id" id="id" value="<%=c[i].id%>">
+
+							<button type="submit" class="btn btn-danger">Remove</button>
+						</form>
 					</td>
 				</tr>
 			<% } %>

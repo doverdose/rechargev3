@@ -216,6 +216,14 @@ body {
 	h3 {
 		float: left;
 		margin: 0;
+
+		small {
+			display: block;
+
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: emCalc(8);
+		}
 	}
 
 	.header-actions {

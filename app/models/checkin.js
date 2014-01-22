@@ -13,9 +13,12 @@ module.exports = function() {
 	*/
 
 	var CheckinSchema = new Schema({
-		templateId: ObjectId,
 		user_id: ObjectId,
-		answer: String,
+		type: String,
+		question: String,
+		answers: [{
+			text: String
+		}],
 		timestamp: {
 			type: Date,
 			default: Date.now

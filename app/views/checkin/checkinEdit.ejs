@@ -13,6 +13,8 @@
 <form role="form" action="/checkin" method="post">
 	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 	<input type="hidden" name="id" value="<%= checkin.id || '' %>">
+	<input type="hidden" name="type" value="<%= template.type %>">
+	<input type="hidden" name="question" value="<%= template.question %>">
 
 	<h3>
 		<%= template.question %>
@@ -36,7 +38,7 @@
 	<% if(template.type === 'text') { %>
 		<div class="form-group">
 			<label for="answer">Answer</label>
-			<textarea class="form-control" id="answer" name="answer"></textarea>
+			<textarea class="form-control" id="answers[]" name="answers[]" required></textarea>
 		</div>
 	<% } %>
 
