@@ -14,23 +14,31 @@
 	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 	<input type="hidden" name="id" value="<%= checkin.id || '' %>">
 
-	<p>
-		<%= template.title %>
-	</p>
-
 	<h3>
 		<%= template.question %>
 	</h3>
 
-	<% if(template.answers && template.answers.length) { %>
-	<ul>
-		<% for(var i=0; i < template.answers.length; i++) { %>
-			<li>
-				<%= template.answers[i].text %>
-			</li>
-		<% } %>
-	</ul>
+	<% if(template.type === 'multiplechoice' || template.type === 'singlechoice') { %>
+		<% if(template.answers && template.answers.length) { %>
+			<% for(var i=0; i < template.answers.length; i++) { %>
+				<div class="form-group">
+					<div class="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>">
+						<label>
+							<input type="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>" name="answers[]" value="<%= template.answers[i].text %>">
+							<%= template.answers[i].text %>
+						</label>
+					</div>
+				</div>
+			<% } %>
+		<% }%>
 	<% }%>
+
+	<% if(template.type === 'text') { %>
+		<div class="form-group">
+			<label for="answer">Answer</label>
+			<textarea class="form-control" id="answer" name="answer"></textarea>
+		</div>
+	<% } %>
 
 	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
 		<% if(checkin.id) { %>

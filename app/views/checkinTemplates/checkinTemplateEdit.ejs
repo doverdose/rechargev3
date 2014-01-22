@@ -25,8 +25,7 @@
 	<div class="form-group">
 		<label for="type">Checkin type</label>
 		<select class="form-control js-visibility-select" name="type" id="type">
-			<option value="longtext" <%= c.type === 'longtext' && 'selected' %>>Long text</option>
-			<option value="shorttext" <%= c.type === 'shorttext' && 'selected' %>>Short text</option>
+			<option value="text" <%= c.type === 'text' && 'selected' %>>Text</option>
 			<option data-show=".possible-answers" value="singlechoice" <%= c.type === 'singlechoice' && 'selected' %>>Single choice</option>
 			<option data-show=".possible-answers" value="multiplechoice" <%= c.type === 'multiplechoice' && 'selected' %>>Multiple choice</option>
 		</select>
