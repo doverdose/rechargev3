@@ -5,6 +5,7 @@ module.exports = function() {
 
 	var mongoose = require('mongoose'),
 		util = require('util'),
+		extend = require('util-extend'),
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
@@ -89,20 +90,30 @@ module.exports = function() {
 
 		} else {
 
-			var formParams = parseForm(req.body);
+			CheckinTemplate.findOne({
+				_id: req.body.templateId
+			}, function(err, template) {
+				if (!template) return res.redirect('/checkin');
 
-			// create new checkin
-			var c = new Checkin(formParams);
-			c.user_id = req.user.id;
 
-			c.save(function(err, newCheckin) {
-				 if(err) {
-					console.log(err);
-					res.redirect('/checkin');
-				}
+				// TODO extend checkin template, and fill in req.body details
+				var formParams = parseForm(req.body);
 
-				res.redirect('/checkin/' + newCheckin.id);
+				// create new checkin
+				var checkin = new Checkin(formParams);
+				checkin.user_id = req.user.id;
+
+				checkin.save(function(err, newCheckin) {
+					if(err) {
+						console.log(err);
+						res.redirect('/checkin');
+					}
+
+					res.redirect('/checkin/' + newCheckin.id);
+				});
+
 			});
+
 
 		}
 

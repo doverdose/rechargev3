@@ -13,8 +13,7 @@
 <form role="form" action="/checkin" method="post">
 	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 	<input type="hidden" name="id" value="<%= checkin.id || '' %>">
-	<input type="hidden" name="type" value="<%= template.type %>">
-	<input type="hidden" name="question" value="<%= template.question %>">
+	<input type="hidden" name="templateId" value="<%= template.id %>">
 
 	<h3>
 		<%= template.question %>

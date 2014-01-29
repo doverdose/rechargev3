@@ -11,11 +11,11 @@ module.exports = function() {
 	/**
 	* Checkin Schema
 	*/
-
 	var CheckinSchema = new Schema({
 		user_id: ObjectId,
 		type: String,
 		question: String,
+		tips: String,
 		answers: [{
 			text: String
 		}],
@@ -32,7 +32,6 @@ module.exports = function() {
 	CheckinSchema.virtual('id').get(function() {
 		return this._id.toHexString();
 	});
-
 
 	mongoose.model('Checkin', CheckinSchema)
 

@@ -12,25 +12,40 @@
 
 	<% if(c.length) { %>
 
-		<table class="table">
-			<tbody>
-			<% for (var i = 0; i < c.length; i++) { %>
-				<tr>
-					<td>
-						<a href='/checkin/<%=c[i].id%>'><%=: c[i].timestamp | fromNow %>
-					</td>
-					<td>
-						<form action="/checkin/remove" method="post" class="pull-right">
-							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-							<input type="hidden" name="id" id="id" value="<%=c[i].id%>">
+		<div class="list-group checkin-list">
 
-							<button type="submit" class="btn btn-danger">Remove</button>
-						</form>
-					</td>
-				</tr>
-			<% } %>
-			</tbody>
-		</table>
+		<% for (var i = 0; i < c.length; i++) { %>
+
+			<div href="#" class="list-group-item">
+
+				<div class="row">
+
+					<a href="/checkin/<%=c[i].id%>" class="col-xs-8">
+						<small title="<%= c[i].timestamp %>">
+							<%=: c[i].timestamp | fromNow %>
+						</small>
+						<h3 data-toggle="tooltip" data-placement="bottom" title="<%= c[i].tips || '' %>">
+							<%= c[i].question %>
+						</h3>
+
+						<%= c[i].answers %>
+
+					</a>
+
+					<form action="/checkin/remove" method="post" class="text-right col-xs-4">
+						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+						<input type="hidden" name="id" id="id" value="<%=c[i].id%>">
+
+						<button type="submit" class="btn btn-danger">Remove</button>
+					</form>
+
+				</div>
+
+			</div>
+
+		<% } %>
+
+		</div>
 
 	<% } else { %>
 

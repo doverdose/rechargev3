@@ -186,6 +186,26 @@ body {
 	margin-bottom: emCalc(12);
 }
 
+/* Checkins
+ */
+.checkin-list {
+
+	.list-group-item {
+
+		a {
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		h3 {
+			margin: 0;
+		}
+
+	}
+
+}
+
 /* JS visibility selector
  */
 .js-visibility-select-hide {
