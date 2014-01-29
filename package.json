@@ -20,7 +20,8 @@
 		"async": "~0",
 		"connect-livereload" : "*",
 		"mquery" : "*", 
-		"mongodb" : "*"
+		"mongodb" : "*",
+		"util-extend": "~1.0"
 	},
 	"devDependencies": {
 		"supertest": "latest",
