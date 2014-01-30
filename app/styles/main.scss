@@ -38,10 +38,11 @@ body {
 	display: none;
 }
 
-.form-inline {
-	display: inline-block;
+.small-title {
+	font-weight: bold;
+	font-size: emCalc(12);
+	text-transform: uppercase;
 }
-
 
 /* Navbar
  */
@@ -198,11 +199,20 @@ body {
 			}
 		}
 
+		small {
+			display: block;
+		}
+
 		h3 {
+			display: inline-block;
 			margin: 0;
 		}
 
 	}
+
+}
+
+.checkin-edit {
 
 }
 

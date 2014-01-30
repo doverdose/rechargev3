@@ -1,51 +1,81 @@
 <% layout('../layouts/default') -%>
 
-<div class="page-header">
-	<h2>
-		<% if(checkin.id) { %>
-			Edit checkin
-		<% } else { %>
-			New checkin
-		<% } %>
-	</h2>
-</div>
+<div class="checkin-edit">
 
-<form role="form" action="/checkin" method="post">
-	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-	<input type="hidden" name="id" value="<%= checkin.id || '' %>">
-	<input type="hidden" name="templateId" value="<%= template.id %>">
+	<div class="page-header">
+		<h3>
+			<small>
+				<% if(checkin.id) { %>
+					Edit checkin
+				<% } else { %>
+					New checkin
+				<% } %>
+			</small>
 
-	<h3>
-		<%= template.question %>
-	</h3>
+			<%= template.question %>
 
-	<% if(template.type === 'multiplechoice' || template.type === 'singlechoice') { %>
-		<% if(template.answers && template.answers.length) { %>
-			<% for(var i=0; i < template.answers.length; i++) { %>
-				<div class="form-group">
-					<div class="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>">
-						<label>
-							<input type="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>" name="answers[]" value="<%= template.answers[i].text %>">
-							<%= template.answers[i].text %>
-						</label>
-					</div>
+		</h3>
+	</div>
+
+	<form role="form" action="/checkin" method="post">
+		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+		<input type="hidden" name="id" value="<%= checkin.id || '' %>">
+		<input type="hidden" name="templateId" value="<%= template.id %>">
+
+		<label for="answer" class="text-muted">
+			Answer(s)
+		</label>
+
+		<div class="row">
+
+			<div class="col-sm-5 col-sm-push-7">
+
+				<div class="alert alert-info">
+					<h4 class="small-title">
+						<i class="glyphicon glyphicon-question-sign"></i> Tips:
+					</h4>
+
+					<p>
+						<%= template.tips %>
+					</p>
 				</div>
-			<% } %>
-		<% }%>
-	<% }%>
 
-	<% if(template.type === 'text') { %>
-		<div class="form-group">
-			<label for="answer">Answer</label>
-			<textarea class="form-control" id="answers[]" name="answers[]" required></textarea>
+			</div>
+
+			<div class="col-sm-7 col-sm-pull-5">
+
+				<% if(template.type === 'multiplechoice' || template.type === 'singlechoice') { %>
+					<% if(template.answers && template.answers.length) { %>
+						<% for(var i=0; i < template.answers.length; i++) { %>
+							<div class="form-group">
+								<div class="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>">
+									<label>
+										<input type="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>" name="answers[]" value="<%= template.answers[i].text %>">
+										<%= template.answers[i].text %>
+									</label>
+								</div>
+							</div>
+						<% } %>
+					<% }%>
+				<% }%>
+
+				<% if(template.type === 'text') { %>
+					<div class="form-group">
+						<textarea class="form-control" id="answers[]" name="answers[]" required></textarea>
+					</div>
+				<% } %>
+
+			</div>
+
 		</div>
-	<% } %>
 
-	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
-		<% if(checkin.id) { %>
-			Update checkin
-		<% } else { %>
-			Make new checkin
-		<% } %>
-	</button>
-</form>
+		<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+			<% if(checkin.id) { %>
+				Update checkin
+			<% } else { %>
+				Make new checkin
+			<% } %>
+		</button>
+	</form>
+
+</div>

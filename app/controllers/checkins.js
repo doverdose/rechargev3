@@ -48,7 +48,7 @@ module.exports = function() {
 
 		var newAnswers = [];
 
-		if(form.answers) {
+		if(form.answers && form.answers.length) {
 			form.answers.forEach(function(answer, i) {
 				// don't add if just whitespace
 				if(answer.trim()) {
@@ -90,14 +90,18 @@ module.exports = function() {
 
 		} else {
 
-			CheckinTemplate.findOne({
+			CheckinTemplate.findOne().lean().exec({
 				_id: req.body.templateId
 			}, function(err, template) {
 				if (!template) return res.redirect('/checkin');
 
+				// remove template id and answers to use the ones from req
+				delete template._id;
+				delete template.answers;
 
-				// TODO extend checkin template, and fill in req.body details
-				var formParams = parseForm(req.body);
+				// extend checkin template, and fill in req.body details
+				template = extend(template, req.body);
+				var formParams = parseForm(template);
 
 				// create new checkin
 				var checkin = new Checkin(formParams);

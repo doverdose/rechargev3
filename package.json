@@ -19,7 +19,7 @@
 		"email-templates": "~0",
 		"async": "~0",
 		"connect-livereload" : "*",
-		"mquery" : "*", 
+		"mquery" : "*",
 		"mongodb" : "*",
 		"util-extend": "~1.0"
 	},

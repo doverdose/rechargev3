@@ -16,21 +16,22 @@
 
 		<% for (var i = 0; i < c.length; i++) { %>
 
-			<div href="#" class="list-group-item">
+			<div class="list-group-item">
 
 				<div class="row">
 
-					<a href="/checkin/<%=c[i].id%>" class="col-xs-8">
-						<small title="<%= c[i].timestamp %>">
-							<%=: c[i].timestamp | fromNow %>
-						</small>
-						<h3 data-toggle="tooltip" data-placement="bottom" title="<%= c[i].tips || '' %>">
-							<%= c[i].question %>
-						</h3>
+					<div class="col-xs-8">
+						<a href="/checkin/<%=c[i].id%>">
 
-						<%= c[i].answers %>
+							<small title="<%= c[i].timestamp %>">
+								<%=: c[i].timestamp | fromNow %>
+							</small>
 
-					</a>
+							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= c[i].tips || '' %>">
+								<%= c[i].question %>
+							</h3>
+						</a>
+					</div>
 
 					<form action="/checkin/remove" method="post" class="text-right col-xs-4">
 						<input type="hidden" name="_csrf" value="<%= csrf_token %>">

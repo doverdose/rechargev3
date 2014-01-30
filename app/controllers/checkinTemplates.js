@@ -27,7 +27,7 @@ module.exports = function() {
 
 		var newAnswers = [];
 
-		if(form.answers) {
+		if(form.answers && form.answers.length) {
 			form.answers.forEach(function(answer, i) {
 				// don't add if just whitespace
 				if(answer.trim()) {
@@ -55,9 +55,7 @@ module.exports = function() {
 				if (!c) return res.redirect('/admin');
 
 				// update checkin with
-				extend(c, req.body);
-
-				console.log(req.body);
+				req.body = extend(c.toObject(), req.body);
 
 				// parse the array of answers, and turn it into an array of objects
 				if(req.body.answers && req.body.answers.length) {
