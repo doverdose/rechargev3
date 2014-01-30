@@ -30,15 +30,17 @@
 
 			<div class="col-sm-5 col-sm-push-7">
 
-				<div class="alert alert-info">
-					<h4 class="small-title">
-						<i class="glyphicon glyphicon-question-sign"></i> Tips:
-					</h4>
+				<% if(template.tips) { %>
+					<div class="alert alert-info">
+						<h4 class="small-title">
+							<i class="glyphicon glyphicon-question-sign"></i> Tips:
+						</h4>
 
-					<p>
-						<%= template.tips %>
-					</p>
-				</div>
+						<p>
+							<%= template.tips %>
+						</p>
+					</div>
+				<% } %>
 
 			</div>
 

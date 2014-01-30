@@ -94,10 +94,13 @@ module.exports = function() {
 			}, function(err, template) {
 				if (!template) return res.redirect('/checkin');
 
-				// update the checkin template, and fill in req.body details
-				template.answers = req.body.answers || [];
+				// copy the properties from the checkin template
+				req.body.type = template.type;
+				req.body.title = template.title;
+				req.body.question = template.question;
+				req.body.tips = template.tips;
 
-				var formParams = parseForm(template);
+				var formParams = parseForm(req.body);
 
 				// create new checkin
 				var checkin = new Checkin(formParams);
