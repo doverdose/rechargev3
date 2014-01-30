@@ -37,14 +37,17 @@ var userPatient = {
 describe('Checkins', function () {
 
 	before(function(done) {
+		require('./helper').clearDb(function() {
 
-		// create new patient
-		var patient = new User(userPatient);
-		patient.save(function() {
+			// create new patient
+			var patient = new User(userPatient);
+			patient.save(function() {
 
-			// create a new checkin template
-			var checkin = new CheckinTemplate(checkinTemplateMchoice);
-			checkin.save(done);
+				// create a new checkin template
+				var checkin = new CheckinTemplate(checkinTemplateMchoice);
+				checkin.save(done);
+
+			});
 
 		});
 
@@ -129,7 +132,4 @@ describe('Checkins', function () {
 
 	});
 
-	after(function (done) {
-		require('./helper').clearDb(done);
-	});
 });

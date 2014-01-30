@@ -5,7 +5,6 @@ module.exports = function() {
 
 	var mongoose = require('mongoose'),
 		util = require('util'),
-		extend = require('util-extend'),
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
@@ -95,12 +94,9 @@ module.exports = function() {
 			}, function(err, template) {
 				if (!template) return res.redirect('/checkin');
 
-				// remove template id and answers to use the ones from req
-				delete template._id;
-				delete template.answers;
+				// update the checkin template, and fill in req.body details
+				template.answers = req.body.answers || [];
 
-				// extend checkin template, and fill in req.body details
-				template = extend(template, req.body);
 				var formParams = parseForm(template);
 
 				// create new checkin

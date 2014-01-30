@@ -49,6 +49,10 @@ var count,
 
 describe('Users', function () {
 
+	before(function(done) {
+		require('./helper').clearDb(done);
+	});
+
 	describe('Create new Patient/Signup', function () {
 
 		it('should register the new user and redirect to /', function (done) {
@@ -1057,7 +1061,4 @@ describe('Users', function () {
 
 	});
 
-	after(function (done) {
-		require('./helper').clearDb(done);
-	})
 })

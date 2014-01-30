@@ -40,9 +40,15 @@ var count,
 describe('Admin', function () {
 
 	before(function (done) {
-		// create a new admin user
-		var admin = new User(adminUser);
-		admin.save(done);
+
+		require('./helper').clearDb(function() {
+
+			// create a new admin user
+			var admin = new User(adminUser);
+			admin.save(done);
+
+		});
+
 	})
 
 	describe('GET /admin', function () {
@@ -129,9 +135,6 @@ describe('Admin', function () {
 				.end(done)
 			})
 		})
-	})
+	});
 
-	after(function (done) {
-		require('./helper').clearDb(done);
-	})
 })

@@ -30,9 +30,15 @@ var adminUser = {
 describe('Checkin Template', function () {
 
 	before(function (done) {
-		// create a new admin user
-		var admin = new User(adminUser);
-		admin.save(done);
+
+		require('./helper').clearDb(function() {
+
+			// create a new admin user
+			var admin = new User(adminUser);
+			admin.save(done);
+
+		});
+
 	});
 
 	describe('POST /checkintemplate', function () {
@@ -148,7 +154,4 @@ describe('Checkin Template', function () {
 
 	});
 
-	after(function (done) {
-		require('./helper').clearDb(done);
-	});
 });

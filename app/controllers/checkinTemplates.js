@@ -5,7 +5,6 @@ module.exports = function() {
 
 	var mongoose = require('mongoose'),
 		util = require('util'),
-		extend = require('util-extend'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
 	var remove = function(req, res) {
@@ -55,7 +54,10 @@ module.exports = function() {
 				if (!c) return res.redirect('/admin');
 
 				// update checkin with
-				req.body = extend(c.toObject(), req.body);
+				c.type = req.body.type || c.type;
+				c.title = req.body.title || c.title;
+				c.question = req.body.question || c.question;
+				c.tips = req.body.tips || c.tips;
 
 				// parse the array of answers, and turn it into an array of objects
 				if(req.body.answers && req.body.answers.length) {
