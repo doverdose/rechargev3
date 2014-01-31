@@ -89,10 +89,12 @@ module.exports = function() {
 
 		} else {
 
-			CheckinTemplate.findOne().lean().exec({
+			CheckinTemplate.findOne({
 				_id: req.body.templateId
 			}, function(err, template) {
 				if (!template) return res.redirect('/checkin');
+
+				template = template.toObject();
 
 				// copy the properties from the checkin template
 				req.body.type = template.type;
