@@ -3,7 +3,9 @@
 <div class="js-checkinselector-container">
 
 	<div class="page-header">
-		<h2>Check-ins</h2>
+		<h2>
+			Check-ins
+		</h2>
 
 		<div class="header-actions">
 			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
@@ -11,6 +13,38 @@
 	</div>
 
 	<% if(c.length) { %>
+
+		<%
+			var scoreClass = 'warning';
+
+			if(totalScore > 10) {
+				scoreClass = 'info';
+			}
+
+			if(totalScore > 50) {
+				scoreClass = 'success';
+			}
+		%>
+
+		<div class="alert alert-dismissable alert-<%= scoreClass %>">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+			<p>
+				<strong>Your current check-in score is <%= totalScore %>. </strong>
+			</p>
+
+			<% if(scoreClass === 'warning') { %>
+				Improve it by checking-in more often.
+			<% } %>
+
+			<% if(scoreClass === 'info') { %>
+				Keep up the good work!
+			<% } %>
+
+			<% if(scoreClass === 'success') { %>
+				Great work!
+			<% } %>
+		</div>
 
 		<div class="list-group checkin-list">
 

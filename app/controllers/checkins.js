@@ -29,13 +29,22 @@ module.exports = function() {
 
 			if (err) throw err;
 
+			// calculate user score
+			var totalScore = 0;
+			checkins.forEach(function(checkin, i) {
+				totalScore += checkin.score || 0;
+			});
+
+			// get list of checkin templates to
+			// show them in the new checkin selector
 			CheckinTemplate.find({}, function(err, checkinTemplates) {
 
 				if (err) throw err;
 
 				res.render('checkin/list.ejs', {
 					c: checkins.reverse(),
-					checkinTemplates: checkinTemplates
+					checkinTemplates: checkinTemplates,
+					totalScore: totalScore
 				});
 
 			});
