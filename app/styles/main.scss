@@ -212,6 +212,18 @@ body {
 
 }
 
+/* List groups
+ */
+.list-group-item {
+	background: transparent;
+	border-color: lighten($black, 70%);
+	border-width: 1px 0 0;
+
+	&:first-child {
+		border: 0;
+	}
+}
+
 .checkin-edit {
 
 }
