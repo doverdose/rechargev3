@@ -46,7 +46,7 @@
 
 			<div class="col-sm-7 col-sm-pull-5">
 
-				<% if(template.type === 'multiplechoice' || template.type === 'singlechoice') { %>
+				<% if(template.type.indexOf('choice') !== -1) { %>
 					<% if(template.answers && template.answers.length) { %>
 						<% for(var i=0; i < template.answers.length; i++) { %>
 							<div class="form-group">

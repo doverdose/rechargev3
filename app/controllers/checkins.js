@@ -14,7 +14,7 @@ module.exports = function() {
 
 			res.render('checkin/checkinView.ejs', {
 				c: c,
-				choice: (c.type === 'multiplechoice' || c.type === 'singlechoice')
+				choice: (c.type.indexOf('choice') !== -1)
 			});
 		});
 	}

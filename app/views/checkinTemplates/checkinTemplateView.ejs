@@ -1,6 +1,5 @@
 <% layout('../layouts/default') -%>
 
-
 <div class="page-header">
 	<form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
 		<a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
@@ -29,14 +28,14 @@
 	<%= c.tips %>
 </p>
 
-<% if(c.answers && c.answers.length) { %>
-<h4 class="text-muted">Possible answers:</h4>
-<ul>
-	<% for(var i=0; i < c.answers.length; i++) { %>
-		<li>
-			<%= c.answers[i].text %>
-		</li>
-	<% } %>
-</ul>
+<% if(c.type.indexOf('choice') !== -1 && c.answers && c.answers.length) { %>
+	<h4 class="text-muted">Possible answers:</h4>
+	<ul>
+		<% for(var i=0; i < c.answers.length; i++) { %>
+			<li>
+				<%= c.answers[i].text %>
+			</li>
+		<% } %>
+	</ul>
 <% }%>
 
