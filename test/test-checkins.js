@@ -44,8 +44,13 @@ describe('Checkins', function () {
 			patient.save(function() {
 
 				// create a new checkin template
-				var checkin = new CheckinTemplate(checkinTemplateMchoice);
-				checkin.save(done);
+				var template = new CheckinTemplate(checkinTemplateMchoice);
+				template.save(function(err, ctemplate) {
+					// set the new checkinTemplate id on the checkin data
+					checkinData.templateId = ctemplate._id;
+
+					done();
+				});
 
 			});
 
