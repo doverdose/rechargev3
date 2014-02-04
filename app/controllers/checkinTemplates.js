@@ -58,6 +58,7 @@ module.exports = function() {
 				c.title = req.body.title || c.title;
 				c.question = req.body.question || c.question;
 				c.tips = req.body.tips || c.tips;
+				c.score = req.body.score || c.score;
 
 				// parse the array of answers, and turn it into an array of objects
 				if(req.body.answers && req.body.answers.length) {

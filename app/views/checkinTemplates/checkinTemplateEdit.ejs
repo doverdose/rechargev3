@@ -33,7 +33,12 @@
 
 	<div class="form-group">
 		<label for="title">Title</label>
-		<input type="text" class="form-control" id="title" name="title" value="<%= c.title || ''%>">
+		<input type="text" class="form-control" id="title" name="title" value="<%= c.title || ''%>" required>
+	</div>
+
+	<div class="form-group">
+		<label for="score">Score</label>
+		<input type="text" class="form-control" id="score" name="score" value="<%= c.score || '0' %>" required>
 	</div>
 
 	<div class="form-group">
@@ -43,7 +48,7 @@
 
 	<div class="form-group">
 		<label for="question">Question</label>
-		<textarea class="form-control" id="question" name="question"><%= c.question || '' %></textarea>
+		<textarea class="form-control" id="question" name="question" required><%= c.question || '' %></textarea>
 	</div>
 
 	<div class="possible-answers js-clone-field js-visibility-select-hide" data-clone=".form-group">
@@ -67,7 +72,7 @@
 			<div class="input-group form-group">
 				<input type="text" class="form-control" name="answers[]" value="">
 				<span class="input-group-btn">
-					<button class="btn btn-danger js-remove-field-btn" type="button" title="Remove answer">
+					<button class="btn btn-danger js-remove-field-btn" type="button" title="Remove answer" disabled>
 						<i class="glyphicon glyphicon-remove-circle"></i>
 					</button>
 				</span>

@@ -16,6 +16,7 @@ module.exports = function() {
 		type: String,
 		question: String,
 		tips: String,
+		score: Number,
 		answers: [{
 			text: String
 		}],
@@ -36,5 +37,5 @@ module.exports = function() {
 	mongoose.model('Checkin', CheckinSchema)
 
 	return {};
-	
+
 }();

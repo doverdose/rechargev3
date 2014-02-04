@@ -101,6 +101,7 @@ module.exports = function() {
 				req.body.title = template.title;
 				req.body.question = template.question;
 				req.body.tips = template.tips;
+				req.body.score = template.score;
 
 				var formParams = parseForm(req.body);
 
