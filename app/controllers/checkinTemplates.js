@@ -111,7 +111,16 @@ module.exports = function() {
 	}
 
 	var createView = function (req, res) {
-		res.render('checkinTemplates/checkinTemplateEdit.ejs', { c: {} });
+
+		// we do this so we can re-use the same template
+		// when both editing and creating templates
+		var c = {
+			answers: [{ text: '' }]
+		};
+
+		res.render('checkinTemplates/checkinTemplateEdit.ejs', {
+			c: c
+		});
 	}
 
 	var view = function(req, res) {
