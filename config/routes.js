@@ -7,6 +7,7 @@ var express = require('express'),
 	settings = require('../app/controllers/settings'),
 	providers = require('../app/controllers/providers'),
 	admin = require('../app/controllers/admin'),
+	schedules = require('../app/controllers/schedules'),
 	auth = require('./middlewares/authorization');
 
 module.exports = function(app, passport) {
@@ -50,15 +51,17 @@ module.exports = function(app, passport) {
 	app.post('/provider/approve', auth.requiresLogin, providers.approve);
 	app.post('/provider/revoke', auth.requiresLogin, providers.revoke);
 
+	app.post('/schedule', auth.requiresLogin, auth.requiresAdmin, schedules.update);
+	app.post('/schedule/remove', auth.requiresLogin, auth.requiresAdmin, schedules.remove);
+	app.get('/schedule/new', auth.requiresLogin, auth.requiresAdmin, schedules.createView);
+	app.get('/schedule/:id', auth.requiresLogin, auth.requiresAdmin, schedules.view);
+	app.get('/schedule/:id/edit', auth.requiresLogin, auth.requiresAdmin, schedules.updateView);
+
 	app.post('/checkintemplate', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.update);
 	app.post('/checkintemplate/remove', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.remove);
 	app.get('/checkintemplate/new', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.createView);
 	app.get('/checkintemplate/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.view);
 	app.get('/checkintemplate/:id/edit', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.updateView);
-
-// 	app.put('/checkin/:id.:format?', auth.requiresLogin, checkin.checkinUpdate);
-// 	app.get('/checkin/new', auth.requiresLogin, checkin.checkinNew);
-// 	app.get('/checkin/:id/delete', auth.requiresLogin, checkin.checkinDelete);
 
 	app.post('/checkin', auth.requiresLogin, checkin.update);
 	app.post('/checkin/remove', auth.requiresLogin, checkin.remove);

@@ -5,105 +5,167 @@
 	<h2>Administration</h2>
 </div>
 
-<div class="row stats">
-	<div class="col-xs-6">
-		<h3>Providers</h3>
+<ul class="nav nav-tabs">
+	<li class="active">
+		<a href="#providers" data-toggle="tab">Providers</a>
+	</li>
+	<li>
+		<a href="#patients" data-toggle="tab">Patients</a>
+	</li>
+	<li>
+		<a href="#checkin-templates" data-toggle="tab">Checkin templates</a>
+	</li>
+	<li>
+		<a href="#checkin-schedules" data-toggle="tab">Checkin schedules</a>
+	</li>
+</ul>
+
+<div class="tab-content">
+
+	<div class="tab-pane active" id="providers">
+
+		<div class="row stats">
+			<div class="col-xs-12 text-right">
+				<a class="btn btn-default" href="/user/new">
+					<i class="glyphicon glyphicon-plus"></i>
+					New provider
+				</a>
+			</div>
+		</div>
+
+		<% for(var i = 0; i < providers.length; i++) { %>
+			<div class="row stats">
+				<div class="col-xs-6">
+					<a href="/user/<%= providers[i].id %>">
+						<%= providers[i].name %>
+					</a>
+				</div>
+				<div class="col-xs-6 text-right">
+					<form action="/user/delete" method="post">
+						<a class="btn btn-primary" href="/user/<%= providers[i].id %>/edit"> Edit </a>
+
+						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+						<input type="hidden" name="userId" id="userId" value="<%= providers[i].id %>">
+						<button type="submit" class="btn btn-danger">
+							Delete
+						</button>
+					</form>
+				</div>
+			</div>
+		<% } %>
+
+		<% if(!providers.length) { %>
+			<h4 class="text-muted text-center">There are no providers. </h4>
+		<% } %>
+
 	</div>
-	<div class="col-xs-6 text-right">
-		<a class="btn btn-default" href="/user/new">
-			<i class="glyphicon glyphicon-plus"></i>
-			New provider
-		</a>
+
+	<div class="tab-pane" id="patients">
+
+		<div class="row stats">
+			<div class="col-xs-12 text-right">
+				<a class="btn btn-default" href="/user/new">
+					<i class="glyphicon glyphicon-plus"></i>
+					New patient
+				</a>
+			</div>
+		</div>
+
+		<% for(var i = 0; i < patients.length; i++) { %>
+			<div class="row stats">
+				<div class="col-xs-6">
+					<a href="/user/<%= patients[i].id %>">
+						<%= patients[i].name %>
+					</a>
+				</div>
+				<div class="col-xs-6 text-right">
+					<a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
+					<a class="btn btn-danger" href="/user/<%= patients[i].id %>/delete"> Delete </a>
+				</div>
+			</div>
+		<% } %>
+
+		<% if(!patients.length) { %>
+			<h4 class="text-muted text-center">There are no patients. </h4>
+		<% } %>
+
 	</div>
+
+	<div class="tab-pane" id="checkin-templates">
+
+		<div class="row stats">
+			<div class="col-xs-12 text-right">
+				<a class="btn btn-default" href="/checkintemplate/new">
+					<i class="glyphicon glyphicon-plus"></i>
+					New checkin template
+				</a>
+			</div>
+		</div>
+
+		<% for(var i = 0; i < checkinTemplates.length; i++) { %>
+			<div class="row stats">
+				<div class="col-xs-6">
+					<a href="/checkintemplate/<%= checkinTemplates[i].id %>">
+						<%= checkinTemplates[i].title %>
+					</a>
+				</div>
+				<div class="col-xs-6 text-right">
+					<form action="/checkintemplate/remove" method="post" class="form-inline">
+						<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit">Edit</a>
+
+						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+						<input type="hidden" name="id" id="id" value="<%= checkinTemplates[i].id %>">
+
+						<button type="submit" class="btn btn-danger">Delete</button>
+					</form>
+				</div>
+			</div>
+		<% } %>
+
+		<% if(!checkinTemplates.length) { %>
+			<h4 class="text-muted text-center">There are no checkin templates. </h4>
+		<% } %>
+
+	</div>
+
+	<div class="tab-pane" id="checkin-schedules">
+
+		<div class="row stats">
+			<div class="col-xs-12 text-right">
+				<a class="btn btn-default" href="/schedule/new">
+					<i class="glyphicon glyphicon-plus"></i>
+					New checkin schedule
+				</a>
+			</div>
+		</div>
+
+		<% for(var i = 0; i < schedules.length; i++) { %>
+			<div class="row stats">
+				<div class="col-xs-6">
+					<a href="/schedule/<%= schedules[i].id %>">
+						<%= schedules[i].title %>
+					</a>
+				</div>
+				<div class="col-xs-6 text-right">
+					<form action="/schedule/remove" method="post" class="form-inline">
+						<a class="btn btn-primary" href="/schedule/<%= schedules[i].id %>/edit">Edit</a>
+
+						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+						<input type="hidden" name="id" id="id" value="<%= schedules[i].id %>">
+
+						<button type="submit" class="btn btn-danger">Delete</button>
+					</form>
+				</div>
+			</div>
+		<% } %>
+
+		<% if(!schedules.length) { %>
+			<h4 class="text-muted text-center">There are check-in schedules set-up. </h4>
+		<% } %>
+
+	</div>
+
 </div>
 
-<% for(var i = 0; i < providers.length; i++) { %>
-	<div class="row stats">
-		<div class="col-xs-6">
-			<a href="/user/<%= providers[i].id %>">
-				<%= providers[i].name %>
-			</a>
-		</div>
-		<div class="col-xs-6 text-right">
-			<form action="/user/delete" method="post">
-				<a class="btn btn-primary" href="/user/<%= providers[i].id %>/edit"> Edit </a>
 
-				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-				<input type="hidden" name="userId" id="userId" value="<%= providers[i].id %>">
-				<button type="submit" class="btn btn-danger">
-					Delete
-				</button>
-			</form>
-		</div>
-	</div>
-<% } %>
 
-<% if(!providers.length) { %>
-	<h4 class="text-muted text-center">There are no providers. </h4>
-<% } %>
-
-<div class="row stats">
-	<div class="col-xs-6">
-		<h3>Patients</h3>
-	</div>
-	<div class="col-xs-6 text-right">
-		<a class="btn btn-default" href="/user/new">
-			<i class="glyphicon glyphicon-plus"></i>
-			New patient
-		</a>
-	</div>
-</div>
-
-<% for(var i = 0; i < patients.length; i++) { %>
-	<div class="row stats">
-		<div class="col-xs-6">
-			<a href="/user/<%= patients[i].id %>">
-				<%= patients[i].name %>
-			</a>
-		</div>
-		<div class="col-xs-6 text-right">
-			<a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
-			<a class="btn btn-danger" href="/user/<%= patients[i].id %>/delete"> Delete </a>
-		</div>
-	</div>
-<% } %>
-
-<% if(!patients.length) { %>
-	<h4 class="text-muted text-center">There are no patients. </h4>
-<% } %>
-
-<div class="row stats">
-	<div class="col-xs-6">
-		<h3>Checkin Templates</h3>
-	</div>
-	<div class="col-xs-6 text-right">
-		<a class="btn btn-default" href="/checkintemplate/new">
-			<i class="glyphicon glyphicon-plus"></i>
-			New checkin template
-		</a>
-	</div>
-</div>
-
-<% for(var i = 0; i < checkinTemplates.length; i++) { %>
-	<div class="row stats">
-		<div class="col-xs-6">
-			<a href="/checkintemplate/<%= checkinTemplates[i].id %>">
-				<%= checkinTemplates[i].title %>
-			</a>
-		</div>
-		<div class="col-xs-6 text-right">
-			<form action="/checkintemplate/remove" method="post" class="form-inline">
-				<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit">Edit</a>
-
-				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-				<input type="hidden" name="id" id="id" value="<%= checkinTemplates[i].id %>">
-
-				<button type="submit" class="btn btn-danger">Delete</button>
-			</form>
-		</div>
-	</div>
-<% } %>
-
-<% if(!checkinTemplates.length) { %>
-	<h4 class="text-muted text-center">There are no checkin templates. </h4>
-<% } %>

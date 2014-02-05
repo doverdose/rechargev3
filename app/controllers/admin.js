@@ -6,6 +6,7 @@ module.exports = function() {
 		User = mongoose.model('User'),
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate'),
+		Schedule = mongoose.model('Schedule'),
 		dayMilliseconds = 24 * 60 * 60 * 1000;
 
 	var getPatients = function(req) {
@@ -95,6 +96,24 @@ module.exports = function() {
 
 	};
 
+	var getSchedules = function() {
+
+		// get list of users who are not admins or providers
+		var deferred = Q.defer();
+
+		Schedule.find({
+		}, function(err, schedules) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(schedules);
+			}
+		});
+
+		return deferred.promise;
+
+	};
+
 	var getCheckinTemplates = function() {
 
 		// get list of users who are not admins or providers
@@ -114,34 +133,34 @@ module.exports = function() {
 
 	var admin = function(req, res) {
 
-		var patients = [],
-			yourPatients = [],
-			providers = [];
+		var templateVars = {};
+
+		// TODO replace all promise functionality with async.parallel
+		// for much better performance and error handling
 
 		getPatients(req)
 		.then(function(allPatients) {
-			patients = allPatients;
+			templateVars.patients = allPatients;
 			return getYourPatients(req);
 		}, function(error) {})
 		.then(function(yPatients) {
-			yourPatients = yPatients;
+			templateVars.yourPatients = yPatients;
 			return getProviders()
 		})
 		.then(function(allProviders) {
-			providers = allProviders;
+
+			if(req.user.permissions.admin) {
+				templateVars.providers = allProviders;
+			}
+
 			return getCheckinTemplates()
 		})
 		.then(function(checkinTemplates) {
-
-			var templateVars = {
-				patients: patients,
-				yourPatients: yourPatients,
-				checkinTemplates: checkinTemplates
-			};
-
-			if(req.user.permissions.admin) {
-				templateVars.providers = providers;
-			}
+			templateVars.checkinTemplates = checkinTemplates;
+			return getSchedules()
+		})
+		.then(function(schedules) {
+			templateVars.schedules = schedules;
 
 			var adminTemplate = 'admin/provider';
 			if(req.user.permissions.admin) {
@@ -152,7 +171,6 @@ module.exports = function() {
 
 			return;
 		});
-
 	};
 
 	return {
