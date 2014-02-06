@@ -21,8 +21,9 @@
 			$('.js-select2').select2();
 
 			// init datepicker
-			$('.input-group.date').datepicker({
-				orientation: 'top auto'
+			$('.js-upcoming-date').datepicker({
+				orientation: 'top auto',
+				startDate: new Date()
 			});
 
 		};
