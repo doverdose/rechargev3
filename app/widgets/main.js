@@ -20,6 +20,11 @@
 			// init select2
 			$('.js-select2').select2();
 
+			// init datepicker
+			$('.input-group.date').datepicker({
+				orientation: 'top auto'
+			});
+
 		};
 
 		return {

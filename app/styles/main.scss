@@ -44,6 +44,10 @@ body {
 	text-transform: uppercase;
 }
 
+body .select2-container {
+	display: block;
+}
+
 /* Navbar
  */
 
@@ -273,12 +277,6 @@ body {
 	}
 }
 
-/* Provider admin
- */
-
-.popover-content .select2-container {
-	display: block;
-}
 
 /* Settings
  */

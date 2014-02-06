@@ -6,6 +6,7 @@ module.exports = function() {
 	var mongoose = require('mongoose'),
 		util = require('util'),
 		async = require('async'),
+		moment = require('moment'),
 		Schedule = mongoose.model('Schedule'),
 		User = mongoose.model('User'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
@@ -79,7 +80,9 @@ module.exports = function() {
 	var createView = function (req, res) {
 
 		var templateVars = {
-			schedule: {}
+			schedule: {
+				due_date: moment().format('MM/DD/YYYY')
+			}
 		};
 
 		async.parallel([

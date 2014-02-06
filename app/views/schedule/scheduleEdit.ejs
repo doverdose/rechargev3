@@ -22,40 +22,73 @@
 	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 	<input type="hidden" name="id" value="<%= schedule.id || '' %>">
 
-	<div class="form-group">
-		<label for="user_id">Patient</label>
-		<select class="js-select2" id="user_id" name="user_id">
-			<% for(var i = 0; i < patients.length; i++) { %>
-				<option value="<%= patients[i].id %>">
-					<%= patients[i].name %>
-				</option>
-			<% } %>
-		</select>
+	<div class="row">
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="user_id">Patient</label>
+				<select class="js-select2" id="user_id" name="user_id">
+					<% for(var i = 0; i < patients.length; i++) { %>
+						<option value="<%= patients[i].id %>">
+							<%= patients[i].name %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+		</div>
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="template_id">Checkin template</label>
+				<select class="js-select2" id="template_id" name="template_id">
+					<% for(var i = 0; i < templates.length; i++) { %>
+						<option value="<%= templates[i].id %>">
+							<%= templates[i].title %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+
+		</div>
+
 	</div>
 
-	<div class="form-group">
-		<label for="template_id">Checkin template</label>
-		<select class="js-select2" id="template_id" name="template_id">
-			<% for(var i = 0; i < templates.length; i++) { %>
-				<option value="<%= templates[i].id %>">
-					<%= templates[i].title %>
-				</option>
-			<% } %>
-		</select>
-	</div>
+	<div class="row">
 
-	<div class="form-group">
-		<label for="type">Repeating</label>
-		<select class="form-control" name="type" id="type">
-			<option value="0" <%= schedule.repeating === 0 && 'selected' %>>Never</option>
-			<option value="1" <%= schedule.repeating === 1 && 'selected' %>>Every day</option>
-			<option value="7" <%= schedule.repeating === 7 && 'selected' %>>Every week</option>
-		</select>
-	</div>
+		<div class="col-sm-6">
 
-	<div class="form-group">
-		<label for="due_date">Due date</label>
-		<input type="text" class="form-control" id="due_date" name="due_date" value="<%= schedule.due_date || ''%>" required>
+			<div class="form-group">
+				<label for="due_date">Due date</label>
+
+
+				<div class="input-group date">
+					<input type="text" class="form-control" id="due_date" name="due_date" value="<%= schedule.due_date || ''%>" required>
+					<span class="input-group-addon">
+						<i class="glyphicon glyphicon-th"></i>
+					</span>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="type">Repeating</label>
+				<select class="form-control" name="type" id="type">
+					<option value="0" <%= schedule.repeating === 0 && 'selected' %>>Never</option>
+					<option value="1" <%= schedule.repeating === 1 && 'selected' %>>Every day</option>
+					<option value="7" <%= schedule.repeating === 7 && 'selected' %>>Every week</option>
+				</select>
+			</div>
+
+		</div>
+
 	</div>
 
 	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
