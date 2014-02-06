@@ -33,7 +33,7 @@ module.exports = function() {
 			Schedule.findOne({
 				_id: req.body.id
 			}, function(err, schedule) {
-				if (!c) return res.redirect('/admin');
+				if (!schedule) return res.redirect('/admin');
 
 				// update schedule with
 				schedule.template_id = req.body.template_id || schedule.template_id;
@@ -67,12 +67,17 @@ module.exports = function() {
 
 		Schedule.findOne({
 			_id: req.params.id
-		}, function(err, c) {
-			if (!c) return res.redirect('/admin');
+		}, function(err, schedule) {
+			if (!schedule) return res.redirect('/admin');
 
-			res.render('schedule/scheduleEdit.ejs', {
-				schedule: schedule
-			});
+			var templateVars = {
+				schedule: schedule.toObject()
+			};
+
+			templateVars.schedule.due_date = moment(templateVars.schedule.due_date).format('MM/DD/YYYY');
+
+			formView(req, res, templateVars);
+
 		});
 
 	};
@@ -84,6 +89,12 @@ module.exports = function() {
 				due_date: moment().format('MM/DD/YYYY')
 			}
 		};
+
+		formView(req, res, templateVars);
+
+	};
+
+	var formView = function(req, res, templateVars) {
 
 		async.parallel([
 			function(callback) {
@@ -128,14 +139,49 @@ module.exports = function() {
 
 	var view = function(req, res) {
 
+		var templateVars = {};
+
 		Schedule.findOne({
 			_id: req.params.id
 		}, function(err, schedule) {
-			if (!c) return res.redirect('/schedule');
+			if (!schedule) return res.redirect('/schedule');
 
-			res.render('schedule/scheduleView.ejs', {
-				schedule: schedule
+			templateVars.schedule = schedule;
+
+			async.parallel([
+				function(callback) {
+
+					User.findOne({
+						_id: schedule.user_id
+					}, function(err, user) {
+						if (!user) return res.redirect('/schedule');
+
+						templateVars.forUser = user;
+
+						callback();
+					});
+
+				},
+				function(callback) {
+
+					CheckinTemplate.findOne({
+						_id: schedule.template_id
+					}, function(err, template) {
+						if (!template) return res.redirect('/schedule');
+
+						templateVars.template = template;
+
+						callback();
+					});
+
+				}
+			], function(err) {
+
+				res.render('schedule/scheduleView.ejs', templateVars);
+
 			});
+
+
 		});
 
 	}

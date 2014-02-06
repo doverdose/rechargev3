@@ -143,7 +143,22 @@
 			<div class="row stats">
 				<div class="col-xs-6">
 					<a href="/schedule/<%= schedules[i].id %>">
-						<%= schedules[i].title %>
+
+						<p>
+							User: <%= patientsObject[schedules[i].user_id].name %>
+						</p>
+
+						<p>
+							Template: <%= templatesObject[schedules[i].template_id].title %>
+						</p>
+
+						<% if(schedules[i].repeat_interval) { %>
+							<p>
+								Every
+								<%= (schedules[i].repeat_interval === 1) ? 'day' : '' %>
+								<%= (schedules[i].repeat_interval === 7) ? 'week' : '' %>
+							</p>
+						<% } %>
 					</a>
 				</div>
 				<div class="col-xs-6 text-right">
