@@ -27,9 +27,11 @@ Run `jshint` tests with:
 
 ## Deployment
 
-Before deploying, make sure to build the latest version with Grunt. This will concatenate the scripts, optimize the images, compile and optimize the Sass, etc.
+Before deploying, make sure to build the latest version with Grunt. This will run jshint checks, concatenate the scripts, optimize the images, compile and optimize the Sass, etc.
 
-	grunt build
+	grunt
+
+Please make sure all jshint checks pass.
 
 Run on development server with:
 

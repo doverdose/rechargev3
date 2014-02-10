@@ -176,7 +176,8 @@ module.exports = function (grunt) {
 					// Replace all relative urls in CSS with absolute urls
 					// mostly for bower_components like select2
 
-					var cssPatt = new RegExp('app(\/.*\/).*\.css$');
+					//var cssPatt = new RegExp('app(\/.*\/).*\.css$');
+					var cssPatt = new RegExp('app(\/.*\/).*.css$');
 
 					//filter out everithing except css files
 					var file = cssPatt.exec(filepath);
@@ -208,7 +209,7 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('server', function (target) {
+	grunt.registerTask('server', function () {
 		grunt.task.run([
 			'clean:server',
 			'sass:server',

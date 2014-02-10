@@ -5,11 +5,9 @@ module.exports = (function() {
 	'use strict';
 
 	var mongoose = require('mongoose'),
-		User = mongoose.model('User'),
-		util = require('util'),
-		Q = require('q');
+		User = mongoose.model('User');
 
-	var login = function (req, res) {
+	var login = function (req, res, next) {
 		// update last_login date
 		if(req.user) {
 			User.findById(req.user._id, function(err, u) {
@@ -62,7 +60,7 @@ module.exports = (function() {
 	/**
 	* Create new user
 	*/
-	var create = function (req, res) {
+	var create = function (req, res, next) {
 		var user = new User(req.body);
 		user.provider = 'local';
 
@@ -100,7 +98,7 @@ module.exports = (function() {
 						errors: err.errors,
 						wrongUser: user,
 						title: 'Sign up'
-					})
+					});
 				}
 
 				// manually login the user once successfully signed up
@@ -108,7 +106,7 @@ module.exports = (function() {
 					if (err) {
 						return next(err);
 					}
-					return res.redirect('/')
+					return res.redirect('/');
 				});
 			}
 		});
@@ -145,24 +143,24 @@ module.exports = (function() {
 	};
 
 
-	var getProviderPatients = function(patientIds) {
-
-		// get list of users who are not admins or providers
-		var deferred = Q.defer();
-
-		User.find({
-			'_id': { $in: patientIds }
-		}, function(err, docs){
-			if (err) {
-				deferred.reject(new Error(err));
-			} else {
-				deferred.resolve(providers);
-			}
-		});
-
-		return deferred.promise;
-
-	};
+// 	var getProviderPatients = function(patientIds) {
+//
+// 		// get list of users who are not admins or providers
+// 		var deferred = Q.defer();
+//
+// 		User.find({
+// 			'_id': { $in: patientIds }
+// 		}, function(err, patients){
+// 			if (err) {
+// 				deferred.reject(new Error(err));
+// 			} else {
+// 				deferred.resolve(patients);
+// 			}
+// 		});
+//
+// 		return deferred.promise;
+//
+// 	};
 
 	/* View user
 	*/
@@ -177,7 +175,7 @@ module.exports = (function() {
 
 			// if provider, only see your own patients
 			if(req.user.permissions.provider) {
-				req.user.patients.forEach(function(patient, i){
+				req.user.patients.forEach(function(patient){
 					patientIds.push(patient.id);
 				});
 
@@ -199,8 +197,8 @@ module.exports = (function() {
 					return next(err);
 				}
 				if (!user) {
-					return next(new Error('Failed to load User ' + id))
-				};
+					return next(new Error('Failed to load User ' + req.params.id));
+				}
 
 				if(user.permissions.provider) {
 
@@ -212,10 +210,10 @@ module.exports = (function() {
 
 					// get your own patients
 					var patientIds = [];
-					user.patients.forEach(function(patient, i){
+					user.patients.forEach(function(patient){
 						patientIds.push(patient.id);
 					});
-					patientConditions['_id'] = { $in: patientIds };
+					patientConditions._id = { $in: patientIds };
 
 					// get current providers patients
 					User.find(patientConditions, function(err, patients) {
@@ -242,7 +240,7 @@ module.exports = (function() {
 										profile: user,
 										providerPatients: providerPatients,
 										allPatients: allPatients
-									})
+									});
 
 								}
 							});
@@ -259,15 +257,14 @@ module.exports = (function() {
 
 				}
 
-
-			})
+			});
 
 	};
 
 	/* New user
 	*/
 
-	var newView = function (req, res, next) {
+	var newView = function (req, res) {
 
 		// TODO if provider, assign users to yourself
 		// if patient, see only your profile
@@ -276,34 +273,41 @@ module.exports = (function() {
 		res.render('users/new.ejs', {
 			title: 'New user',
 			profile: new User()
-		})
+		});
 
 	};
 
 	/* Edit user
 	*/
 
-	var update = function (req, res) {
+	var update = function (req, res, next) {
 
 		User.findOne({ _id : req.body.id })
 			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
+				if (err) {
+					return next(err);
+				}
 
-				if(req.body.name) user.name = req.body.name;
-				if(req.body.email) user.email = req.body.email;
-				if(req.body.username) user.username = req.body.username;
-				if(req.body.password) user.password = req.body.password;
+				if(!user) {
+					return next(new Error('Failed to load User ' + req.body.id));
+				}
+
+				user.name = req.body.name || user.name;
+				user.email = req.body.email || user.email;
+				user.username = req.body.username || user.username;
+				user.password = req.body.password || user.password;
 
 				user.save(function(err) {
-					if (err) return console.log(err)
+					if (err) {
+						return console.log(err);
+					}
 				});
 
-			})
+			});
 
 		res.redirect('/user/' + req.body.id);
 
-	}
+	};
 
 	var edit = function (req, res, next) {
 
@@ -313,33 +317,41 @@ module.exports = (function() {
 
 			User.findOne({ _id : req.params.id })
 				.exec(function (err, user) {
-					if (err) return next(err)
-					if (!user) return next(new Error('Failed to load User ' + id))
+					if (err) {
+						return next(err);
+					}
+					if (!user) {
+						return next(new Error('Failed to load User ' + req.params.id));
+					}
 
 					res.render('users/edit.ejs', {
 						title: 'Profile',
 						profile: user
-					})
+					});
 
-				})
+				});
 
 		} else {
 			// if patient, see only your profile
-			 return next(new Error('Only admin can edit user details'))
+			return next(new Error('Only admin can edit user details'));
 		}
-
 
 	};
 
 	/* Delete user
 	*/
 
-	var remove = function (req, res) {
+	var remove = function (req, res, next) {
 
 		User.findOne({ _id : req.body.userId })
 			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
+				if (err) {
+					return next(err);
+				}
+
+				if (!user) {
+					return next(new Error('Failed to load User ' + req.body.userId));
+				}
 
 				user.remove();
 			});
@@ -367,11 +379,12 @@ module.exports = (function() {
 	 */
 	var unfollow = function (req, res) {
 
-		req.user.following.forEach(function(following, i) {
-			if(following.id == req.body.userId) {
+		req.user.following.every(function(following, i) {
+			if(following.id === req.body.userId) {
 				req.user.following.splice(i, 1);
 				return false;
 			}
+			return true;
 		});
 
 		req.user.save();
@@ -382,7 +395,7 @@ module.exports = (function() {
 
 	/* Approve follow
 	 */
-	var approveFollow = function (req, res) {
+	var approveFollow = function (req, res, next) {
 
 		/* Find user with followerId.
 		 * Then find the current logged-in user in the users' following array
@@ -390,14 +403,20 @@ module.exports = (function() {
 		 */
 		User.findOne({ _id : req.body.followerId })
 			.exec(function (err, follower) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
+				if (err) {
+					return next(err);
+				}
+				if (!user) {
+					return next(new Error('Failed to load User ' + req.body.followerId));
+				}
 
-				follower.following.forEach(function(following, i) {
+				follower.following.every(function(following) {
 					if(following.id === req.user.id) {
 						following.approved = true;
 						return false;
 					}
+
+					return true;
 				});
 
 				follower.save();
@@ -409,7 +428,7 @@ module.exports = (function() {
 
 	/* Reject follow
 	 */
-	var rejectFollow = function (req, res) {
+	var rejectFollow = function (req, res, next) {
 
 		/* Find user with followerId.
 		 * Then find the current logged-in user in the users' following array
@@ -425,11 +444,13 @@ module.exports = (function() {
 					return next(new Error('Failed to load User ' + req.body.followerId));
 				}
 
-				follower.following.forEach(function(following, i) {
+				follower.following.every(function(following) {
 					if(following.id === req.user.id) {
 						following.approved = false;
 						return false;
 					}
+
+					return true;
 				});
 
 				follower.save();

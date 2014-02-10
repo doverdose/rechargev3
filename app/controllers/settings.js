@@ -1,63 +1,75 @@
+/* Settings controller
+ */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
 		User = mongoose.model('User'),
-		util = require('util'),
 		Q = require('q');
 
 	/**
 	* Find user by id
 	*/
 
-	var user = function (req, res, next, id) {
-		User.findOne({ _id : id })
-			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
-				req.profile = user
-				next()
-			})
-	}
+// 	var user = function (req, res, next, id) {
+// 		User.findOne({ _id : id })
+// 			.exec(function (err, user) {
+// 				if (err) {
+// 					return next(err);
+// 				}
+// 				if (!user) {
+// 					return next(new Error('Failed to load User ' + id));
+// 				}
+// 				req.profile = user;
+// 				next();
+// 			});
+// 	};
 
 	/* Edit user
 	*/
 
-	var update = function (req, res) {
-
-		User.findOne({ _id : req.body.id })
-			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
-
-				if(req.body.name) user.name = req.body.name;
-				if(req.body.email) user.email = req.body.email;
-				if(req.body.username) user.username = req.body.username;
-				if(req.body.password) user.password = req.body.password;
-
-				user.save(function(err) {
-					if (err) return console.log(err)
-				});
-
-			})
-
-		res.redirect('/user/' + req.body.id);
-
-	}
+// 	var update = function (req, res, next) {
+//
+// 		User.findOne({ _id : req.body.id })
+// 			.exec(function (err, user) {
+// 				if (err) {
+// 					return next(err);
+// 				}
+// 				if (!user) {
+// 					return next(new Error('Failed to load User ' + req.body.id));
+// 				}
+//
+// 				user.name = req.body.name || user.name;
+// 				user.email = req.body.email || user.email;
+// 				user.username = req.body.username || user.username;
+// 				user.password = req.body.password || user.password;
+//
+// 				user.save(function(err) {
+// 					if (err) {
+// 						return console.log(err);
+// 					}
+// 				});
+//
+// 			});
+//
+// 		res.redirect('/user/' + req.body.id);
+//
+// 	};
 
 	/* Edit profile
 	 */
-	var profile = function(req, res, next) {
+	var profile = function(req, res) {
 
 		res.render('settings/profile.ejs', {
 			title: 'Profile'
-		})
+		});
 
 	};
 
 	/* Manage providers
 	 */
-	var providers = function(req, res, next) {
+	var providers = function(req, res) {
 
 		// get providers for current patient
 		User.find({
@@ -77,7 +89,7 @@ module.exports = function() {
 				var approved = [];
 				providers.forEach(function(provider, i) {
 
-					provider.patients.forEach(function(patient, j) {
+					provider.patients.forEach(function(patient) {
 
 						if(patient.approved === true) {
 							approved[i] = true;
@@ -113,10 +125,10 @@ module.exports = function() {
 
 		// only see users that you are not already following
 		var patientIds = [ req.user.id ];
-		req.user.following.forEach(function(patient, i){
+		req.user.following.forEach(function(patient){
 			patientIds.push(patient.id);
 		});
-		patientConditions['_id'] = { $nin: patientIds };
+		patientConditions._id = { $nin: patientIds };
 
 		User.find(patientConditions, function(err, patients) {
 			if (err) {
@@ -144,10 +156,10 @@ module.exports = function() {
 
 		// parse ids of followers
 		var followerIds = [];
-		req.user.following.forEach(function(follower, i){
+		req.user.following.forEach(function(follower){
 			followerIds.push(follower.id);
 		});
-		patientConditions['_id'] = { $in: followerIds };
+		patientConditions._id = { $in: followerIds };
 
 		User.find(patientConditions, function(err, patients) {
 			if (err) {
@@ -163,10 +175,9 @@ module.exports = function() {
 
 	/* Render the following page
 	 */
-	var following = function (req, res, next) {
+	var following = function (req, res) {
 
-		var following,
-			approved = {};
+		var following;
 
 		// get list of all patients
 		getFollowingDetails(req)
@@ -181,9 +192,9 @@ module.exports = function() {
 
 			// see approved followers
 			var approved = {};
-			following.forEach(function(patient, i) {
+			following.forEach(function(patient) {
 
-				req.user.following.forEach(function(f, i) {
+				req.user.following.forEach(function(f) {
 					if(f.id === patient.id && f.approved === true) {
 						approved[f.id] = true;
 						return false;
@@ -199,7 +210,7 @@ module.exports = function() {
 				approved: approved
 			});
 
-		}, function(error) {});
+		}, function() {});
 
 	};
 
@@ -215,7 +226,11 @@ module.exports = function() {
 			'permissions.provider': { $ne: true }
 		};
 
-		patientConditions['following'] = { $all: { $elemMatch: { id: req.user.id }}};
+		patientConditions.following = {
+			$all: {
+				$elemMatch: { id: req.user.id }
+			}
+		};
 
 		User.find(patientConditions, function(err, patients) {
 			if (err) {
@@ -231,25 +246,22 @@ module.exports = function() {
 
 	/* Render the followers page
 	 */
-	var followers = function (req, res, next) {
+	var followers = function (req, res) {
 
 		// TODO get list of users following you,
 		// approve or deny following you
-
-		var followers,
-			approved = {};
 
 		// get list of all patients
 		getFollowersDetails(req)
 		.then(function(followerDetails) {
 
-			followers = followerDetails;
+			var followers = followerDetails;
 
 			// see approved followers
 			var approved = {};
-			followers.forEach(function(follower, i) {
+			followers.forEach(function(follower) {
 
-				follower.following.forEach(function(f, i) {
+				follower.following.forEach(function(f) {
 					if(f.id === req.user.id && f.approved === true) {
 						approved[follower.id] = true;
 						return false;
@@ -276,5 +288,6 @@ module.exports = function() {
 		providers: providers,
 		following: following,
 		followers: followers
-	}
-}();
+	};
+
+}());

@@ -1,22 +1,24 @@
 /* Schedule controller
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
-		util = require('util'),
 		async = require('async'),
 		moment = require('moment'),
 		Schedule = mongoose.model('Schedule'),
 		User = mongoose.model('User'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
-	var remove = function(req, res) {
+	var remove = function(req, res, next) {
 
 		Schedule.findOne({
 			_id: req.body.id
 		}, function(err, schedule) {
-			if (!schedule) return res.redirect('/admin');
+			if (!schedule) {
+				return next(new Error('Failed to find Schedule ' + req.body.id));
+			}
 
 			schedule.remove();
 
@@ -25,7 +27,7 @@ module.exports = function() {
 
 	};
 
-	var update = function(req, res) {
+	var update = function(req, res, next) {
 
 		if(req.body.id) {
 
@@ -33,7 +35,9 @@ module.exports = function() {
 			Schedule.findOne({
 				_id: req.body.id
 			}, function(err, schedule) {
-				if (!schedule) return res.redirect('/admin');
+				if (!schedule) {
+					return next(new Error('Failed to find Schedule ' + req.body.id));
+				}
 
 				// update schedule with
 				schedule.template_id = req.body.template_id || schedule.template_id;
@@ -51,9 +55,8 @@ module.exports = function() {
 			var schedule = new Schedule(req.body);
 
 			schedule.save(function(err, newSchedule) {
-				 if (err) {
-					console.log(err);
-					res.redirect('/admin');
+				if (err) {
+					return next(err);
 				}
 
 				res.redirect('/schedule/' + newSchedule.id);
@@ -68,7 +71,9 @@ module.exports = function() {
 		Schedule.findOne({
 			_id: req.params.id
 		}, function(err, schedule) {
-			if (!schedule) return res.redirect('/admin');
+			if (!schedule) {
+				return next(new Error('Failed to find Schedule ' + req.params.id));
+			}
 
 			var templateVars = {
 				schedule: schedule.toObject()
@@ -82,7 +87,7 @@ module.exports = function() {
 
 	};
 
-	var createView = function (req, res) {
+	var createView = function (req, res, next) {
 
 		var templateVars = {
 			schedule: {
@@ -90,11 +95,11 @@ module.exports = function() {
 			}
 		};
 
-		formView(req, res, templateVars);
+		formView(req, res, next, templateVars);
 
 	};
 
-	var formView = function(req, res, templateVars) {
+	var formView = function(req, res, next, templateVars) {
 
 		async.parallel([
 			function(callback) {
@@ -130,21 +135,25 @@ module.exports = function() {
 
 			}
 		], function(err) {
-			if (err) throw err;
+			if (err) {
+				return next(err);
+			}
 
 			res.render('schedule/scheduleEdit.ejs', templateVars);
 		});
 
 	};
 
-	var view = function(req, res) {
+	var view = function(req, res, next) {
 
 		var templateVars = {};
 
 		Schedule.findOne({
 			_id: req.params.id
 		}, function(err, schedule) {
-			if (!schedule) return res.redirect('/schedule');
+			if (!schedule) {
+				return next(new Error('Failed to find Schedule ' + req.params.id));
+			}
 
 			templateVars.schedule = schedule;
 
@@ -154,7 +163,9 @@ module.exports = function() {
 					User.findOne({
 						_id: schedule.user_id
 					}, function(err, user) {
-						if (!user) return res.redirect('/schedule');
+						if (!user) {
+							return next(new Error('Failed to find User ' + schedule.user_id));
+						}
 
 						templateVars.forUser = user;
 
@@ -167,7 +178,9 @@ module.exports = function() {
 					CheckinTemplate.findOne({
 						_id: schedule.template_id
 					}, function(err, template) {
-						if (!template) return res.redirect('/schedule');
+						if (!template) {
+							return next(new Error('Failed to find Checkin Template ' + schedule.template_id));
+						}
 
 						templateVars.template = template;
 
@@ -175,17 +188,15 @@ module.exports = function() {
 					});
 
 				}
-			], function(err) {
+			], function() {
 
 				res.render('schedule/scheduleView.ejs', templateVars);
 
 			});
 
-
 		});
 
-	}
-
+	};
 
 	return {
 		createView: createView,
@@ -193,7 +204,7 @@ module.exports = function() {
 		updateView: updateView,
 		remove: remove,
 		view: view
-	}
+	};
 
-}();
+}());
 
