@@ -1,5 +1,8 @@
+/* Users controller
+ */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
 		User = mongoose.model('User'),
@@ -10,26 +13,28 @@ module.exports = function() {
 		// update last_login date
 		if(req.user) {
 			User.findById(req.user._id, function(err, u) {
-				if (!u)
+				if (!u) {
 					return next(new Error('Could not find User'));
-				else {
+				} else {
 					// update last_login
 					u.last_login = new Date();
 
 					u.save(function(err) {
-						if (err) return console.log(err)
+						if (err) {
+							return console.log(err);
+						}
 					});
 				}
 			});
 		}
 
 		if (req.session.returnTo) {
-			res.redirect(req.session.returnTo)
-			delete req.session.returnTo
-			return
+			res.redirect(req.session.returnTo);
+			delete req.session.returnTo;
+			return;
 		}
-		res.redirect('/')
-	}
+		res.redirect('/');
+	};
 
 	/**
 	* Login
@@ -39,8 +44,8 @@ module.exports = function() {
 		res.render('users/login', {
 			title: 'Login',
 			message: req.flash('error')
-		})
-	}
+		});
+	};
 
 	/**
 	* Sign-up
@@ -50,14 +55,13 @@ module.exports = function() {
 		res.render('users/signup', {
 			title: 'Sign up',
 			user: new User()
-		})
-	}
+		});
+	};
 
 
 	/**
 	* Create new user
 	*/
-
 	var create = function (req, res) {
 		var user = new User(req.body);
 		user.provider = 'local';
@@ -83,11 +87,11 @@ module.exports = function() {
 						errors: err.errors,
 						wrongUser: user,
 						title: 'New user'
-					})
+					});
 				}
 
 				// return to the admin
-				return res.redirect('/admin')
+				return res.redirect('/admin');
 
 			} else {
 
@@ -101,12 +105,14 @@ module.exports = function() {
 
 				// manually login the user once successfully signed up
 				req.logIn(user, function(err) {
-					if (err) return next(err)
+					if (err) {
+						return next(err);
+					}
 					return res.redirect('/')
-				})
+				});
 			}
-		})
-	}
+		});
+	};
 
 
 	/**
@@ -116,7 +122,7 @@ module.exports = function() {
 	var logout = function (req, res) {
 		req.logout();
 		res.redirect('/login');
-	}
+	};
 
 	/**
 	* Find user by id
@@ -125,12 +131,18 @@ module.exports = function() {
 	var user = function (req, res, next, id) {
 		User.findOne({ _id : id })
 			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
-				req.profile = user
-				next()
-			})
-	}
+				if(err) {
+					return next(err);
+				}
+
+				if(!user) {
+					return next(new Error('Failed to load User ' + id));
+				}
+
+				req.profile = user;
+				next();
+			});
+	};
 
 
 	var getProviderPatients = function(patientIds) {
@@ -169,18 +181,26 @@ module.exports = function() {
 					patientIds.push(patient.id);
 				});
 
-				if(patientIds.indexOf(req.params.id) === -1) return next(new Error('You can only see your own profile'))
+				if(patientIds.indexOf(req.params.id) === -1) {
+					return next(new Error('You can only see your own profile'));
+				}
 			}
 
 		} else {
 			// if patient, see only your profile
-			if (req.user.id !== req.params.id) return next(new Error('You can only see your own profile'))
+			if (req.user.id !== req.params.id) {
+				return next(new Error('You can only see your own profile'));
+			}
 		}
 
 		User.findOne({ _id : req.params.id })
 			.exec(function (err, user) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
+				if (err) {
+					return next(err);
+				}
+				if (!user) {
+					return next(new Error('Failed to load User ' + id))
+				};
 
 				if(user.permissions.provider) {
 
@@ -235,7 +255,7 @@ module.exports = function() {
 					res.render('users/view.ejs', {
 						title: 'Details',
 						profile: user
-					})
+					});
 
 				}
 
@@ -397,8 +417,13 @@ module.exports = function() {
 		 */
 		User.findOne({ _id : req.body.followerId })
 			.exec(function (err, follower) {
-				if (err) return next(err)
-				if (!user) return next(new Error('Failed to load User ' + id))
+				if (err) {
+					return next(err);
+				}
+
+				if (!follower) {
+					return next(new Error('Failed to load User ' + req.body.followerId));
+				}
 
 				follower.following.forEach(function(following, i) {
 					if(following.id === req.user.id) {
@@ -432,5 +457,6 @@ module.exports = function() {
 		approveFollow: approveFollow,
 		rejectFollow: rejectFollow,
 		unfollow: unfollow
-	}
-}();
+	};
+
+}());

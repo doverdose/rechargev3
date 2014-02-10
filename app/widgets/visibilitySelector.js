@@ -5,9 +5,9 @@
  */
 
 (function() {
-	"use strict";
+	'use strict';
 
-	var visibilitySelector = function() {
+	var visibilitySelector = (function() {
 		var $select,
 			$options,
 			elementSelector,
@@ -42,9 +42,8 @@
 
 		return {
 			init: init
-		}
-
-	}();
+		};
+	}());
 
 	$(document).ready(visibilitySelector.init);
 })();

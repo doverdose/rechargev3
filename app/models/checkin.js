@@ -2,7 +2,8 @@
 /* Checkin model
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
@@ -34,8 +35,8 @@ module.exports = function() {
 		return this._id.toHexString();
 	});
 
-	mongoose.model('Checkin', CheckinSchema)
+	mongoose.model('Checkin', CheckinSchema);
 
 	return {};
 
-}();
+}());

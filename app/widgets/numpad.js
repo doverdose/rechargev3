@@ -2,9 +2,9 @@
  */
 
 (function() {
-	"use strict";
+	'use strict';
 
-	var signup = function() {
+	var numpad = (function() {
 
 		var $container,
 			$btnsNum,
@@ -24,12 +24,12 @@
 				var maskedPassword = '';
 				for(var i = 0; i < passwordValue.length; i++) {
 					maskedPassword += '●';
-				};
+				}
 
 				$fieldPassword.val(maskedPassword);
 			} else {
 				$fieldPassword.val(passwordValue);
-			};
+			}
 
 		};
 
@@ -65,7 +65,7 @@
 			$btnReveal.toggleClass('active');
 		};
 
-		var submitForm = function(e) {
+		var submitForm = function() {
 
 			$fieldPasswordReal.val(passwordValue);
 			$containerForm.submit();
@@ -96,10 +96,10 @@
 
 		return {
 			init: init
-		}
+		};
 
-	}();
+	}());
 
-	$(document).ready(signup.init);
+	$(document).ready(numpad.init);
 
 })();

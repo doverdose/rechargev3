@@ -4,7 +4,7 @@
 (function() {
 	'use strict';
 
-	var templatePopover = function() {
+	var templatePopover = (function() {
 
 		var $popover;
 
@@ -34,9 +34,9 @@
 
 		return {
 			init: init
-		}
+		};
 
-	}();
+	}());
 
 	$(document).ready(templatePopover.init);
 

@@ -2,7 +2,8 @@
 /* Schedule model
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
@@ -26,8 +27,8 @@ module.exports = function() {
 		return this._id.toHexString();
 	});
 
-	mongoose.model('Schedule', ScheduleSchema)
+	mongoose.model('Schedule', ScheduleSchema);
 
 	return {};
 
-}();
+}());

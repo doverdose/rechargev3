@@ -2,9 +2,9 @@
  */
 
 (function() {
-	"use strict";
+	'use strict';
 
-	var main = function() {
+	var main = (function() {
 
 		var init = function() {
 
@@ -13,8 +13,8 @@
 
 			// initialize tabs
 			$('[data-toggle="tab"]').click(function (e) {
-				e.preventDefault()
-				$(this).tab('show')
+				e.preventDefault();
+				$(this).tab('show');
 			});
 
 			// init select2
@@ -30,9 +30,9 @@
 
 		return {
 			init: init
-		}
+		};
 
-	}();
+	}());
 
 	$(document).ready(main.init);
 })();

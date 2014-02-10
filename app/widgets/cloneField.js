@@ -5,9 +5,9 @@
  */
 
 (function() {
-	"use strict";
+	'use strict';
 
-	var cloneField = function() {
+	var cloneField = (function() {
 
 		var $container,
 			fieldSelector,
@@ -55,9 +55,9 @@
 
 		return {
 			init: init
-		}
+		};
 
-	}();
+	}());
 
 	$(document).ready(cloneField.init);
 })();
