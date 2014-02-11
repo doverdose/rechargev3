@@ -1,0 +1,69 @@
+<% layout('../layouts/settings') -%>
+
+<div class="page-header">
+	<h3>Following</h3>
+	<div class="header-actions text-right">
+		<button type="button" class="btn btn-default pull-right" rel="popover" data-placement="bottom" data-tpl=".js-following-popover-template">
+			Follow user
+		</button>
+	</div>
+</div>
+
+
+<% if(following.length) { %>
+
+	<ul class="list-group">
+		<% for(var i = 0; i < following.length; i++) { %>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col-xs-4 col-sm-7">
+						<%= following[i].name %>
+					</div>
+
+					<div class="col-xs-8 col-sm-5 text-right">
+
+						<% if(approved[following[i].id] === true) { %>
+							<span class="btn btn-success disabled">Approved</span>
+						<% } else { %>
+							<span class="btn btn-danger disabled">Not approved</span>
+						<% } %>
+
+						<form action="/user/unfollow" method="post" class="form-inline">
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="userId" id="userId" value="<%= following[i].id %>">
+
+							<button class="btn btn-link" title="Unfollow">
+								<i class="glyphicon glyphicon-remove-circle"></i>
+							</button>
+						</form>
+
+					</div>
+				</div>
+			</li>
+		<% } %>
+	</ul>
+
+<% } else { %>
+
+	<h4 class="text-muted text-center">You are not following any users. </h4>
+
+<% } %>
+
+<div class="js-template js-following-popover-template">
+	<form action="/user/follow" method="post">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+
+			<div class="form-group">
+				<label for="userId">Search for users</label>
+				<select class="js-select2" id="userId" name="userId">
+					<% for(var i = 0; i < patients.length; i++) { %>
+						<option value="<%= patients[i].id %>"><%= patients[i].name %></option>
+					<% } %>
+				</select>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-block">
+				Follow
+			</button>
+		</form>
+</div>

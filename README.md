@@ -1,7 +1,7 @@
 Recharge v3
 ===========
 
-ReCharge Health app with MongoDB, Express, Bootstrap. Testing with Mocha.
+ReCharge Health app with MongoDB, Express, Grunt, Bootstrap. Testing with Mocha.
 
 Server will be running on port `8080`, by default.
 
@@ -16,20 +16,24 @@ Server will be running on port `8080`, by default.
 
 ## Tests
 
-Run tests with:
+Run mocha tests with:
 
 	npm test
-	
+
 
 ## Deployment
 
-Before deploying, make sure to build the latest version with Grunt. This will run jshint checks, concatenate the scripts, optimize the images, compile and optimize the Sass, etc.
+Before deployment, run:
 
-	npm run-script build
+	npm run-script production-test
 
-Please make sure all jshint checks pass.
+This will run the mocha tests, jshint checks, concatenate the scripts, optimize the images, compile and optimize Sass, and start a Node server for manual testing.
 
-Run on development server with:
+Make sure all tests pass.
+
+Start the Node server with:
 
 	npm start
+
+Make sure you have the NODE_ENV variable set to `development`, `staging` or `production`.
 

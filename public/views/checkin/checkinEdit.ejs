@@ -1,0 +1,83 @@
+<% layout('../layouts/default') -%>
+
+<div class="checkin-edit">
+
+	<div class="page-header">
+		<h3>
+			<small>
+				<% if(checkin.id) { %>
+					Edit checkin
+				<% } else { %>
+					New checkin
+				<% } %>
+			</small>
+
+			<%= template.question %>
+
+		</h3>
+	</div>
+
+	<form role="form" action="/checkin" method="post">
+		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+		<input type="hidden" name="id" value="<%= checkin.id || '' %>">
+		<input type="hidden" name="templateId" value="<%= template.id %>">
+
+		<label for="answer" class="text-muted">
+			Answer(s)
+		</label>
+
+		<div class="row">
+
+			<div class="col-sm-5 col-sm-push-7">
+
+				<% if(template.tips) { %>
+					<div class="alert alert-info">
+						<h4 class="small-title">
+							<i class="glyphicon glyphicon-question-sign"></i> Tips:
+						</h4>
+
+						<p>
+							<%= template.tips %>
+						</p>
+					</div>
+				<% } %>
+
+			</div>
+
+			<div class="col-sm-7 col-sm-pull-5">
+
+				<% if(template.type.indexOf('choice') !== -1) { %>
+					<% if(template.answers && template.answers.length) { %>
+						<% for(var i=0; i < template.answers.length; i++) { %>
+							<div class="form-group">
+								<div class="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>">
+									<label>
+										<input type="<%= (template.type === 'multiplechoice') ? 'checkbox' : '' %><%= (template.type === 'singlechoice') ? 'radio' : '' %>" name="answers[]" value="<%= template.answers[i].text %>">
+										<%= template.answers[i].text %>
+									</label>
+								</div>
+							</div>
+						<% } %>
+					<% }%>
+				<% }%>
+
+				<% if(template.type === 'text') { %>
+					<div class="form-group">
+						<textarea class="form-control" id="answers[]" name="answers[]" required></textarea>
+					</div>
+				<% } %>
+
+			</div>
+
+		</div>
+
+		<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+			<% if(checkin.id) { %>
+				Update checkin
+			<% } else { %>
+				Make new checkin
+			<% } %>
+		</button>
+	</form>
+
+</div>

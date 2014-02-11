@@ -101,7 +101,7 @@ module.exports = function(app, config, passport, env) {
 			// assume "not found" in the error msgs
 			app.use(function(err, req, res, next){
 				// treat as 404
-				if (err.message && (err.message.indexOf('not found') ||  (err.message.indexOf('Cast to ObjectId failed')))) {
+				if (err.message && (~err.message.indexOf('not found') || (~err.message.indexOf('Cast to ObjectId failed')))) {
 					return next();
 				}
 

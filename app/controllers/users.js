@@ -10,7 +10,11 @@ module.exports = (function() {
 	var login = function (req, res, next) {
 		// update last_login date
 		if(req.user) {
-			User.findById(req.user._id, function(err, u) {
+
+			User.findOne({
+				_id: req.user._id
+			}, function(err, u) {
+
 				if (!u) {
 					return next(new Error('Could not find User'));
 				} else {
@@ -23,6 +27,7 @@ module.exports = (function() {
 						}
 					});
 				}
+
 			});
 		}
 
@@ -31,6 +36,7 @@ module.exports = (function() {
 			delete req.session.returnTo;
 			return;
 		}
+
 		res.redirect('/');
 	};
 
@@ -296,7 +302,9 @@ module.exports = (function() {
 				user.email = req.body.email || user.email;
 				user.username = req.body.username || user.username;
 
-				if(user.password) user.password = req.body.password;
+				if(user.password) {
+					user.password = req.body.password;
+				}
 
 				user.save(function(err) {
 					if (err) {

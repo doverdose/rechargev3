@@ -49,9 +49,10 @@
 		"uglify-js" : "*"
 	},
 	"scripts": {
-		"build": "npm install && bower install && grunt",
 		"dev": "npm install && bower install && grunt server",
-		"start": "NODE_ENV=development node web.js",
-		"test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec test/test-*.js"
+		"build": "npm install && bower install && grunt",
+		"test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec test/test-*.js",
+		"production-test": "npm run-script build && npm test && NODE_ENV=production node web.js",
+		"start": "node web.js"
 	}
 }

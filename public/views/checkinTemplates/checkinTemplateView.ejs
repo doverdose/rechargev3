@@ -1,0 +1,41 @@
+<% layout('../layouts/default') -%>
+
+<div class="page-header">
+	<form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
+		<a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
+
+		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+		<input type="hidden" name="id" id="id" value="<%= c.id %>">
+
+		<button type="submit" class="btn btn-danger">Remove</button>
+	</form>
+
+	<h3><%= c.title %></h3>
+</div>
+
+<h4 class="text-muted">Question:</h4>
+<p>
+	<%= c.question %>
+</p>
+
+<h4 class="text-muted">Score:</h4>
+<p>
+	<%= c.score %>
+</p>
+
+<h4 class="text-muted">Tips:</h4>
+<p>
+	<%= c.tips %>
+</p>
+
+<% if(c.type.indexOf('choice') !== -1 && c.answers && c.answers.length) { %>
+	<h4 class="text-muted">Possible answers:</h4>
+	<ul>
+		<% for(var i=0; i < c.answers.length; i++) { %>
+			<li>
+				<%= c.answers[i].text %>
+			</li>
+		<% } %>
+	</ul>
+<% }%>
+

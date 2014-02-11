@@ -14,6 +14,7 @@ module.exports = (function() {
 
 		var templateVars = {};
 
+
 		async.parallel([
 			function(callback) {
 
@@ -80,6 +81,7 @@ module.exports = (function() {
 						callback(err);
 						return;
 					}
+
 					templateVars.yourPatients = patients;
 					callback();
 				});
@@ -99,6 +101,8 @@ module.exports = (function() {
 						templateVars.providers = providers;
 						callback();
 					});
+				} else {
+					callback();
 				}
 
 			},
