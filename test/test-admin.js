@@ -49,7 +49,7 @@ describe('Admin', function () {
 
 		});
 
-	})
+	});
 
 	describe('GET /admin', function () {
 
@@ -61,9 +61,9 @@ describe('Admin', function () {
 				.expect(302)
 				.expect('Location', '/login')
 				.expect(/Moved Temporarily/)
-				.end(done)
-			})
-		})
+				.end(done);
+			});
+		});
 
 		context('When logged in as Admin', function () {
 			before(function (done) {
@@ -72,8 +72,8 @@ describe('Admin', function () {
 				.post('/users/session')
 				.field('email', adminUser.email)
 				.field('password', adminUser.password)
-				.end(done)
-			})
+				.end(done);
+			});
 
 			it('should respond with Content-Type text/html', function (done) {
 				agent

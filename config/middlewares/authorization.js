@@ -19,7 +19,7 @@ module.exports = (function() {
 		next();
 	};
 
-	/* If user is logged-in, don't redirect to dashboard.
+	/* If user is logged-in, redirect to dashboard.
 	* Used for Login and Register
 	*/
 

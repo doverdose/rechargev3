@@ -209,10 +209,12 @@ describe('Users', function () {
 
 			it('should have new name', function (done) {
 
-				User.findOne({ username: fakeUser.username }).exec(function (err, user) {
-					should.not.exist(err)
-					user.name.should.equal(newName)
-					done()
+				User.findOne({
+					username: fakeUser.username
+				}).exec(function (err, user) {
+					should.not.exist(err);
+					user.name.should.equal(newName);
+					done();
 				})
 
 			})

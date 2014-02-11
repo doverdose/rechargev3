@@ -295,7 +295,8 @@ module.exports = (function() {
 				user.name = req.body.name || user.name;
 				user.email = req.body.email || user.email;
 				user.username = req.body.username || user.username;
-				user.password = req.body.password || user.password;
+
+				if(user.password) user.password = req.body.password;
 
 				user.save(function(err) {
 					if (err) {
