@@ -1,208 +1,212 @@
-var mongoose = require('mongoose'),
-	util = require('util'),
-	Q = require('q'),
-	User = mongoose.model('User'),
-	Checkin = mongoose.model('Checkin'),
-	Notification = mongoose.model('Notification'),
-	dayMilliseconds = 24 * 60 * 60 * 1000,
-  winston = require('winston');
+/* Notifications controller
+ */
 
-var path = require('path'),
-	templatesDir,
-	emailTemplates = require('email-templates');
+module.exports = (function() {
+	'use strict';
 
-var nodemailer = require("nodemailer"),
-	smtpTransport,
-	config;
+	var mongoose = require('mongoose'),
+		Q = require('q'),
+		User = mongoose.model('User'),
+		Checkin = mongoose.model('Checkin'),
+		Notification = mongoose.model('Notification'),
+		dayMilliseconds = 24 * 60 * 60 * 1000;
 
-var allUsers = function() {
+	var templatesDir,
+		emailTemplates = require('email-templates');
 
-	// get list of all users
+	var nodemailer = require('nodemailer'),
+		smtpTransport,
+		config;
 
-	var deferred = Q.defer();
+	var allUsers = function() {
 
-	User.find({}, function(err, allUsers) {
-		if (err) {
-			deferred.reject(new Error(err));
-		} else {
-			deferred.resolve(allUsers);
-		}
-	});
+		// get list of all users
 
-	return deferred.promise;
+		var deferred = Q.defer();
 
-};
-
-var getCheckinsToday = function(user) {
-
-	// get checkins for a user
-
-	var deferred = Q.defer();
-
-	Checkin.find({
-		user_id: user._id,
-		timestamp: new Date().getTime() - dayMilliseconds
-	}, function(err, checkins) {
-		if (err) {
-			deferred.reject(new Error(err));
-		} else {
-			deferred.resolve(checkins);
-		}
-	});
-
-	return deferred.promise;
-
-};
-
-var allNotifications = function(user) {
-
-	// get not sent notifications
-
-	var deferred = Q.defer();
-
-	Notification.find({
-		sent: {
-			$ne: true
-		}
-	}, function(err, notifications) {
-		if (err) {
-			deferred.reject(new Error(err));
-		} else {
-			deferred.resolve(notifications);
-		}
-	});
-
-	return deferred.promise;
-
-};
-
-var scheduleNotifications = function(req, res) {
-
-	allUsers()
-	.then(function(users) {
-
-		users.forEach(function(user, i) {
-
-			getCheckinsToday(user)
-			.then(function(checkins) {
-
-				if(checkins.length === 0) {
-
-					// if the user has a notification set that is less than 24h ago, do nothing
-					Notification.findOne({
-						timestamp: { $gte: new Date().getTime() - dayMilliseconds }
-					}, function(err, notification) {
-
-						// if the user has no checkins already set for the day
-						// schedule notification in 24h
-						if(!notification) {
-
-							var newNotification = new Notification({
-								user_id: user._id,
-								timestamp: new Date(new Date().getTime() + dayMilliseconds),
-								sent: false
-							});
-
-							newNotification.save(function() {});
-
-						}
-
-					});
-
-
-				}
-
-			});
-
+		User.find({}, function(err, allUsers) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(allUsers);
+			}
 		});
 
-	})
-	.done()
+		return deferred.promise;
 
-};
+	};
 
-var sendNotifications = function(req, res) {
+	var getCheckinsToday = function(user) {
 
-	allNotifications()
-	.then(function(notifications) {
+		// get checkins for a user
 
-		notifications.forEach(function(notification, i) {
+		var deferred = Q.defer();
 
-			User.findOne({
-				_id: notification.user_id
-			}).exec(function (err, user) {
+		Checkin.find({
+			user_id: user._id,
+			timestamp: new Date().getTime() - dayMilliseconds
+		}, function(err, checkins) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(checkins);
+			}
+		});
 
-				emailTemplates(templatesDir, function(templateErr, template) {
+		return deferred.promise;
 
-					if (err || templateErr) {
-						console.log(err || templateErr);
-					} else if(user) {
+	};
 
-						// Prepare nodemailer transport object
-						var transport = nodemailer.createTransport(config.mail.type, config.mail.transport);
+	var allNotifications = function() {
 
-						// An example users object with formatted email function
-						var locals = {
-							email: user.email,
-							name: user.name
-						};
+		// get not sent notifications
+		var deferred = Q.defer();
 
-						// Send a single email
-						template('notification', locals, function(err, html, text) {
-							if (err) {
-								console.log(err);
-							} else {
-								transport.sendMail({
-									from: config.mail.from,
-									to: user.email,
-									subject: 'Notification',
-									html: html,
-									text: text
-								}, function(err, responseStatus) {
-									if (err) {
-										console.log(err);
-									} else {
-										console.log(responseStatus.message);
+		Notification.find({
+			sent: {
+				$ne: true
+			}
+		}, function(err, notifications) {
+			if (err) {
+				deferred.reject(new Error(err));
+			} else {
+				deferred.resolve(notifications);
+			}
+		});
 
-										notification.sent = "true";
-										notification.sent_timestamp = new Date();
+		return deferred.promise;
 
-										notification.save(function(err, callback) {
-											console.log(err);
-										});
-									}
+	};
+
+	var scheduleNotifications = function() {
+
+		allUsers()
+		.then(function(users) {
+
+			users.forEach(function(user) {
+
+				getCheckinsToday(user)
+				.then(function(checkins) {
+
+					if(checkins.length === 0) {
+
+						// if the user has a notification set that is less than 24h ago, do nothing
+						Notification.findOne({
+							timestamp: { $gte: new Date().getTime() - dayMilliseconds }
+						}, function(err, notification) {
+
+							// if the user has no checkins already set for the day
+							// schedule notification in 24h
+							if(!notification) {
+
+								var newNotification = new Notification({
+									user_id: user._id,
+									timestamp: new Date(new Date().getTime() + dayMilliseconds),
+									sent: false
 								});
+
+								newNotification.save(function() {});
+
 							}
+
 						});
 
+
 					}
-				})
+
+				});
 
 			});
 
-		});
+		})
+		.done();
 
-	})
-	.done()
+	};
 
-};
+	var sendNotifications = function() {
 
-module.exports = function(cfg) {
+		allNotifications()
+		.then(function(notifications) {
 
-	config = cfg;
+			notifications.forEach(function(notification) {
 
-	smtpTransport = nodemailer.createTransport(config.mail.type, config.mail.transport);
-	templatesDir = config.root + '/app/views/email';
+				User.findOne({
+					_id: notification.user_id
+				}).exec(function (err, user) {
 
-	// send notifications that are not sent
-	// on server restart
-	//sendNotifications();
-	scheduleNotifications();
+					emailTemplates(templatesDir, function(templateErr, template) {
 
-	// run the interval every 24h
-	setInterval(function() {
-		sendNotifications();
+						if (err || templateErr) {
+							console.log(err || templateErr);
+						} else if(user) {
+
+							// Prepare nodemailer transport object
+							var transport = nodemailer.createTransport(config.mail.type, config.mail.transport);
+
+							// An example users object with formatted email function
+							var locals = {
+								email: user.email,
+								name: user.name
+							};
+
+							// Send a single email
+							template('notification', locals, function(err, html, text) {
+								if (err) {
+									console.log(err);
+								} else {
+									transport.sendMail({
+										from: config.mail.from,
+										to: user.email,
+										subject: 'Notification',
+										html: html,
+										text: text
+									}, function(err, responseStatus) {
+										if (err) {
+											console.log(err);
+										} else {
+											console.log(responseStatus.message);
+
+											notification.sent = 'true';
+											notification.sent_timestamp = new Date();
+
+											notification.save(function(err) {
+												console.log(err);
+											});
+										}
+									});
+								}
+							});
+
+						}
+					});
+
+				});
+
+			});
+
+		})
+		.done();
+
+	};
+
+	return function(cfg) {
+
+		config = cfg;
+
+		smtpTransport = nodemailer.createTransport(config.mail.type, config.mail.transport);
+		templatesDir = config.root + '/app/views/email';
+
+		// send notifications that are not sent
+		// on server restart
+		//sendNotifications();
 		scheduleNotifications();
-	}, dayMilliseconds);
 
-}
+		// run the interval every 24h
+		setInterval(function() {
+			sendNotifications();
+			scheduleNotifications();
+		}, dayMilliseconds);
+
+	};
+
+}());

@@ -199,13 +199,13 @@ module.exports = function (grunt) {
 			}
 		},
 		uglify: {
-			dist: {
-				files: {
-					'<%= yeoman.dist %>/scripts/scripts.js': [
-						'<%= yeoman.dist %>/scripts/scripts.js'
-					]
-				}
-			}
+// 			dist: {
+// 				files: {
+// 					'<%= yeoman.dist %>/scripts/scripts.js': [
+// 						'<%= yeoman.dist %>/scripts/scripts.js'
+// 					]
+// 				}
+// 			}
 		}
 	});
 
@@ -222,7 +222,7 @@ module.exports = function (grunt) {
 		'clean:dist',
 		'sass:dist',
 		'imagemin',
-		'htmlmin',
+		//'htmlmin',
 		'useminPrepare',
 		'copy',
 		'concat',

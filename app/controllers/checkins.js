@@ -1,45 +1,51 @@
 /* Checkins controller
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
-		util = require('util'),
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
-	var view = function(req, res) {
-		Checkin.findOne({_id: req.params.id}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
+	var view = function(req, res, next) {
+		Checkin.findOne({
+			_id: req.params.id
+		}, function(err, c) {
+			if (!c) {
+				return next(new Error('Failed to load Check-in ' + req.params.id));
+			}
 
 			res.render('checkin/checkinView.ejs', {
 				c: c,
 				choice: (c.type.indexOf('choice') !== -1)
 			});
 		});
-	}
+	};
 
-	var list = function(req, res) {
+	var list = function(req, res, next) {
 		var Checkin = mongoose.model('Checkin');
 		var CheckinTemplate = mongoose.model('CheckinTemplate');
 
 		Checkin.find({
 			user_id: req.user._id
 		}, function(err, checkins) {
-
-			if (err) throw err;
+			if (err) {
+				return next(err);
+			}
 
 			// calculate user score
 			var totalScore = 0;
-			checkins.forEach(function(checkin, i) {
+			checkins.forEach(function(checkin) {
 				totalScore += checkin.score || 0;
 			});
 
 			// get list of checkin templates to
 			// show them in the new checkin selector
 			CheckinTemplate.find({}, function(err, checkinTemplates) {
-
-				if (err) throw err;
+				if (err) {
+					return next(err);
+				}
 
 				res.render('checkin/list.ejs', {
 					c: checkins.reverse(),
@@ -57,7 +63,7 @@ module.exports = function() {
 		var newAnswers = [];
 
 		if(form.answers && form.answers.length) {
-			form.answers.forEach(function(answer, i) {
+			form.answers.forEach(function(answer) {
 				// don't add if just whitespace
 				if(answer.trim()) {
 					newAnswers.push({
@@ -65,7 +71,7 @@ module.exports = function() {
 					});
 				}
 			});
-		};
+		}
 
 		form.answers = newAnswers;
 
@@ -73,7 +79,7 @@ module.exports = function() {
 
 	};
 
-	var update = function(req, res) {
+	var update = function(req, res, next) {
 
 		if(req.body.id) {
 
@@ -101,7 +107,13 @@ module.exports = function() {
 			CheckinTemplate.findOne({
 				_id: req.body.templateId
 			}, function(err, template) {
-				if (!template) return res.redirect('/checkin');
+				if(err) {
+					return next(err);
+				}
+
+				if (!template) {
+					return next(new Error('Failed to load Check-in Template' + req.body.templateId));
+				}
 
 				template = template.toObject();
 
@@ -120,8 +132,7 @@ module.exports = function() {
 
 				checkin.save(function(err, newCheckin) {
 					if(err) {
-						console.log(err);
-						res.redirect('/checkin');
+						return next(err);
 					}
 
 					res.redirect('/checkin/' + newCheckin.id);
@@ -134,12 +145,14 @@ module.exports = function() {
 
 	};
 
-	var updateView = function(req, res) {
+	var updateView = function(req, res, next) {
 
 		Checkin.findOne({
 			_id: req.params.id
 		}, function(err, checkin) {
-			if (!c) return res.redirect('/checkin');
+			if (!checkin) {
+				return next(new Error('Failed to load Check-in ' + req.params.id));
+			}
 			res.render('checkin/checkinEdit.ejs', {
 				checkin: checkin
 			});
@@ -147,12 +160,14 @@ module.exports = function() {
 
 	};
 
-	var createView = function (req, res) {
+	var createView = function (req, res, next) {
 
 		CheckinTemplate.findOne({
 			_id: req.body.id
 		}, function(err, template) {
-			if (!template) return res.redirect('/checkin');
+			if (!template) {
+				return next(new Error('Failed to load Check-in Template ' + req.body.id));
+			}
 
 			res.render('checkin/checkinEdit.ejs', {
 				checkin: {},
@@ -163,12 +178,14 @@ module.exports = function() {
 
 	};
 
-	var remove = function(req, res) {
+	var remove = function(req, res, next) {
 
 		Checkin.findOne({
 			_id: req.body.id
 		}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
+			if (!c) {
+				return next(new Error('Failed to load Check-in ' + req.body.id));
+			}
 
 			c.remove();
 
@@ -184,7 +201,7 @@ module.exports = function() {
 		remove: remove,
 		view: view,
 		list: list
-	}
+	};
 
-}();
+}());
 

@@ -19,17 +19,13 @@ Server will be running on port `8080`, by default.
 Run tests with:
 
 	npm test
-
-Run `jshint` tests with:
-
-	grunt
-
+	
 
 ## Deployment
 
 Before deploying, make sure to build the latest version with Grunt. This will run jshint checks, concatenate the scripts, optimize the images, compile and optimize the Sass, etc.
 
-	grunt
+	npm run-script build
 
 Please make sure all jshint checks pass.
 

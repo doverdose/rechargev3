@@ -4,8 +4,12 @@
 module.exports = (function() {
 	'use strict';
 
-	exports.index = function(req,res){
+	var index = function(req,res){
 		res.render('site/index.ejs');
+	};
+
+	return {
+		index: index
 	};
 
 }());

@@ -1,16 +1,19 @@
-var express = require('express'),
-	site = require('../app/controllers/site'),
-	dashboard = require('../app/controllers/dashboard'),
-	checkin = require('../app/controllers/checkins'),
-	checkinTemplate = require('../app/controllers/checkinTemplates'),
-	users = require('../app/controllers/users'),
-	settings = require('../app/controllers/settings'),
-	providers = require('../app/controllers/providers'),
-	admin = require('../app/controllers/admin'),
-	schedules = require('../app/controllers/schedules'),
-	auth = require('./middlewares/authorization');
+/* Routes
+ */
 
 module.exports = function(app, passport) {
+	'use strict';
+
+	var site = require('../app/controllers/site'),
+		dashboard = require('../app/controllers/dashboard'),
+		checkin = require('../app/controllers/checkins'),
+		checkinTemplate = require('../app/controllers/checkinTemplates'),
+		users = require('../app/controllers/users'),
+		settings = require('../app/controllers/settings'),
+		providers = require('../app/controllers/providers'),
+		admin = require('../app/controllers/admin'),
+		schedules = require('../app/controllers/schedules'),
+		auth = require('./middlewares/authorization');
 
 	// site
 	app.get('/', site.index);

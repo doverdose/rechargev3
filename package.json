@@ -49,8 +49,9 @@
 		"uglify-js" : "*"
 	},
 	"scripts": {
+		"build": "NODE_ENV=development && npm install && bower install && grunt",
 		"dev": "NODE_ENV=development && npm install && bower install && grunt server",
 		"start": "NODE_ENV=development node web.js",
-		"test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec test/test-*.js"
+		"test": "NODE_ENV=test grunt jshint && ./node_modules/.bin/mocha --reporter spec test/test-*.js"
 	}
 }

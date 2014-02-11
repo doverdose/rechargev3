@@ -5,13 +5,9 @@ module.exports = function(app, config, passport, env) {
 	'use strict';
 
 	var express = require('express'),
-		site = require('../app/controllers/site'),
-		mongoose = require('mongoose'),
 		MongoStore = require('connect-mongo')(express),
 		flash = require('connect-flash'),
-		path = require('path'),
-		engine = require('ejs-locals'),
-		fs = require('fs');
+		engine = require('ejs-locals');
 
 	app.configure(function() {
 		app.engine('html', engine);
@@ -56,13 +52,15 @@ module.exports = function(app, config, passport, env) {
 		app.use(express.methodOverride());
 
 		// express/mongo session storage
-		app.use(express.session({
-			secret: 're-health charge session token',
-			store: new MongoStore({
-					url: config.db,
-					collection : 'sessions'
+		app.use(
+			express.session({
+				secret: 're-health charge session token',
+				store: new MongoStore({
+						url: config.db,
+						collection : 'sessions'
+					})
 				})
-		}));
+		);
 
 		// use passport session
 		app.use(passport.initialize());
@@ -103,9 +101,7 @@ module.exports = function(app, config, passport, env) {
 			// assume "not found" in the error msgs
 			app.use(function(err, req, res, next){
 				// treat as 404
-				if (err.message
-					&& (~err.message.indexOf('not found')
-					|| (~err.message.indexOf('Cast to ObjectId failed')))) {
+				if (err.message && (err.message.indexOf('not found') ||  (err.message.indexOf('Cast to ObjectId failed')))) {
 					return next();
 				}
 
@@ -120,7 +116,7 @@ module.exports = function(app, config, passport, env) {
 		}
 
 		// assume 404 since no middleware responded
-		app.use(function(req, res, next){
+		app.use(function(req, res){
 			res.status(404).render('404', {
 				url: req.originalUrl,
 				error: 'Not found'
@@ -129,6 +125,4 @@ module.exports = function(app, config, passport, env) {
 
 	});
 
-}
-
-
+};

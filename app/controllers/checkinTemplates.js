@@ -1,24 +1,25 @@
 /* Checkin Templates controller
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
-		util = require('util'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
-	var remove = function(req, res) {
+	var remove = function(req, res, next) {
 
 		CheckinTemplate.findOne({
 			_id: req.body.id
 		}, function(err, c) {
-			if (!c) return res.redirect('/admin');
+			if(!c) {
+				return next(new Error('Failed to load Check-in Template' + req.body.id));
+			}
 
 			c.remove();
 
 			res.redirect('/admin');
 		});
-
 
 	};
 
@@ -27,7 +28,7 @@ module.exports = function() {
 		var newAnswers = [];
 
 		if(form.answers && form.answers.length) {
-			form.answers.forEach(function(answer, i) {
+			form.answers.forEach(function(answer) {
 				// don't add if just whitespace
 				if(answer.trim()) {
 					newAnswers.push({
@@ -35,7 +36,7 @@ module.exports = function() {
 					});
 				}
 			});
-		};
+		}
 
 		form.answers = newAnswers;
 
@@ -43,7 +44,7 @@ module.exports = function() {
 
 	};
 
-	var update = function(req, res) {
+	var update = function(req, res, next) {
 
 		if(req.body.id) {
 
@@ -51,7 +52,9 @@ module.exports = function() {
 			CheckinTemplate.findOne({
 				_id: req.body.id
 			}, function(err, c) {
-				if (!c) return res.redirect('/admin');
+				if (!c) {
+					return next(new Error('Failed to load Check-in Template' + req.body.id));
+				}
 
 				// update checkin with
 				c.type = req.body.type || c.type;
@@ -63,7 +66,7 @@ module.exports = function() {
 				// parse the array of answers, and turn it into an array of objects
 				if(req.body.answers && req.body.answers.length) {
 					c.answers = parseForm(req.body).answers;
-				};
+				}
 
 				c.save(function() {
 					res.redirect('/checkintemplate/' + c.id);
@@ -78,9 +81,8 @@ module.exports = function() {
 			var c = new CheckinTemplate(formParams);
 
 			c.save(function(err, newCheckin) {
-				 if (err) {
-					console.log(err);
-					res.redirect('/admin');
+				if (err) {
+					return next(err);
 				}
 
 				res.redirect('/checkintemplate/' + newCheckin.id);
@@ -88,27 +90,23 @@ module.exports = function() {
 
 		}
 
-	}
+	};
 
 	var updateView = function(req, res, next) {
 
 		CheckinTemplate.findOne({
 			_id: req.params.id
 		}, function(err, c) {
-			if (!c) return res.redirect('/admin');
-
-			switch (req.params.format) {
-			case 'json':
-				res.send(c.__doc);
-				break;
-			default:
-				res.render('checkinTemplates/checkinTemplateEdit.ejs', {
-					c: c
-				});
+			if (!c) {
+				return next(new Error('Failed to load Check-in Template' + req.params.id));
 			}
+
+			res.render('checkinTemplates/checkinTemplateEdit.ejs', {
+				c: c
+			});
 		});
 
-	}
+	};
 
 	var createView = function (req, res) {
 
@@ -121,25 +119,23 @@ module.exports = function() {
 		res.render('checkinTemplates/checkinTemplateEdit.ejs', {
 			c: c
 		});
-	}
+	};
 
-	var view = function(req, res) {
+	var view = function(req, res, next) {
 
 		CheckinTemplate.findOne({
 			_id: req.params.id
 		}, function(err, c) {
-			if (!c) return res.redirect('/checkin');
-
-			switch (req.params.format) {
-				case 'json':
-					res.send(c.__doc);
-					break;
-				default:
-					res.render('checkinTemplates/checkinTemplateView.ejs', {c: c});
+			if (!c) {
+				return next(new Error('Failed to load Check-in Template' + req.params.id));
 			}
+
+			res.render('checkinTemplates/checkinTemplateView.ejs', {
+				c: c
+			});
 		});
 
-	}
+	};
 
 
 	return {
@@ -148,7 +144,7 @@ module.exports = function() {
 		updateView: updateView,
 		remove: remove,
 		view: view
-	}
+	};
 
-}();
+}());
 
