@@ -18,6 +18,7 @@ module.exports = (function() {
 		question: String,
 		tips: String,
 		score: Number,
+		title: String,
 		answers: [{
 			text: String
 		}],

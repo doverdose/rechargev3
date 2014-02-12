@@ -12,7 +12,46 @@
 		</div>
 	</div>
 
+	<% if(schedules.today.length) { %>
+
+		<h4>Please make these check-ins today</h4>
+
+		<div class="list-group large-list">
+
+		<% for (var i = 0; i < schedules.today.length; i++) { %>
+
+			<div class="list-group-item">
+
+				<div class="row">
+
+					<div class="col-xs-12">
+
+						<form action="/checkin/new" method="post">
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="id" value="<%= schedules.today[i].template_id %>">
+
+
+							<button type="submit" class="btn btn-primary btn-block">
+								<%= schedules.today[i].template_id %>
+							</button>
+						</form>
+					</div>
+
+				</div>
+
+			</div>
+
+		<% } %>
+
+		</div>
+
+	<% } %>
+
+
+
 	<% if(checkins.length) { %>
+
+		<h4>Past check-ins</h4>
 
 		<%
 			var scoreClass = 'warning';

@@ -6,6 +6,7 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		async = require('async'),
+		moment = require('moment'),
 		Schedule = mongoose.model('Schedule'),
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
@@ -72,12 +73,12 @@ module.exports = (function() {
 			},
 			function(callback) {
 
+				var nextMonday = moment().day(8).hour(0).minute(0).toDate(),
+					tommorrow = moment().add('days', 1).toDate();
+
 				// get schedules for checking-in
 				Schedule.find({
 					user_id: req.user._id,
-					template_id: {
-						$nin: patientIds
-					},
 					$or: [
 						{
 							due_date: {
@@ -95,9 +96,55 @@ module.exports = (function() {
 						return next(err);
 					}
 
-					templateVars.schedules = schedules;
+					templateVars.schedules = {
+						today: [],
+						thisWeek: []
+					};
 
-					console.log(schedules);
+					// for recurring dates, set the next
+					schedules.forEach(function(schedule) {
+
+						// if the due_date has passed, but this is a recurring check-in
+						if(schedule.due_date < new Date() && schedule.repeat_interval) {
+							// calculate the number of possible recurring times
+							// then add one more to get the 'next' recurring date
+							var recurringTimes = parseInt(moment().diff(schedule.due_date, 'days') / schedule.repeat_interval) + 1;
+
+							var nextDueDate = moment(schedule.due_date).add('days', schedule.repeat_interval * recurringTimes).toDate();
+
+							schedule.due_date = nextDueDate;
+						}
+
+						// TODO check if the user has already checked-in in the last interval
+						// TODO push functions to an array and run it with async.parallel
+						if(schedule.due_date < tommorrow) {
+							templateVars.schedules.today.push(schedule);
+
+							// TODO get template title, so we can use it here and in te the template
+							Checkin.count({
+								//title: ,
+								timestamp: {
+									$gte: moment(tommorrow).subtract(schedule.repeat_interval, 'days'),
+									$lte: tommorrow
+								}
+							}, function(err, checkinCount) {
+								if(err) {
+									next(err);
+								}
+
+								// TODO count must be zero else don't push
+								console.log(checkinCount);
+							});
+
+						} else if (schedule.due_date < nextMonday) {
+							templateVars.schedules.thisWeek.push(schedule);
+						}
+
+					});
+
+					console.log(templateVars.schedules);
+
+					//templateVars.schedules = schedules;
 
 					callback();
 
@@ -181,6 +228,7 @@ module.exports = (function() {
 				req.body.question = template.question;
 				req.body.tips = template.tips;
 				req.body.score = template.score;
+				req.body.title = template.title;
 
 				var formParams = parseForm(req.body);
 
