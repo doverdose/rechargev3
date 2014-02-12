@@ -5,6 +5,8 @@ module.exports = (function() {
 	'use strict';
 
 	var mongoose = require('mongoose'),
+		async = require('async'),
+		Schedule = mongoose.model('Schedule'),
 		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
@@ -27,35 +29,91 @@ module.exports = (function() {
 		var Checkin = mongoose.model('Checkin');
 		var CheckinTemplate = mongoose.model('CheckinTemplate');
 
-		Checkin.find({
-			user_id: req.user._id
-		}, function(err, checkins) {
-			if (err) {
-				return next(err);
-			}
+		var templateVars = {};
 
-			// calculate user score
-			var totalScore = 0;
-			checkins.forEach(function(checkin) {
-				totalScore += checkin.score || 0;
-			});
+		async.parallel([
+			function(callback) {
 
-			// get list of checkin templates to
-			// show them in the new checkin selector
-			CheckinTemplate.find({}, function(err, checkinTemplates) {
-				if (err) {
-					return next(err);
-				}
+				// get checkin details
+				Checkin.find({
+					user_id: req.user._id
+				}, function(err, checkins) {
+					if (err) {
+						return next(err);
+					}
 
-				res.render('checkin/list.ejs', {
-					c: checkins.reverse(),
-					checkinTemplates: checkinTemplates,
-					totalScore: totalScore
+					// calculate user score
+					var totalScore = 0;
+					checkins.forEach(function(checkin) {
+						totalScore += checkin.score || 0;
+					});
+
+					templateVars.totalScore = totalScore;
+					templateVars.checkins = checkins.reverse();
+					callback();
+
 				});
 
-			});
+			},
+			function(callback) {
+
+				// get list of checkin templates to
+				// show them in the new checkin selector
+				CheckinTemplate.find({}, function(err, checkinTemplates) {
+					if (err) {
+						return next(err);
+					}
+
+					templateVars.checkinTemplates = checkinTemplates;
+					callback();
+
+				});
+
+			},
+			function(callback) {
+
+				// get schedules for checking-in
+				Schedule.find({
+					user_id: req.user._id,
+					template_id: {
+						$nin: patientIds
+					},
+					$or: [
+						{
+							due_date: {
+								$gte: new Date()
+							}
+						},
+						{
+							repeat_interval: {
+								$gt: 0
+							}
+						}
+					]
+				}, function(err, schedules) {
+					if (err) {
+						return next(err);
+					}
+
+					templateVars.schedules = schedules;
+
+					console.log(schedules);
+
+					callback();
+
+				});
+
+			}
+		], function(err) {
+			if(err) {
+				next(err);
+			}
+
+			res.render('checkin/list.ejs', templateVars);
 
 		});
+
+
 	};
 
 	var parseForm = function(form) {

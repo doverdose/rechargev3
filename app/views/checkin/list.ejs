@@ -12,7 +12,7 @@
 		</div>
 	</div>
 
-	<% if(c.length) { %>
+	<% if(checkins.length) { %>
 
 		<%
 			var scoreClass = 'warning';
@@ -48,28 +48,28 @@
 
 		<div class="list-group large-list">
 
-		<% for (var i = 0; i < c.length; i++) { %>
+		<% for (var i = 0; i < checkins.length; i++) { %>
 
 			<div class="list-group-item">
 
 				<div class="row">
 
 					<div class="col-xs-8">
-						<a href="/checkin/<%=c[i].id%>">
+						<a href="/checkin/<%= checkins[i].id %>">
 
-							<strong title="<%= c[i].timestamp %>">
-								<%=: c[i].timestamp | fromNow %>
+							<strong title="<%= checkins[i].timestamp %>">
+								<%=: checkins[i].timestamp | fromNow %>
 							</strong>
 
-							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= c[i].tips || '' %>">
-								<%= c[i].question %>
+							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkins[i].tips || '' %>">
+								<%= checkins[i].question %>
 							</h3>
 						</a>
 					</div>
 
 					<form action="/checkin/remove" method="post" class="text-right col-xs-4">
 						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-						<input type="hidden" name="id" id="id" value="<%=c[i].id%>">
+						<input type="hidden" name="id" id="id" value="<%= checkins[i].id %>">
 
 						<button type="submit" class="btn btn-danger">Remove</button>
 					</form>
