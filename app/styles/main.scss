@@ -193,7 +193,7 @@ body .select2-container {
 
 /* Checkins
  */
-.checkin-list {
+.large-list {
 
 	.list-group-item {
 		background: transparent;
@@ -210,8 +210,12 @@ body .select2-container {
 			}
 		}
 
-		small {
+		strong {
 			display: block;
+
+			color: lighten($black, 50%);
+			font-size: emCalc(10);
+			text-transform: uppercase;
 		}
 
 		h3 {
@@ -293,4 +297,12 @@ body .select2-container {
 	p {
 		color: lighten($color1, 20%);
 	}
+}
+
+/* Admin
+ */
+.toolbar-actions {
+	padding: emCalc(24) 0;
+
+	text-align: right;
 }

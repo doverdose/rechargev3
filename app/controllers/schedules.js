@@ -81,7 +81,7 @@ module.exports = (function() {
 
 			templateVars.schedule.due_date = moment(templateVars.schedule.due_date).format('MM/DD/YYYY');
 
-			formView(req, res, templateVars);
+			formView(req, res, next, templateVars);
 
 		});
 
