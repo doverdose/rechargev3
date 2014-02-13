@@ -123,58 +123,62 @@ module.exports = (function() {
 					templateVars.checkinTemplates.every(function(template) {
 						if(schedule.template_id.equals(template._id)) {
 							schedule.template = template;
-
 							return false;
 						}
 						return true;
 					});
 
-					// TODO check if the user has already checked-in in the last interval
-					// TODO push functions to an array and run it with async.parallel
-					if(schedule.due_date < tomorrow) {
-						templateVars.schedules.today.push(schedule);
+					var compareDate = {
+						date: null,
+						object: null
+					};
 
+					// check if the user has already checked-in in the last interval
+					if(schedule.due_date < tomorrow) {
+						compareDate.date = tomorrow;
+						compareDate.object = 'today';
+					} else if (schedule.due_date < nextMonday) {
+						compareDate.date = nextMonday;
+						compareDate.object = 'thisWeek';
+
+						console.log('yes this week');
+					}
+
+					console.log(schedule.due_date);
+					console.log(compareDate.date);
+					console.log('luni', nextMonday);
+					console.log('tomorrow', tomorrow);
+
+					if(compareDate.date) {
+						// parse all checkins, to see if we already made the required checkin
+						var existingCheckin = false;
 						templateVars.checkins.every(function(checkin) {
 
-							//console.log(checkin.timestamp);
-							console.log(tomorrow);
-							//console.log(moment(tomorrow).subtract(schedule.repeat_interval, 'days').toDate());
-
-							// TODO look for a template with the same title in the last
+							// look for a template with the same title made in the last day
 							if(
 								checkin.title === schedule.template.title &&
-								checkin.timestamp > moment(tomorrow).subtract(schedule.repeat_interval, 'days').toDate() &&
-								checkin.timestamp < tomorrow
+								checkin.timestamp > moment(compareDate.date).subtract(schedule.repeat_interval, 'days').toDate() &&
+								checkin.timestamp < compareDate.date
 							) {
-								console.log('already checked-in');
 
+								console.log('found another');
+
+								existingCheckin = true;
 								return false;
 							}
 
 							return true;
 						});
 
-						// TODO get template title, so we can use it here and in te the template
-// 						Checkin.count({
-// 							//title: ,
-// 							timestamp: {
-// 								$gte: moment(tommorrow).subtract(schedule.repeat_interval, 'days'),
-// 								$lte: tommorrow
-// 							}
-// 						}, function(err, checkinCount) {
-// 							if(err) {
-// 								next(err);
-// 							}
-//
-// 							// TODO count must be zero else don't push
-// 							console.log(checkinCount);
-// 						});*/
-
-					} else if (schedule.due_date < nextMonday) {
-						templateVars.schedules.thisWeek.push(schedule);
+						if(!existingCheckin) {
+							templateVars.schedules[compareDate.object].push(schedule);
+						}
 					}
 
+
 				});
+
+				console.log(templateVars.schedules);
 
 				res.render('checkin/list.ejs', templateVars);
 

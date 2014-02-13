@@ -12,41 +12,53 @@
 		</div>
 	</div>
 
-	<% if(schedules.today.length) { %>
+	<% Object.keys(schedules).forEach(function(key) { %>
 
-		<h4>Please make these check-ins today</h4>
+		<% if(schedules[key].length) { %>
 
-		<div class="list-group large-list">
+			<h4>
+				Please make these check-ins
+				<% if(key === 'today') { %>
+					today
+				<% } %>
 
-		<% for (var i = 0; i < schedules.today.length; i++) { %>
+				<% if(key === 'thisWeek') { %>
+					this week
+				<% } %>
+			</h4>
 
-			<div class="list-group-item">
+			<div class="list-group large-list">
 
-				<div class="row">
+				<% schedules[key].forEach(function(schedule) { %>
 
-					<div class="col-xs-12">
+					<div class="list-group-item">
 
-						<form action="/checkin/new" method="post">
-							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-							<input type="hidden" name="id" value="<%= schedules.today[i].template_id %>">
+						<div class="row">
+
+							<div class="col-xs-12">
+
+								<form action="/checkin/new" method="post">
+									<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+									<input type="hidden" name="id" value="<%= schedule.template_id %>">
 
 
-							<button type="submit" class="btn btn-primary btn-block">
-								<%= schedules.today[i].template_id %>
-							</button>
-						</form>
+									<button type="submit" class="btn btn-primary btn-block">
+										<%= schedule.template.title %>
+									</button>
+								</form>
+							</div>
+
+						</div>
+
 					</div>
+
+				<% }) %>
 
 				</div>
 
-			</div>
-
 		<% } %>
 
-		</div>
-
-	<% } %>
-
+	<% }) %>
 
 
 	<% if(checkins.length) { %>
@@ -87,28 +99,28 @@
 
 		<div class="list-group large-list">
 
-		<% for (var i = 0; i < checkins.length; i++) { %>
+		<% checkins.forEach(function(checkin) { %>
 
 			<div class="list-group-item">
 
 				<div class="row">
 
 					<div class="col-xs-8">
-						<a href="/checkin/<%= checkins[i].id %>">
+						<a href="/checkin/<%= checkin.id %>">
 
-							<strong title="<%= checkins[i].timestamp %>">
-								<%=: checkins[i].timestamp | fromNow %>
+							<strong title="<%= checkin.timestamp %>">
+								<%=: checkin.timestamp | fromNow %>
 							</strong>
 
-							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkins[i].tips || '' %>">
-								<%= checkins[i].question %>
+							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkin.tips || '' %>">
+								<%= checkin.question %>
 							</h3>
 						</a>
 					</div>
 
 					<form action="/checkin/remove" method="post" class="text-right col-xs-4">
 						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-						<input type="hidden" name="id" id="id" value="<%= checkins[i].id %>">
+						<input type="hidden" name="id" id="id" value="<%= checkin.id %>">
 
 						<button type="submit" class="btn btn-danger">Remove</button>
 					</form>
@@ -117,13 +129,13 @@
 
 			</div>
 
-		<% } %>
+		<% }) %>
 
 		</div>
 
 	<% } else { %>
 
-		<h4 class="text-center text-muted">You haven't made any check-ins</h4>
+		<h4 class="text-center text-muted">You haven't made any check-ins yet</h4>
 
 	<% } %>
 
