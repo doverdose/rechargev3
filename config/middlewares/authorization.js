@@ -1,23 +1,66 @@
-/*
- *  Restrict pages that require login
+/* Authorization Middleware
+ * Restrict pages based on authentication and permissions
  */
 
-exports.requiresLogin = function (req, res, next) {
-	if (!req.isAuthenticated()) {
-		req.flash('error', 'You are not authorized');
-		req.session.returnTo = req.originalUrl
-		return res.redirect('/login')
-	}
-	next()
-}
+module.exports = (function() {
+	'use strict';
 
-/* If user is logged-in, don't redirect to dashboard.
- * Used for Login and Register
- */
+	var requiresLogin = function (req, res, next) {
 
-exports.isLoggedIn = function (req, res, next) {
-	if(req.isAuthenticated()) {
-		return res.redirect('/dashboard')
-	}
-	next()
-}
+		if(req.method === 'GET') {
+			req.session.lastUrl = req.url;
+		}
+
+		if (!req.isAuthenticated()) {
+			req.flash('error', 'You are not authorized');
+			req.session.returnTo = req.originalUrl;
+			return res.redirect('/login');
+		}
+		next();
+	};
+
+	/* If user is logged-in, redirect to dashboard.
+	* Used for Login and Register
+	*/
+
+	var isLoggedIn = function (req, res, next) {
+		if(req.isAuthenticated()) {
+			return res.redirect('/dashboard');
+		}
+
+		next();
+	};
+
+	/* Require Admin permission
+	*/
+	var requiresAdmin = function(req, res, next) {
+
+		if(!req.user.permissions.admin) {
+			req.session.returnTo = req.originalUrl;
+			return res.redirect('/dashboard');
+		}
+		next();
+
+	};
+
+	/* Require Provider permission
+	*/
+	var requiresProvider = function(req, res, next) {
+
+		if(!req.user.permissions.provider && !req.user.permissions.admin) {
+			req.session.returnTo = req.originalUrl;
+			return res.redirect('/dashboard');
+		}
+		next();
+
+	};
+
+	return {
+		requiresLogin: requiresLogin,
+		isLoggedIn: isLoggedIn,
+		requiresAdmin: requiresAdmin,
+		requiresProvider: requiresProvider
+	};
+
+}());
+

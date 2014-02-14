@@ -1,8 +1,11 @@
+/* App config
+ */
 
-var path = require('path'),
-	rootPath = path.normalize(__dirname + '/..');
+module.exports = function() {
+	'use strict';
 
-module.exports = function(app) {
+	var path = require('path'),
+		rootPath = path.normalize(__dirname + '/..');
 
 	return {
 		development: {
@@ -13,32 +16,32 @@ module.exports = function(app) {
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
-					service: "Gmail",
+					service: 'Gmail',
 					auth: {
-						user: "rechargeapp.donotreply@gmail.com",
-						pass: "thisisjustwhatweneeded"
+						user: 'rechargeapp.donotreply@gmail.com',
+						pass: 'thisisjustwhatweneeded'
 					}
 				}
 			},
 			app: {}
 		},
-    nitrous: {
-      db: 'mongodb://kimodo:kimono@ds051868.mongolab.com:51868/recharge-dev',
-      root: rootPath,
-      mail: {
+		nitrous: {
+			db: 'mongodb://kimodo:kimono@ds051868.mongolab.com:51868/recharge-dev',
+			root: rootPath,
+			mail: {
 				from: 'ReCharge Health <rechargeapp@gmail.com>',
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
-					service: "Gmail",
+					service: 'Gmail',
 					auth: {
-						user: "rechargeapp.donotreply@gmail.com",
-						pass: "thisisjustwhatweneeded"
+						user: 'rechargeapp.donotreply@gmail.com',
+						pass: 'thisisjustwhatweneeded'
 					}
 				}
 			},
-      app: {}
-    },
+			app: {}
+		},
 		test: {
 			db: 'mongodb://localhost/recharge-test',
 			root: rootPath,
@@ -47,10 +50,10 @@ module.exports = function(app) {
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
-					service: "Gmail",
+					service: 'Gmail',
 					auth: {
-					    user: "rechargeapp.donotreply@gmail.com",
-						pass: "thisisjustwhatweneeded"
+						user: 'rechargeapp.donotreply@gmail.com',
+						pass: 'thisisjustwhatweneeded'
 					}
 				}
 			},
@@ -60,14 +63,14 @@ module.exports = function(app) {
 			db: 'mongodb://komodo:theonlylivingdragon@ds049548.mongolab.com:49548/heroku_app18503207',
 			root: rootPath,
 			mail: {
-			    from: 'ReCharge Health <rechargeapp@gmail.com>',
+				from: 'ReCharge Health <rechargeapp@gmail.com>',
 				type: 'SMTP',
 				transport: {
 					// nodemailer transport
-					service: "Gmail",
+					service: 'Gmail',
 					auth: {
-					    user: "rechargeapp.donotreply@gmail.com",
-						pass: "thisisjustwhatweneeded"
+						user: 'rechargeapp.donotreply@gmail.com',
+						pass: 'thisisjustwhatweneeded'
 					}
 				}
 			},
@@ -77,19 +80,19 @@ module.exports = function(app) {
 			db: 'mongodb://localhost/recharge-production',
 			root: rootPath,
 			mail: {
-			    from: 'ReCharge Health <rechargeapp@gmail.com>',
-			    type: 'SMTP',
+				from: 'ReCharge Health <rechargeapp@gmail.com>',
+				type: 'SMTP',
 				transport: {
 					// nodemailer transport
-					service: "Gmail",
+					service: 'Gmail',
 					auth: {
-					    user: "rechargeapp.donotreply@gmail.com",
-						pass: "thisisjustwhatweneeded"
+						user: 'rechargeapp.donotreply@gmail.com',
+						pass: 'thisisjustwhatweneeded'
 					}
 				}
 			},
 			app: {}
 		}
-	}
+	};
 
-}
+};

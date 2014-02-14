@@ -1,0 +1,308 @@
+/* Bourbon
+ */
+@import "../bower_components/bourbon/app/assets/stylesheets/bourbon";
+
+/* Variables
+ */
+$color1: #47a3da;
+$white: #fff;
+$black: #333;
+
+/* Bootstrap
+ */
+$icon-font-path: "../bower_components/bootstrap-sass/fonts/";
+
+//$navbar-height: 80px;
+$navbar-inverse-color: $white;
+$navbar-inverse-bg: $color1;
+
+@import "../bower_components/bootstrap-sass/lib/bootstrap.scss";
+
+/* Imports
+ */
+@import "utils";
+
+/* General
+ */
+
+body {
+	padding-top: $navbar-height;
+	color: $black;
+}
+
+.container {
+	max-width: 600px;
+}
+
+.js-template {
+	display: none;
+}
+
+.small-title {
+	font-weight: bold;
+	font-size: emCalc(12);
+	text-transform: uppercase;
+}
+
+body .select2-container {
+	display: block;
+}
+
+/* Navbar
+ */
+
+.navbar {
+
+	.navbar-nav > li > a {
+		&:hover {
+			background-color: darken($white, 5%);
+		}
+	}
+
+	.navbar-brand {
+		margin: 0 auto;
+	}
+
+	.btn {
+		display: block;
+
+		@include breakpoint(mama-bear) {
+			display: inline-block;
+		}
+	}
+
+	.navbar-nav {
+		@include breakpoint(mama-bear) {
+			margin-right: emCalc(4);
+		}
+	}
+
+	.signed-in-text {
+		float: none;
+
+		@include breakpoint(mama-bear) {
+			float: left;
+			overflow: hidden;
+			max-width: 200px;
+
+			white-space: nowrap;
+			text-align: left;
+			text-overflow: ellipsis;
+		}
+	}
+
+}
+
+/* Carousel
+ */
+.carousel {
+	.item {
+		overflow: hidden;
+		height: 380px;
+		width: 100%;
+
+		@include breakpoint(baby-bear) {
+			height: 320px;
+		}
+	}
+
+	img {
+		width: auto !important;
+		min-width: 100% !important;
+		min-height: 100% !important;
+		max-width: none !important;
+	}
+
+	.carousel-indicators {
+		bottom: 0;
+	}
+}
+
+.marketing {
+	padding-top: emCalc(40);
+	padding-bottom: emCalc(40);
+}
+
+/* Signup
+ */
+.password-keypad {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+
+	.btn-group {
+		width: 100.5%;
+		margin-top: -1px;
+
+		&:first-child .btn {
+			border-top: 0;
+		}
+
+		&:last-child .btn {
+			border-bottom: 0;
+		}
+
+		.btn:first-child {
+			border-left: 0;
+		}
+
+		.btn:last-child {
+			border-right: 0;
+		}
+	}
+
+	.btn {
+		width: (100%/3);
+		border-radius: 0;
+	}
+
+	.btn.btn-reveal {
+		margin-left: -1px;
+		width: (100%/3 * 2);
+	}
+}
+
+/* Dashboard
+ */
+.stats {
+	padding: emCalc(24) 0;
+
+	h3 {
+		margin: 0;
+	}
+
+	strong {
+		display: block;
+	}
+
+	.label {
+		display: inline-block;
+		margin: 0;
+
+		font-size: emCalc(40);
+		font-weight: bold;
+	}
+
+}
+
+/* Checkin Templates
+ */
+.possible-answers {
+	margin-bottom: emCalc(12);
+}
+
+/* Checkins
+ */
+.large-list {
+
+	.list-group-item {
+		background: transparent;
+		border-color: lighten($black, 70%);
+		border-width: 1px 0 0;
+
+		&:first-child {
+			border: 0;
+		}
+
+		a {
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		strong {
+			display: block;
+
+			color: lighten($black, 50%);
+			font-size: emCalc(10);
+			text-transform: uppercase;
+		}
+
+		h3 {
+			display: inline-block;
+			margin: 0;
+		}
+
+	}
+
+}
+
+.checkin-edit {
+
+}
+
+/* JS visibility selector
+ */
+.js-visibility-select-hide {
+	position: absolute;
+	visibility: hidden;
+	opacity: 0;
+
+	@include transform(translateY(-30px));
+	@include transition (all .1s ease-in-out);
+}
+
+.js-visibility-select-show {
+	position: relative;
+	visibility: visible;
+	opacity: 1;
+
+	@include transform(translateY(0));
+	@include transition (all .1s ease-in-out);
+}
+
+/* Page header
+ */
+.page-header {
+	overflow: hidden;
+	border-bottom: 0;
+
+	h2,
+	h3 {
+		float: left;
+		margin: 0;
+
+		small {
+			display: block;
+
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: emCalc(8);
+		}
+	}
+
+	.header-actions {
+		float: right;
+	}
+}
+
+
+/* Settings
+ */
+.settings-nav {
+	margin-top: emCalc(20);
+}
+
+/* Footer
+ */
+
+.site-footer {
+	display: block;
+	margin-top: emCalc(80);
+	background: $color1;
+	padding: emCalc(20);
+
+	color: lighten($color1, 30%);
+
+	p {
+		color: lighten($color1, 20%);
+	}
+}
+
+/* Admin
+ */
+.toolbar-actions {
+	padding: emCalc(24) 0;
+
+	text-align: right;
+}

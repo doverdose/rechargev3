@@ -1,0 +1,100 @@
+<% layout('../layouts/default') -%>
+
+<h2>
+	<% if(schedule._id) { %>
+		Edit schedule
+	<% } else { %>
+		New schedule
+	<% } %>
+</h2>
+
+<% if(typeof errors !== 'undefined') { %>
+	<div class="alert alert-danger">
+		<% for(error in errors) { %>
+			<p>
+				<%= errors[error].type %>
+			</p>
+		<% } %>
+	</div>
+<% } %>
+
+<form role="form" action="/schedule" method="post">
+	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+	<input type="hidden" name="id" value="<%= schedule._id || '' %>">
+
+	<div class="row">
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="user_id">Patient</label>
+				<select class="js-select2" id="user_id" name="user_id">
+					<% for(var i = 0; i < patients.length; i++) { %>
+						<option value="<%= patients[i]._id %>">
+							<%= patients[i].name %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+		</div>
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="template_id">Checkin template</label>
+				<select class="js-select2" id="template_id" name="template_id">
+					<% for(var i = 0; i < templates.length; i++) { %>
+						<option value="<%= templates[i]._id %>">
+							<%= templates[i].title %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<div class="row">
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="due_date">Due date</label>
+
+				<div class="input-group date js-upcoming-date">
+					<input type="text" class="form-control" id="due_date" name="due_date" value="<%= schedule.due_date || ''%>" required>
+					<span class="input-group-addon">
+						<i class="glyphicon glyphicon-th"></i>
+					</span>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="col-sm-6">
+
+			<div class="form-group">
+				<label for="repeat_interval">Repeating</label>
+				<select class="form-control" name="repeat_interval" id="repeat_interval">
+					<option value="0" <%= schedule.repeat_interval === 0 && 'selected' %>>Never</option>
+					<option value="1" <%= schedule.repeat_interval === 1 && 'selected' %>>Every day</option>
+					<option value="7" <%= schedule.repeat_interval === 7 && 'selected' %>>Every week</option>
+				</select>
+			</div>
+
+		</div>
+
+	</div>
+
+	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+		<% if(schedule._id) { %>
+			Update schedule
+		<% } else { %>
+			Create new schedule
+		<% } %>
+	</button>
+</form>

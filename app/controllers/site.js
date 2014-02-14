@@ -1,7 +1,16 @@
-var mongoose = require('mongoose'),
-	util = require('util');
+/* Site controller
+ */
 
-exports.index = function(req,res){
-	res.render('site/index.ejs');
-}
+module.exports = (function() {
+	'use strict';
+
+	var index = function(req,res){
+		res.render('site/index.ejs');
+	};
+
+	return {
+		index: index
+	};
+
+}());
 

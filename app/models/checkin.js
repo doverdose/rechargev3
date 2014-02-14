@@ -1,34 +1,43 @@
 /**
- * Module dependencies.
+/* Checkin model
  */
 
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	ObjectId = Schema.ObjectId;
+module.exports = (function() {
+	'use strict';
 
-/**
- * Checkin Schema
- */
+	var mongoose = require('mongoose'),
+		Schema = mongoose.Schema,
+		ObjectId = Schema.ObjectId;
 
-var CheckinSchema = new Schema({
-	'questions': [{
-		'question': String,
-		'answer': String
-	}],
-	'user_id': ObjectId,
-	'timestamp': {
-		type: Date,
-		default: Date.now
-	}
-});
+	/**
+	* Checkin Schema
+	*/
+	var CheckinSchema = new Schema({
+		user_id: ObjectId,
+		type: String,
+		question: String,
+		tips: String,
+		score: Number,
+		title: String,
+		answers: [{
+			text: String
+		}],
+		timestamp: {
+			type: Date,
+			default: Date.now
+		}
+	});
 
-/**
- * Virtuals
- */
+	/**
+	* Virtuals
+	*/
 
-CheckinSchema.virtual('id').get(function() {
-	return this._id.toHexString();
-});
+	CheckinSchema.virtual('id').get(function() {
+		return this._id.toHexString();
+	});
 
+	mongoose.model('Checkin', CheckinSchema);
 
-mongoose.model('Checkin', CheckinSchema)
+	return {};
+
+}());
