@@ -29,6 +29,9 @@ module.exports = (function() {
 
 	var update = function(req, res, next) {
 
+		// make sure mongo doesn't brak the date when converting to utc
+		req.body.due_date += ' UTC';
+
 		if(req.body.id) {
 
 			// update
