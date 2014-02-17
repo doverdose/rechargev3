@@ -16,7 +16,9 @@ module.exports = (function() {
 		user_id: ObjectId,
 		template_id: ObjectId,
 		due_date: Date,
-		repeat_interval: Number
+		repeat_interval: Number,
+		expires: Boolean,
+		expire_date: Date
 	});
 
 	/**

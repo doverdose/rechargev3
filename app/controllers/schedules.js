@@ -29,8 +29,30 @@ module.exports = (function() {
 
 	var update = function(req, res, next) {
 
-		// make sure mongo doesn't brak the date when converting to utc
+		// make sure mongo doesn't break the date when converting to utc/isodate
 		req.body.due_date += ' UTC';
+
+		var expiryPreset = {
+			'1m': { months: 1 },
+			'6m': { months: 6 },
+			'1y': { years: 1 }
+		};
+
+		console.log(req.body.expiry);
+
+		// set proper expire_date, based on expiry select
+		if(req.body.expiry === '0') {
+			req.body.expires = false;
+			console.log(req.body.expires);
+		} else {
+			req.body.expires = true;
+
+			if(req.body.expiry === 'custom') {
+				req.body.expire_date += ' UTC';
+			} else {
+				req.body.expire_date = moment.utc(req.body.due_date).add(expiryPreset[req.body.expiry]).toDate();
+			}
+		}
 
 		if(req.body.id) {
 
@@ -46,6 +68,8 @@ module.exports = (function() {
 				schedule.template_id = req.body.template_id || schedule.template_id;
 				schedule.repeat_interval = req.body.repeat_interval || schedule.repeat_interval;
 				schedule.due_date = req.body.due_date || schedule.due_date;
+				schedule.expires = req.body.expires;
+				schedule.expire_date = req.body.expire_date || schedule.expire_date;
 
 				schedule.save(function() {
 					res.redirect('/schedule/' + schedule.id);
@@ -83,6 +107,7 @@ module.exports = (function() {
 			};
 
 			templateVars.schedule.due_date = moment(templateVars.schedule.due_date).format('MM/DD/YYYY');
+			templateVars.schedule.expire_date = moment(templateVars.schedule.expire_date).format('MM/DD/YYYY');
 
 			formView(req, res, next, templateVars);
 
@@ -94,7 +119,8 @@ module.exports = (function() {
 
 		var templateVars = {
 			schedule: {
-				due_date: moment().format('MM/DD/YYYY')
+				due_date: moment().format('MM/DD/YYYY'),
+				expire_date: moment().add('years', 1).format('MM/DD/YYYY')
 			}
 		};
 

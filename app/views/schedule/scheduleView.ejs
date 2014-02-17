@@ -35,3 +35,9 @@
 	</p>
 <% }%>
 
+<% if(schedule.expires) { %>
+<h4 class="text-muted">Expiry date:</h4>
+<p title="<%= schedule.expire_date %>">
+	<%=: schedule.expire_date | fromNow %>
+</p>
+<% }%>
