@@ -16,45 +16,56 @@
 
 		<% if(schedules[key].length) { %>
 
-			<h4>
-				Please make these check-ins
-				<% if(key === 'today') { %>
-					today
-				<% } %>
+			<div class="panel <%= (key==='today') ? 'panel-warning' : 'panel-primary' %>">
 
-				<% if(key === 'thisWeek') { %>
-					this week
-				<% } %>
-			</h4>
+				<div class="panel-heading">
+					Please make these check-ins
 
-			<div class="list-group large-list">
+					<strong>
+						<% if(key === 'today') { %>
+							today
+						<% } %>
 
-				<% schedules[key].forEach(function(schedule) { %>
-
-					<div class="list-group-item">
-
-						<div class="row">
-
-							<div class="col-xs-12">
-
-								<form action="/checkin/new" method="post">
-									<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-									<input type="hidden" name="id" value="<%= schedule.template_id %>">
-
-
-									<button type="submit" class="btn btn-primary btn-block">
-										<%= schedule.template.title %>
-									</button>
-								</form>
-							</div>
-
-						</div>
-
-					</div>
-
-				<% }) %>
-
+						<% if(key === 'thisWeek') { %>
+							this week
+						<% } %>
+					</strong>
 				</div>
+
+
+				<div class="panel-body checkins-upcoming">
+					<ul class="row list-unstyled">
+
+					<% schedules[key].forEach(function(schedule) { %>
+
+						<li class="col-sm-6">
+
+							<form action="/checkin/new" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="id" value="<%= schedule.template_id %>">
+
+								<button type="submit" class="btn btn-default">
+									<h3><%= schedule.template.title %></h3>
+
+									<p class="text-muted">
+										<%= schedule.template.question.substr(0, 80) %>&hellip;
+									</p>
+
+									<p title="<%= schedule.due_date %>">
+										<i class="glyphicon glyphicon-th"></i>
+										due <%=: schedule.due_date | fromNow %>
+									</p>
+								</button>
+							</form>
+
+						</li>
+
+					<% }) %>
+
+					</ul>
+				</div>
+
+			</div>
 
 		<% } %>
 

@@ -85,7 +85,7 @@ module.exports = (function() {
 				$or: [
 					{
 						due_date: {
-							$gte: new Date()
+							$gte: moment().hour(0).minute(0).second(0).toDate()
 						}
 					},
 					{
