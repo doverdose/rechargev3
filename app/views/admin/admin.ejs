@@ -13,10 +13,10 @@
 		<a href="#patients" data-toggle="tab">Patients</a>
 	</li>
 	<li>
-		<a href="#checkin-templates" data-toggle="tab">Checkin templates</a>
+		<a href="#checkin-templates" data-toggle="tab">Templates</a>
 	</li>
 	<li>
-		<a href="#checkin-schedules" data-toggle="tab">Checkin schedules</a>
+		<a href="#checkin-schedules" data-toggle="tab">Schedules</a>
 	</li>
 </ul>
 
@@ -38,12 +38,12 @@
 			<div class="list-group-item">
 
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="col-xs-5">
 						<a href="/user/<%= providers[i].id %>">
 							<%= providers[i].name %>
 						</a>
 					</div>
-					<div class="col-xs-6 text-right">
+					<div class="col-xs-7 text-right">
 						<form action="/user/delete" method="post">
 							<a class="btn btn-primary" href="/user/<%= providers[i].id %>/edit"> Edit </a>
 
@@ -83,12 +83,12 @@
 		<% for(var i = 0; i < patients.length; i++) { %>
 			<div class="list-group-item">
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="col-xs-5">
 						<a href="/user/<%= patients[i].id %>">
 							<%= patients[i].name %>
 						</a>
 					</div>
-					<div class="col-xs-6 text-right">
+					<div class="col-xs-7 text-right">
 						<a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
 						<a class="btn btn-danger" href="/user/<%= patients[i].id %>/delete"> Delete </a>
 					</div>
@@ -120,12 +120,12 @@
 			<div class="list-group-item">
 
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="col-xs-5">
 						<a href="/checkintemplate/<%= checkinTemplates[i].id %>">
 							<%= checkinTemplates[i].title %>
 						</a>
 					</div>
-					<div class="col-xs-6 text-right">
+					<div class="col-xs-7 text-right">
 						<form action="/checkintemplate/remove" method="post" class="form-inline">
 							<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit">Edit</a>
 
@@ -190,7 +190,7 @@
 							<% } %>
 						</div>
 					</a>
-					<div class="col-xs-4 text-right">
+					<div class="col-sm-4 col-xs-12 text-right">
 						<form action="/schedule/remove" method="post" class="form-inline">
 							<a class="btn btn-primary" href="/schedule/<%= schedules[i].id %>/edit">Edit</a>
 

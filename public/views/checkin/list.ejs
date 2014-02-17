@@ -12,7 +12,58 @@
 		</div>
 	</div>
 
-	<% if(c.length) { %>
+	<% Object.keys(schedules).forEach(function(key) { %>
+
+		<% if(schedules[key].length) { %>
+
+			<h4>
+				Please make these check-ins
+				<% if(key === 'today') { %>
+					today
+				<% } %>
+
+				<% if(key === 'thisWeek') { %>
+					this week
+				<% } %>
+			</h4>
+
+			<div class="list-group large-list">
+
+				<% schedules[key].forEach(function(schedule) { %>
+
+					<div class="list-group-item">
+
+						<div class="row">
+
+							<div class="col-xs-12">
+
+								<form action="/checkin/new" method="post">
+									<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+									<input type="hidden" name="id" value="<%= schedule.template_id %>">
+
+
+									<button type="submit" class="btn btn-primary btn-block">
+										<%= schedule.template.title %>
+									</button>
+								</form>
+							</div>
+
+						</div>
+
+					</div>
+
+				<% }) %>
+
+				</div>
+
+		<% } %>
+
+	<% }) %>
+
+
+	<% if(checkins.length) { %>
+
+		<h4>Past check-ins</h4>
 
 		<%
 			var scoreClass = 'warning';
@@ -46,30 +97,30 @@
 			<% } %>
 		</div>
 
-		<div class="list-group checkin-list">
+		<div class="list-group large-list">
 
-		<% for (var i = 0; i < c.length; i++) { %>
+		<% checkins.forEach(function(checkin) { %>
 
 			<div class="list-group-item">
 
 				<div class="row">
 
 					<div class="col-xs-8">
-						<a href="/checkin/<%=c[i].id%>">
+						<a href="/checkin/<%= checkin.id %>">
 
-							<small title="<%= c[i].timestamp %>">
-								<%=: c[i].timestamp | fromNow %>
-							</small>
+							<strong title="<%= checkin.timestamp %>">
+								<%=: checkin.timestamp | fromNow %>
+							</strong>
 
-							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= c[i].tips || '' %>">
-								<%= c[i].question %>
+							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkin.tips || '' %>">
+								<%= checkin.question %>
 							</h3>
 						</a>
 					</div>
 
 					<form action="/checkin/remove" method="post" class="text-right col-xs-4">
 						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-						<input type="hidden" name="id" id="id" value="<%=c[i].id%>">
+						<input type="hidden" name="id" id="id" value="<%= checkin.id %>">
 
 						<button type="submit" class="btn btn-danger">Remove</button>
 					</form>
@@ -78,13 +129,13 @@
 
 			</div>
 
-		<% } %>
+		<% }) %>
 
 		</div>
 
 	<% } else { %>
 
-		<h4 class="text-center text-muted">You haven't made any check-ins</h4>
+		<h4 class="text-center text-muted">You haven't made any check-ins yet</h4>
 
 	<% } %>
 

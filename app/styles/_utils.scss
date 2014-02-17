@@ -37,7 +37,7 @@ $em-base: 16 !default;
 		@media (min-width: 978px) { @content; }
 	}
 	@else if $point == mama-bear {
-		@media (min-width: 767px) { @content; }
+		@media (min-width: 768px) { @content; }
 	}
 	@else if $point == baby-bear {
 		@media (min-width: 480px)  { @content; }

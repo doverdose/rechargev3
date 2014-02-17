@@ -93,6 +93,41 @@ body .select2-container {
 
 }
 
+/* Mobile tabs
+ */
+
+.nav-tabs {
+	margin-left: emCalc(-10);
+	margin-right: emCalc(-10);
+
+	> li {
+		overflow: hidden;
+		max-width: 25%;
+
+		> a {
+			padding-left: emCalc(8);
+			padding-right: emCalc(8);
+
+			font-size: emCalc(14);
+		}
+	}
+
+	@include breakpoint(baby-bear) {
+		margin-left: 0;
+		margin-right: 0;
+
+		> li {
+			padding: 10px 15px;
+
+			> a {
+				font-size: emCalc(16);
+			}
+		}
+
+	}
+
+}
+
 /* Carousel
  */
 .carousel {

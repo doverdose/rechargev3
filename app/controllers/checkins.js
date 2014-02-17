@@ -140,14 +140,7 @@ module.exports = (function() {
 					} else if (schedule.due_date < nextMonday) {
 						compareDate.date = nextMonday;
 						compareDate.object = 'thisWeek';
-
-						console.log('yes this week');
 					}
-
-					console.log(schedule.due_date);
-					console.log(compareDate.date);
-					console.log('luni', nextMonday);
-					console.log('tomorrow', tomorrow);
 
 					if(compareDate.date) {
 						// parse all checkins, to see if we already made the required checkin
