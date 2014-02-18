@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="600"
+   height="1000"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="patient-dashboard.svg"
+   inkscape:export-filename="/media/D/Dev/rechargev3/mockups/patient-dashboard.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="347.7694"
+     inkscape:cy="422.63338"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1366"
+     inkscape:window-height="768"
+     inkscape:window-x="1366"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2989"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-52.36217)">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="60"
+       y="132.36217"
+       id="text2985"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2987"
+         x="60"
+         y="132.36217"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans">Dashboard</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2991"
+       y="202.36217"
+       x="60"
+       style="font-size:20.25698662px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans"
+         y="202.36217"
+         x="60"
+         id="tspan2993"
+         sodipodi:role="line">Check-in scores this week</tspan></text>
+    <rect
+       style="color:#000000;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3014"
+       width="440"
+       height="220"
+       x="65"
+       y="222.36217" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 65,442.36217 60,-60 57.73503,-100 28.86751,50 51.96152,30 L 315,273.27251 l 67.70527,39.08966 92.29473,-70 30,150"
+       id="path3018"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="67.395599"
+       y="472.2594"
+       id="text3788"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3790"
+         x="67.395599"
+         y="472.2594">Mon</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3792"
+       y="472.2594"
+       x="138.67171"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="472.2594"
+         x="138.67171"
+         id="tspan3794"
+         sodipodi:role="line">Tue</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="202.6433"
+       y="472.49921"
+       id="text3796"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3798"
+         x="202.6433"
+         y="472.49921">Wed</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3800"
+       y="472.49921"
+       x="272.88788"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="472.49921"
+         x="272.88788"
+         id="tspan3802"
+         sodipodi:role="line">Thu</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="345.10034"
+       y="472.60962"
+       id="text3804"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3806"
+         x="345.10034"
+         y="472.60962">Fri</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3808"
+       y="472.36218"
+       x="408.95013"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="472.36218"
+         x="408.95013"
+         id="tspan3810"
+         sodipodi:role="line">Sat</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="475"
+       y="472.36218"
+       id="text3812"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3814"
+         x="475"
+         y="472.36218">Sun</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3816"
+       y="252.36217"
+       x="40"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="252.36217"
+         x="40"
+         id="tspan3818"
+         sodipodi:role="line">20</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="40"
+       y="309.91357"
+       id="text3820"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3822"
+         x="40"
+         y="309.91357">10</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3824"
+       y="367.36218"
+       x="50.254501"
+       style="font-size:15.59110737px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="367.36218"
+         x="50.254501"
+         id="tspan3826"
+         sodipodi:role="line">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15.15916634px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="60.286255"
+       y="542.43439"
+       id="text3828"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3830"
+         x="60.286255"
+         y="542.43439"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans">Check-in scores this month</tspan></text>
+    <g
+       id="g3878"
+       transform="matrix(0.4446228,0,0,0.4446228,34.711076,312.32313)">
+      <rect
+         style="color:#000000;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect3832"
+         width="440"
+         height="220"
+         x="65"
+         y="562.36218" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 65,782.36217 60,-60 57.73503,-100 28.86751,50 51.96152,30 L 315,613.27251 l 67.70527,39.08966 92.29473,-70 30,150"
+         id="path3834"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="matrix(0.44141253,0,0,0.44141253,283.48314,314.12847)"
+       id="g3894">
+      <rect
+         y="562.36218"
+         x="65"
+         height="220"
+         width="440"
+         id="rect3896"
+         style="color:#000000;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path3898"
+         d="m 65,782.36217 60,-60 57.73503,-100 28.86751,50 51.96152,30 L 315,613.27251 l 67.70527,39.08966 92.29473,-70 30,150"
+         style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3900"
+       y="542.43439"
+       x="320"
+       style="font-size:15.15916634px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans"
+         y="542.43439"
+         x="320"
+         id="tspan3902"
+         sodipodi:role="line">Check-in scores this year</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.25698662px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="60"
+       y="732.36218"
+       id="text3904"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3906"
+         x="60"
+         y="732.36218"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans">Your friends</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3908"
+       y="762.36218"
+       x="60"
+       style="font-size:20.25698662px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans"
+         y="762.36218"
+         x="60"
+         id="tspan3910"
+         sodipodi:role="line"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3912">Captain Ahab</tspan> has checked-in for <tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3914">Some check-in title</tspan></tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="777.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3924">a few seconds ago</tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="792.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3926" /><tspan
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans"
+         y="807.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3928"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3946">Starbuck</tspan> has just checked-in for <tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3944">Some check-in title</tspan></tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="822.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3930">2 hours ago</tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="837.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3932" /><tspan
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         y="852.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3934"><tspan
+   style="font-style:normal;-inkscape-font-specification:Sans Bold;font-weight:bold"
+   id="tspan3948">Stubb</tspan> has just checked-in for <tspan
+   style="font-style:normal;-inkscape-font-specification:Sans Bold;font-weight:bold"
+   id="tspan3958">Some check-in title</tspan></tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="867.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3936">1 day ago</tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="882.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3938" /><tspan
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         y="897.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3940"><tspan
+   style="font-style:normal;-inkscape-font-specification:Sans Bold;font-weight:bold"
+   id="tspan3952">Flask</tspan> has just checked-in for <tspan
+   style="font-style:normal;-inkscape-font-specification:Sans Bold;font-weight:bold"
+   id="tspan3956">Some check-in title</tspan></tspan><tspan
+         style="font-size:12px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         y="912.36218"
+         x="60"
+         sodipodi:role="line"
+         id="tspan3942">1 year ago</tspan></text>
+    <rect
+       style="color:#000000;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3960"
+       width="10"
+       height="10"
+       x="40"
+       y="700"
+       transform="translate(0,52.36217)" />
+    <rect
+       y="798.07648"
+       x="40"
+       height="10"
+       width="10"
+       id="rect3962"
+       style="color:#000000;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <rect
+       style="color:#000000;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3964"
+       width="10"
+       height="10"
+       x="40"
+       y="842.36218" />
+    <rect
+       y="888.07648"
+       x="40"
+       height="10"
+       width="10"
+       id="rect3966"
+       style="color:#000000;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+  </g>
+</svg>

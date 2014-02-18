@@ -27,32 +27,42 @@ module.exports = (function() {
 
 	};
 
-	var update = function(req, res, next) {
+	var parseDates = function(obj, schedule) {
 
 		// make sure mongo doesn't break the date when converting to utc/isodate
-		req.body.due_date += ' UTC';
-
-		var expiryPreset = {
-			'1m': { months: 1 },
-			'6m': { months: 6 },
-			'1y': { years: 1 }
-		};
-
-		console.log(req.body.expiry);
-
-		// set proper expire_date, based on expiry select
-		if(req.body.expiry === '0') {
-			req.body.expires = false;
-			console.log(req.body.expires);
+		if(obj.due_date) {
+			obj.due_date += ' UTC';
 		} else {
-			req.body.expires = true;
-
-			if(req.body.expiry === 'custom') {
-				req.body.expire_date += ' UTC';
-			} else {
-				req.body.expire_date = moment.utc(req.body.due_date).add(expiryPreset[req.body.expiry]).toDate();
-			}
+			// in case the update does not have a new due_date
+			obj.due_date = schedule.due_date;
 		}
+
+		if(obj.expiry) {
+
+			var expiryPreset = {
+				'1m': { months: 1 },
+				'6m': { months: 6 },
+				'1y': { years: 1 }
+			};
+
+			// set proper expire_date, based on expiry select
+			if(obj.expiry === '0') {
+				obj.expires = false;
+			} else {
+				obj.expires = true;
+
+				if(obj.expiry === 'custom') {
+					obj.expire_date += ' UTC';
+				} else {
+					obj.expire_date = moment.utc(obj.due_date).add(expiryPreset[obj.expiry]).toDate();
+				}
+			}
+
+		}
+
+	};
+
+	var update = function(req, res, next) {
 
 		if(req.body.id) {
 
@@ -63,6 +73,8 @@ module.exports = (function() {
 				if (!schedule) {
 					return next(new Error('Failed to find Schedule ' + req.body.id));
 				}
+
+				parseDates(req.body, schedule);
 
 				// update schedule with
 				schedule.template_id = req.body.template_id || schedule.template_id;

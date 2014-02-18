@@ -125,13 +125,11 @@ describe('Admin', function () {
 
 			})
 
-			it('should respond with Content-Type text/html', function (done) {
+			it('should respond with 403 Forbidden', function (done) {
 				agent
 				.get('/admin')
-				.expect('Content-Type', /plain/)
-				.expect(302)
-				.expect('Location', '/dashboard')
-				.expect(/Moved Temporarily/)
+				.expect(403)
+				.expect(/Forbidden/)
 				.end(done)
 			})
 		})
