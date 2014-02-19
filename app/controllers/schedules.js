@@ -16,6 +16,10 @@ module.exports = (function() {
 		Schedule.findOne({
 			_id: req.body.id
 		}, function(err, schedule) {
+			if (err) {
+				return next(err);
+			}
+
 			if (!schedule) {
 				return next(new Error('Failed to find Schedule ' + req.body.id));
 			}
@@ -29,13 +33,13 @@ module.exports = (function() {
 
 	var parseDates = function(obj, schedule) {
 
-		// make sure mongo doesn't break the date when converting to utc/isodate
-		if(obj.due_date) {
-			obj.due_date += ' UTC';
-		} else {
+		// make sure we always use UTC dates
+		if(!obj.due_date) {
 			// in case the update does not have a new due_date
-			obj.due_date = schedule.due_date;
+			obj.due_date = moment.utc(schedule.due_date).format('MM/DD/YYYY');
 		}
+
+		obj.due_date += ' UTC';
 
 		if(obj.expiry) {
 
@@ -74,9 +78,10 @@ module.exports = (function() {
 					return next(new Error('Failed to find Schedule ' + req.body.id));
 				}
 
-				parseDates(req.body, schedule);
+				parseDates(req.body, schedule.toObject());
 
 				// update schedule with
+				schedule.user_id = req.body.user_id || schedule.user_id;
 				schedule.template_id = req.body.template_id || schedule.template_id;
 				schedule.repeat_interval = req.body.repeat_interval || schedule.repeat_interval;
 				schedule.due_date = req.body.due_date || schedule.due_date;
