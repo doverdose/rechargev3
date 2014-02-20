@@ -2,7 +2,8 @@
 /* Checkin model
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
@@ -11,11 +12,16 @@ module.exports = function() {
 	/**
 	* Checkin Schema
 	*/
-
 	var CheckinSchema = new Schema({
-		templateId: ObjectId,
 		user_id: ObjectId,
-		answer: String,
+		type: String,
+		question: String,
+		tips: String,
+		score: Number,
+		title: String,
+		answers: [{
+			text: String
+		}],
 		timestamp: {
 			type: Date,
 			default: Date.now
@@ -30,9 +36,8 @@ module.exports = function() {
 		return this._id.toHexString();
 	});
 
-
-	mongoose.model('Checkin', CheckinSchema)
+	mongoose.model('Checkin', CheckinSchema);
 
 	return {};
-	
-}();
+
+}());

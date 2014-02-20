@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>ReCharge Health</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- Fav and touch icons -->
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
+	<link rel="shortcut icon" href="/ico/favicon.png">
+
+	<!-- build:css({.tmp,app}) /styles/main.css -->
+	<link href="/styles/main.css" rel="stylesheet">
+	<link href="/bower_components/select2/select2.css" rel="stylesheet">
+	<link href="/bower_components/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet">
+	<!-- endbuild -->
+</head>
+<body>
+
+	<!--[if lt IE 9]>
+	<script src="/bower_components/html5shiv/dist/html5shiv.js"></script>
+	<![endif]-->
+
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">ReCharge Health</a>
+		</div>
+
+		<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+
+			<% if(user.email) { %>
+				<ul class="nav navbar-nav">
+
+					<% if(user.permissions.admin) { %>
+						<li>
+							<a href="/admin">Admin</a>
+						</li>
+						<li>
+							<a href="/stats">Stats</a>
+						</li>
+					<% } %>
+
+					<% if(user.permissions.provider) { %>
+						<li>
+							<a href="/admin">Provider</a>
+						</li>
+					<% } %>
+
+					<li>
+						<a href="/checkin">Check-ins</a>
+					</li>
+					<li>
+						<a href="/settings/profile">Settings</a>
+					</li>
+				</ul>
+			<p class="navbar-text signed-in-text">
+				Signed in as <strong><%= user.email %></strong>
+			</p>
+			 <a href="/logout" class="btn btn-default navbar-btn navbar-right">Sign out</a>
+
+			<% } else {%>
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="/signup">Register</a>
+					</li>
+				</ul>
+				<a href="/login" class="btn btn-primary navbar-btn navbar-right">Sign in</a>
+			<% } %>
+		</div>
+	</nav>
+
+	<%- body -%>
+
+	<footer class="site-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<h4>HBS Rock Acclerator Alumnus</h4>
+				</div>
+				<div class="col-md-6 text-center">
+					<h4>NCIIA E-Team Grantee</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p class="text-center myf">&copy 2013 ReCharge Health. All Rights Reserved. </p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- build:js /scripts/plugins.js -->
+	<script src="/bower_components/jquery/jquery.min.js"></script>
+	<script src="/bower_components/bootstrap-sass/dist/js/bootstrap.min.js"></script>
+	<script src="/bower_components/select2/select2.min.js"></script>
+	<script src="/bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js /scripts/scripts.js -->
+	<script src="/widgets/main.js"></script>
+	<script src="/widgets/numpad.js"></script>
+	<script src="/widgets/cloneField.js"></script>
+	<script src="/widgets/visibilitySelector.js"></script>
+	<script src="/widgets/templatePopover.js"></script>
+	<!-- endbuild -->
+
+</body>
+</html>

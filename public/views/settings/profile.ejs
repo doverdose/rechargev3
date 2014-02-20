@@ -1,9 +1,7 @@
 <% layout('../layouts/settings') -%>
 
-<div class="row page-header">
-	<div class="col-xs-12">
-		<h3>Your profile</h3>
-	</div>
+<div class="page-header">
+	<h3>Your profile</h3>
 </div>
 
 <% if(typeof errors !== 'undefined') { %>
@@ -45,7 +43,7 @@
 
 			<input type="hidden" class="form-control js-password-real" id="password" name="password" maxlength="10">
 
-			<input type="text" class="form-control js-password" maxlength="10" readonly="readonly">
+			<input type="text" class="form-control js-password" maxlength="10" readonly>
 
 			<span class="input-group-btn">
 				<button class="btn btn-default js-btn-delete-char" type="button" title="Clear PIN">

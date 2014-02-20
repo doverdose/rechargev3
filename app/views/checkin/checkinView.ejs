@@ -1,0 +1,47 @@
+<% layout('../layouts/default') -%>
+
+<div class="page-header">
+	<h3>
+		<small>Checkin from</small>
+		<abbr title="<%= Date(c.timestamp) %>"><%=: c.timestamp | fromNow %></abbr>
+	</h3>
+
+	<div class="btn-group header-actions">
+		<form action="/checkin/remove" method="post" class="pull-right">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+			<input type="hidden" name="id" id="id" value="<%= c.id %>">
+
+			<button type="submit" class="btn btn-danger">Remove</button>
+		</form>
+	</div>
+</div>
+
+<h3>
+	<%= c.question %>
+</h3>
+
+<small class="text-muted">You answered</small>
+
+<% if(choice) { %>
+	<ul>
+<% } %>
+
+	<% for(var i=0; i < c.answers.length; i++) { %>
+		<% if(choice) { %>
+			<li>
+		<% } %>
+
+			<p class="muted">
+				<%= c.answers[i].text %>
+			</p>
+
+		<% if(choice) { %>
+			</li>
+		<% } %>
+	<% } %>
+
+
+<% if(choice) { %>
+	</ul>
+<% } %>
+

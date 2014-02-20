@@ -1,11 +1,11 @@
 /* Checkin Template model
  */
 
-module.exports = function() {
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
-		Schema = mongoose.Schema,
-		ObjectId = Schema.ObjectId;
+		Schema = mongoose.Schema;
 
 	/**
 	* CheckinTemplate Schema
@@ -14,9 +14,11 @@ module.exports = function() {
 	var CheckinTemplateSchema = new Schema({
 		type: String,
 		question: String,
+		tips: String,
+		score: Number,
 		title: String,
-		valid:  [{
-			value: String
+		answers: [{
+			text: String
 		}]
 	});
 
@@ -28,8 +30,7 @@ module.exports = function() {
 		return this._id.toHexString();
 	});
 
+	mongoose.model('CheckinTemplate', CheckinTemplateSchema);
 
-	mongoose.model('CheckinTemplate', CheckinTemplateSchema)
-
-	return {}
-}();
+	return {};
+}());

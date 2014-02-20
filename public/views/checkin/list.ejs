@@ -1,59 +1,162 @@
 <% layout('../layouts/default') -%>
 
-<div class="container js-checkinselector-container">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
+<div class="js-checkinselector-container">
 
-			<div class="page-header">
-				<button type="button" class="btn btn-default pull-right js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
-				<h2>Salt Reducer Checkins</h2>
-			</div>
+	<div class="page-header">
+		<h2>
+			Check-ins
+		</h2>
 
-			<% if(c.length) { %>
-
-				<table class="table">
-					<thead>
-						<tr>
-							<td class="col-md-9">
-								<strong>Checkin</strong>
-							</td>
-							<td>
-								<strong>Update </strong>
-							</td>
-						</tr>
-					</thead>
-					<tbody>
-					<% for (var i = 0; i < c.length; i++) { %>
-						<tr>
-							<td>
-								<a href="/checkin/<%=c[i].id%>"><%=: c[i].timestamp | fromNow %>
-							</a></td>
-							<td>
-								<a class="btn btn-primary" href="/checkin/<%=c[i].id%>/edit"> Edit </a>
-								<a class="btn btn-danger" href="/checkin/<%=c[i].id%>/delete"> Delete </a>
-							</td>
-						</tr>
-					<% } %>
-					</tbody>
-				</table>
-
-			<% } else { %>
-
-				<h4 class="text-center muted">No checkins available</h4>
-
-			<% } %>
-
+		<div class="header-actions">
+			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
 		</div>
 	</div>
 
+	<% Object.keys(schedules).forEach(function(key) { %>
+
+		<% if(schedules[key].length) { %>
+
+			<div class="panel <%= (key==='today') ? 'panel-warning' : 'panel-primary' %>">
+
+				<div class="panel-heading">
+					Please make these check-ins
+
+					<strong>
+						<% if(key === 'today') { %>
+							today
+						<% } %>
+
+						<% if(key === 'thisWeek') { %>
+							this week
+						<% } %>
+					</strong>
+				</div>
+
+
+				<div class="panel-body checkins-upcoming">
+					<ul class="row list-unstyled">
+
+					<% schedules[key].forEach(function(schedule) { %>
+
+						<li class="col-sm-6">
+
+							<form action="/checkin/new" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="id" value="<%= schedule.template_id %>">
+
+								<button type="submit" class="btn btn-default">
+									<h3><%= schedule.template.title %></h3>
+
+									<p class="text-muted">
+										<%= schedule.template.question.substr(0, 80) %>&hellip;
+									</p>
+
+									<p title="<%= schedule.due_date %>">
+										<i class="glyphicon glyphicon-th"></i>
+										due <%=: schedule.due_date | fromNow %>
+									</p>
+								</button>
+							</form>
+
+						</li>
+
+					<% }) %>
+
+					</ul>
+				</div>
+
+			</div>
+
+		<% } %>
+
+	<% }) %>
+
+
+	<% if(checkins.length) { %>
+
+		<h4>Past check-ins</h4>
+
+		<%
+			var scoreClass = 'warning';
+
+			if(totalScore > 10) {
+				scoreClass = 'info';
+			}
+
+			if(totalScore > 50) {
+				scoreClass = 'success';
+			}
+		%>
+
+		<div class="alert alert-dismissable alert-<%= scoreClass %>">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+			<p>
+				<strong>Your current check-in score is <%= totalScore %>. </strong>
+			</p>
+
+			<% if(scoreClass === 'warning') { %>
+				Improve it by checking-in more often.
+			<% } %>
+
+			<% if(scoreClass === 'info') { %>
+				Keep up the good work!
+			<% } %>
+
+			<% if(scoreClass === 'success') { %>
+				Great work!
+			<% } %>
+		</div>
+
+		<div class="list-group large-list">
+
+		<% checkins.forEach(function(checkin) { %>
+
+			<div class="list-group-item">
+
+				<div class="row">
+
+					<div class="col-xs-8">
+						<a href="/checkin/<%= checkin.id %>">
+
+							<strong title="<%= checkin.timestamp %>">
+								<%=: checkin.timestamp | fromNow %>
+							</strong>
+
+							<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkin.tips || '' %>">
+								<%= checkin.question %>
+							</h3>
+						</a>
+					</div>
+
+					<form action="/checkin/remove" method="post" class="text-right col-xs-4">
+						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+						<input type="hidden" name="id" id="id" value="<%= checkin.id %>">
+
+						<button type="submit" class="btn btn-danger">Remove</button>
+					</form>
+
+				</div>
+
+			</div>
+
+		<% }) %>
+
+		</div>
+
+	<% } else { %>
+
+		<h4 class="text-center text-muted">You haven't made any check-ins yet</h4>
+
+	<% } %>
+
 	<div class="js-template js-checkinselector-template">
-		<form action="/provider/user/add" method="post">
+		<form action="/checkin/new" method="post">
 			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-			<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
 
 			<div class="form-group">
 				<label for="templateId">Select checkin type</label>
-				<select class="js-select2" id="templateId" name="templateId">
+				<select class="js-select2" id="id" name="id">
 					<% for(var i = 0; i < checkinTemplates.length; i++) { %>
 						<option value="<%= checkinTemplates[i].id %>">
 							<%= checkinTemplates[i].title %>
@@ -67,4 +170,5 @@
 			</button>
 		</form>
 	</div>
+
 </div>

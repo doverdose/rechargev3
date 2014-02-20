@@ -1,9 +1,7 @@
 <% layout('../layouts/settings') -%>
 
-<div class="row page-header">
-	<div class="col-xs-12">
-		<h3>Your providers</h3>
-	</div>
+<div class="page-header">
+	<h3>Your providers</h3>
 </div>
 
 <% if(typeof errors !== 'undefined') { %>
@@ -34,7 +32,7 @@
 
 							<form action="/provider/revoke" method="post">
 								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-								<input type="hidden" name="providerId" value="<%= providers[i].id %>">
+								<input type="hidden" name="providerId"  value="<%= providers[i].id %>">
 
 								<button type="submit" class="btn btn-danger">Revoke</button>
 							</form>
@@ -43,7 +41,7 @@
 
 							<form action="/provider/approve" method="post">
 								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-								<input type="hidden" name="providerId" value="<%= providers[i].id %>">
+								<input type="hidden" name="providerId"  value="<%= providers[i].id %>">
 
 								<button type="submit" class="btn btn-success">Approve</button>
 							</form>

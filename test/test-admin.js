@@ -40,10 +40,16 @@ var count,
 describe('Admin', function () {
 
 	before(function (done) {
-		// create a new admin user
-		var admin = new User(adminUser);
-		admin.save(done);
-	})
+
+		require('./helper').clearDb(function() {
+
+			// create a new admin user
+			var admin = new User(adminUser);
+			admin.save(done);
+
+		});
+
+	});
 
 	describe('GET /admin', function () {
 
@@ -55,9 +61,9 @@ describe('Admin', function () {
 				.expect(302)
 				.expect('Location', '/login')
 				.expect(/Moved Temporarily/)
-				.end(done)
-			})
-		})
+				.end(done);
+			});
+		});
 
 		context('When logged in as Admin', function () {
 			before(function (done) {
@@ -66,8 +72,8 @@ describe('Admin', function () {
 				.post('/users/session')
 				.field('email', adminUser.email)
 				.field('password', adminUser.password)
-				.end(done)
-			})
+				.end(done);
+			});
 
 			it('should respond with Content-Type text/html', function (done) {
 				agent
@@ -119,19 +125,14 @@ describe('Admin', function () {
 
 			})
 
-			it('should respond with Content-Type text/html', function (done) {
+			it('should respond with 403 Forbidden', function (done) {
 				agent
 				.get('/admin')
-				.expect('Content-Type', /plain/)
-				.expect(302)
-				.expect('Location', '/dashboard')
-				.expect(/Moved Temporarily/)
+				.expect(403)
+				.expect(/Forbidden/)
 				.end(done)
 			})
 		})
-	})
+	});
 
-	after(function (done) {
-		require('./helper').clearDb(done);
-	})
 })

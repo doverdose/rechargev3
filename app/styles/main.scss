@@ -6,6 +6,7 @@
  */
 $color1: #47a3da;
 $white: #fff;
+$black: #333;
 
 /* Bootstrap
  */
@@ -26,14 +27,25 @@ $navbar-inverse-bg: $color1;
 
 body {
 	padding-top: $navbar-height;
+	color: $black;
+}
+
+.container {
+	max-width: 600px;
 }
 
 .js-template {
 	display: none;
 }
 
-.form-inline {
-	display: inline-block;
+.small-title {
+	font-weight: bold;
+	font-size: emCalc(12);
+	text-transform: uppercase;
+}
+
+body .select2-container {
+	display: block;
 }
 
 /* Navbar
@@ -81,6 +93,41 @@ body {
 
 }
 
+/* Mobile tabs
+ */
+
+.nav-tabs {
+	margin-left: emCalc(-10);
+	margin-right: emCalc(-10);
+
+	> li {
+		overflow: hidden;
+		max-width: 25%;
+
+		> a {
+			padding-left: emCalc(8);
+			padding-right: emCalc(8);
+
+			font-size: emCalc(14);
+		}
+	}
+
+	@include breakpoint(baby-bear) {
+		margin-left: 0;
+		margin-right: 0;
+
+		> li {
+			> a {
+				padding: 10px 15px;
+
+				font-size: emCalc(16);
+			}
+		}
+
+	}
+
+}
+
 /* Carousel
  */
 .carousel {
@@ -104,6 +151,11 @@ body {
 	.carousel-indicators {
 		bottom: 0;
 	}
+}
+
+.marketing {
+	padding-top: emCalc(40);
+	padding-bottom: emCalc(40);
 }
 
 /* Signup
@@ -145,7 +197,7 @@ body {
 	}
 }
 
-/* Dashboard
+/* Stats
  */
 .stats {
 	padding: emCalc(24) 0;
@@ -168,22 +220,114 @@ body {
 
 }
 
-/* Checkin
+/* Checkin Templates
  */
-.page-header {
-	border-bottom: 0;
+.possible-answers {
+	margin-bottom: emCalc(12);
+}
 
-	h3 {
-		margin: 0;
+/* Checkins
+ */
+.large-list {
+
+	.list-group-item {
+		background: transparent;
+		border-color: lighten($black, 70%);
+		border-width: 1px 0 0;
+
+		&:first-child {
+			border: 0;
+		}
+
+		a {
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		strong {
+			display: block;
+
+			color: lighten($black, 50%);
+			font-size: emCalc(10);
+			text-transform: uppercase;
+		}
+
+		h3 {
+			display: inline-block;
+			margin: 0;
+		}
+
+	}
+
+}
+
+.checkin-edit {
+
+}
+
+.checkins-upcoming {
+	ul li {
+		padding-bottom: emCalc(4);
+
+		.btn {
+			border: 0;
+			
+			text-align: left;
+			white-space: normal;
+
+			h3 {
+				margin-top: 0;
+			}
+		}
 	}
 }
 
-/* Provider admin
+/* JS visibility selector
  */
+.js-visibility-select-hide {
+	position: absolute;
+	visibility: hidden;
+	opacity: 0;
 
-.popover-content .select2-container {
-	display: block;
+	@include transform(translateY(-30px));
+	@include transition (all .1s ease-in-out);
 }
+
+.js-visibility-select-show {
+	position: relative;
+	visibility: visible;
+	opacity: 1;
+
+	@include transform(translateY(0));
+	@include transition (all .1s ease-in-out);
+}
+
+/* Page header
+ */
+.page-header {
+	overflow: hidden;
+	border-bottom: 0;
+
+	h2,
+	h3 {
+		float: left;
+		margin: 0;
+
+		small {
+			display: block;
+
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: emCalc(8);
+		}
+	}
+
+	.header-actions {
+		float: right;
+	}
+}
+
 
 /* Settings
  */
@@ -194,31 +338,23 @@ body {
 /* Footer
  */
 
-footer {
+.site-footer {
 	display: block;
+	margin-top: emCalc(80);
 	background: $color1;
-	margin-top: 60px;
+	padding: emCalc(20);
+
+	color: lighten($color1, 30%);
+
+	p {
+		color: lighten($color1, 20%);
+	}
 }
 
-ul.cfooter {
-	text-align:center;
-	list-style-type: none;
-	padding: 0px;
-	margin: 0px;
-}
+/* Admin
+ */
+.toolbar-actions {
+	padding: emCalc(24) 0;
 
-ul.cfooter li {
-	text-decoration:none;
-}
-
-ul.cfooter li a {
-	color: #fff;
-	font-size: 16px;
-	font-weight: normal;
-	line-height: 20px;
-}
-
-ul.cfooter li a:hover {
-	opacity:.80;
-	text-decoration:none;
+	text-align: right;
 }

@@ -1,101 +1,93 @@
 <% layout('../layouts/default') -%>
 
-<div class="container">
+<div class="col-md-8 col-md-offset-2">
 
-	<div class="row">
+	<h2>Sign up</h2>
 
-		<div class="col-md-4 col-md-offset-4">
+	<% if(typeof errors !== 'undefined') { %>
+		<div class="alert alert-danger">
+			<% for(error in errors) { %>
 
-			<h2>Sign up</h2>
+				<p>
+					<%= errors[error].type %>
+				</p>
 
-			<% if(typeof errors !== 'undefined') { %>
-				<div class="alert alert-danger">
-					<% for(error in errors) { %>
-
-						<p>
-							<%= errors[error].type %>
-						</p>
-
-					<% } %>
-				</div>
 			<% } %>
+		</div>
+	<% } %>
 
-			<form role="form" action="/users" method="post" class="js-form-numpad">
-				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+	<form role="form" action="/users" method="post" class="js-form-numpad">
+		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 
-				<div class="form-group">
-					<label for="type">Account type</label>
-					<select class="form-control" name="type" id="type">
-						<option value="patient">Patient</option>
-						<option value="provider">Provider</option>
-					</select>
-				</div>
+		<div class="form-group">
+			<label for="type">Account type</label>
+			<select class="form-control" name="type" id="type">
+				<option value="patient">Patient</option>
+				<option value="provider">Provider</option>
+			</select>
+		</div>
 
-				<div class="form-group">
-					<label for="name">Full name</label>
-					<input type="text" class="form-control" id="name" name="name" value="<%= (typeof wrongUser !== 'undefined') ? wrongUser.name : '' %>">
-				</div>
+		<div class="form-group">
+			<label for="name">Full name</label>
+			<input type="text" class="form-control" id="name" name="name" value="<%= (typeof wrongUser !== 'undefined') ? wrongUser.name : '' %>">
+		</div>
 
-				<div class="form-group">
-					<label for="email">Email address</label>
-					<input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value="<%= (typeof wrongUser !== 'undefined') ? wrongUser.email : '' %>">
-				</div>
+		<div class="form-group">
+			<label for="email">Email address</label>
+			<input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value="<%= (typeof wrongUser !== 'undefined') ? wrongUser.email : '' %>">
+		</div>
 
-				<div class="form-group">
-					<label for="username">Username</label>
-					<input type="text" class="form-control" id="username" name="username" value="<%= (typeof wrongUser !== 'undefined') ? wrongUser.username : '' %>">
-				</div>
+		<div class="form-group">
+			<label for="username">Username</label>
+			<input type="text" class="form-control" id="username" name="username" value="<%= (typeof wrongUser !== 'undefined') ? wrongUser.username : '' %>">
+		</div>
 
-				<div class="form-group js-password-container">
-					<label for="password">PIN Password</label>
-					<p>Use the keypad bellow, to enter a PIN password. </p>
-					<div class="input-group">
+		<div class="form-group js-password-container">
+			<label for="password">PIN Password</label>
+			<p>Use the keypad bellow, to enter a PIN password. </p>
+			<div class="input-group">
 
-						<input type="hidden" class="form-control js-password-real" id="password" name="password" maxlength="10">
+				<input type="hidden" class="form-control js-password-real" id="password" name="password" maxlength="10">
 
-						<input type="text" class="form-control js-password" maxlength="10" readonly="readonly">
+				<input type="text" class="form-control js-password" maxlength="10" readonly>
 
-						<span class="input-group-btn">
-							<button class="btn btn-default js-btn-delete-char" type="button" title="Clear PIN">
-								<span class="glyphicon glyphicon-chevron-left"></span>
-							</button>
-						</span>
-					</div>
-				</div>
+				<span class="input-group-btn">
+					<button class="btn btn-default js-btn-delete-char" type="button" title="Clear PIN">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+					</button>
+				</span>
+			</div>
+		</div>
 
 
-				<div class="password-keypad form-group js-password-keypad">
+		<div class="password-keypad form-group js-password-keypad">
 
-					<div class="btn-group btn-group-lg">
-						<button type="button" class="btn btn-default">7</button>
-						<button type="button" class="btn btn-default">8</button>
-						<button type="button" class="btn btn-default">9</button>
-					</div>
+			<div class="btn-group btn-group-lg">
+				<button type="button" class="btn btn-default">7</button>
+				<button type="button" class="btn btn-default">8</button>
+				<button type="button" class="btn btn-default">9</button>
+			</div>
 
-					<div class="btn-group btn-group-lg">
-						<button type="button" class="btn btn-default">4</button>
-						<button type="button" class="btn btn-default">5</button>
-						<button type="button" class="btn btn-default">6</button>
-					</div>
+			<div class="btn-group btn-group-lg">
+				<button type="button" class="btn btn-default">4</button>
+				<button type="button" class="btn btn-default">5</button>
+				<button type="button" class="btn btn-default">6</button>
+			</div>
 
-					<div class="btn-group btn-group-lg">
-						<button type="button" class="btn btn-default">1</button>
-						<button type="button" class="btn btn-default">2</button>
-						<button type="button" class="btn btn-default">3</button>
-					</div>
+			<div class="btn-group btn-group-lg">
+				<button type="button" class="btn btn-default">1</button>
+				<button type="button" class="btn btn-default">2</button>
+				<button type="button" class="btn btn-default">3</button>
+			</div>
 
-					<div class="btn-group btn-group-lg">
-						<button type="button" class="btn btn-default">0</button>
-						<button type="button" class="btn btn-default btn-reveal js-btn-reveal">Reveal password</button>
-					</div>
-
-				</div>
-
-				<button type="submit" class="btn btn-primary btn-lg js-btn-submit">Sign up</button>
-			</form>
+			<div class="btn-group btn-group-lg">
+				<button type="button" class="btn btn-default">0</button>
+				<button type="button" class="btn btn-default btn-reveal js-btn-reveal">Reveal password</button>
+			</div>
 
 		</div>
 
-	</div>
+		<button type="submit" class="btn btn-primary btn-lg js-btn-submit">Sign up</button>
+	</form>
 
 </div>

@@ -3,21 +3,22 @@
 
 var mongoose = require('mongoose'),
 	async = require('async'),
-	User = mongoose.model('User'),
-	Checkin = mongoose.model('Checkin');
+	models = mongoose.modelNames(),
+	clearCollection = [];
 
 /**
  * Clear database
  *
  */
 
+// generate an array of functions for each model
+// that will clear the model's collection
+models.forEach(function(modelName) {
+	clearCollection.push(function(callback) {
+		mongoose.model(modelName).collection.remove(callback);
+	});
+});
+
 exports.clearDb = function (done) {
-	async.parallel([
-		function (cb) {
-			User.collection.remove(cb)
-		},
-		function (cb) {
-			Checkin.collection.remove(cb)
-		}
-	], done);
+	async.parallel(clearCollection, done);
 }

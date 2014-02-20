@@ -1,11 +1,8 @@
 <% layout('../layouts/settings') -%>
 
-<div class="row page-header">
-	<div class="col-xs-6">
-		<h3>Following</h3>
-	</div>
-	<div class="col-xs-6 text-right">
-
+<div class="page-header">
+	<h3>Following</h3>
+	<div class="header-actions text-right">
 		<button type="button" class="btn btn-default pull-right" rel="popover" data-placement="bottom" data-tpl=".js-following-popover-template">
 			Follow user
 		</button>
@@ -13,23 +10,32 @@
 </div>
 
 
-<% if(followers.length) { %>
+<% if(following.length) { %>
 
 	<ul class="list-group">
-		<% for(var i = 0; i < followers.length; i++) { %>
+		<% for(var i = 0; i < following.length; i++) { %>
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col-xs-8">
-						<%= followers[i].name %>
+					<div class="col-xs-4 col-sm-7">
+						<%= following[i].name %>
 					</div>
 
-					<div class="col-xs-4">
+					<div class="col-xs-8 col-sm-5 text-right">
 
-						<% if(approved[i] === true) { %>
-							<a class="btn btn-success disabled">Approved</a>
+						<% if(approved[following[i].id] === true) { %>
+							<span class="btn btn-success disabled">Approved</span>
 						<% } else { %>
-							<a class="btn btn-danger disabled">Pending</a>
+							<span class="btn btn-danger disabled">Not approved</span>
 						<% } %>
+
+						<form action="/user/unfollow" method="post" class="form-inline">
+							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+							<input type="hidden" name="userId" id="userId" value="<%= following[i].id %>">
+
+							<button class="btn btn-link" title="Unfollow">
+								<i class="glyphicon glyphicon-remove-circle"></i>
+							</button>
+						</form>
 
 					</div>
 				</div>

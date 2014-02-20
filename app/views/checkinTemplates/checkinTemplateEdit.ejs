@@ -1,20 +1,81 @@
 <% layout('../layouts/default') -%>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
+<h2>
+	<% if(c.id) { %>
+		Edit checkin template
+	<% } else { %>
+		New checkin template
+	<% } %>
+</h2>
 
-			<div class="page-header">
-				<a href="/checkin/new" class="btn btn-default pull-right">New check-in</a>
-				<h2>Salt Reducer Checkins</h2>
+<% if(typeof errors !== 'undefined') { %>
+	<div class="alert alert-danger">
+		<% for(error in errors) { %>
+			<p>
+				<%= errors[error].type %>
+			</p>
+		<% } %>
+	</div>
+<% } %>
+
+<form role="form" action="/checkintemplate" method="post">
+	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+	<input type="hidden" name="id" value="<%= c.id || '' %>">
+
+	<div class="form-group">
+		<label for="type">Checkin type</label>
+		<select class="form-control js-visibility-select" name="type" id="type">
+			<option value="text" <%= c.type === 'text' && 'selected' %>>Text</option>
+			<option data-show=".possible-answers" value="singlechoice" <%= c.type === 'singlechoice' && 'selected' %>>Single choice</option>
+			<option data-show=".possible-answers" value="multiplechoice" <%= c.type === 'multiplechoice' && 'selected' %>>Multiple choice</option>
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label for="title">Title</label>
+		<input type="text" class="form-control" id="title" name="title" value="<%= c.title || ''%>" required>
+	</div>
+
+	<div class="form-group">
+		<label for="score">Score</label>
+		<input type="text" class="form-control" id="score" name="score" value="<%= c.score || '0' %>" required>
+	</div>
+
+	<div class="form-group">
+		<label for="tips">Tips</label>
+		<textarea class="form-control" id="tips" name="tips"><%= c.tips || '' %></textarea>
+	</div>
+
+	<div class="form-group">
+		<label for="question">Question</label>
+		<textarea class="form-control" id="question" name="question" required><%= c.question || '' %></textarea>
+	</div>
+
+	<div class="possible-answers js-clone-field js-visibility-select-hide" data-clone=".form-group">
+		<label>Possible answers</label>
+
+		<% for(var i=0; i < c.answers.length; i++) { %>
+			<div class="input-group form-group">
+				<input type="text" class="form-control" name="answers[]" value="<%= c.answers[i].text %>">
+				<span class="input-group-btn">
+					<button class="btn btn-danger js-remove-field-btn" type="button" title="Remove answer">
+						<i class="glyphicon glyphicon-remove-circle"></i>
+					</button>
+				</span>
 			</div>
+		<% } %>
 
-			<form method="post" action="/checkin/<%= c.id %>">
-				<input name="checkin[id]" value="<%= c.id %>" type="hidden">
-				<input type="hidden" name="_method" value="put">
-				<%- partial('checkin_fields', {}) %>
-			</form>
+		<button type="button" class="btn btn-default btn-block js-clone-field-btn">
+			<i class="glyphicon glyphicon-plus"></i>
+			Add new answer
+		</button>
+	</div>
 
-		</div>
-  </div>
-</div>
+	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+		<% if(c.id) { %>
+			Update checkin template
+		<% } else { %>
+			Create new checkin template
+		<% } %>
+	</button>
+</form>

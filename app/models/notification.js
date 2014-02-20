@@ -1,38 +1,44 @@
 /**
- * Module dependencies.
+ * Notification model
  */
 
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	ObjectId = Schema.ObjectId;
+module.exports = (function() {
+	'use strict';
 
-/**
- * Notification Schema
- */
+	var mongoose = require('mongoose'),
+		Schema = mongoose.Schema,
+		ObjectId = Schema.ObjectId;
 
-var NotificationSchema = new Schema({
-	user_id: ObjectId,
-	timestamp: {
-		type: Date,
-		default: Date.now
-	},
-	sent: {
-		type: Boolean,
-		default: false
-	},
-	sent_timestamp: {
-		type: Date,
-		default: ''
-	}
-});
+	/**
+	* Notification Schema
+	*/
+	var NotificationSchema = new Schema({
+		user_id: ObjectId,
+		timestamp: {
+			type: Date,
+			default: Date.now
+		},
+		sent: {
+			type: Boolean,
+			default: false
+		},
+		sent_timestamp: {
+			type: Date,
+			default: ''
+		}
+	});
 
-/**
- * Virtuals
- */
+	/**
+	* Virtuals
+	*/
 
-NotificationSchema.virtual('id').get(function() {
-	return this._id.toHexString();
-});
+	NotificationSchema.virtual('id').get(function() {
+		return this._id.toHexString();
+	});
 
 
-mongoose.model('Notification', NotificationSchema)
+	mongoose.model('Notification', NotificationSchema);
+
+	return {};
+
+}());

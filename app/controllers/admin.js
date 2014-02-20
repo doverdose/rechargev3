@@ -1,161 +1,163 @@
-module.exports = function() {
+/* Admin controller
+ */
+
+module.exports = (function() {
+	'use strict';
 
 	var mongoose = require('mongoose'),
-		util = require('util'),
-		Q = require('q'),
+		async = require('async'),
 		User = mongoose.model('User'),
-		Checkin = mongoose.model('Checkin'),
 		CheckinTemplate = mongoose.model('CheckinTemplate'),
-		dayMilliseconds = 24 * 60 * 60 * 1000;
+		Schedule = mongoose.model('Schedule');
 
-	var getPatients = function(req) {
+	var admin = function(req, res, next) {
 
-		var deferred = Q.defer();
+		var templateVars = {};
 
-		// get list of users who are not admins or providers
-		var patientConditions = {
-			'permissions.admin': { $ne: true },
-			'permissions.provider': { $ne: true }
-		};
+		async.parallel([
+			function(callback) {
 
-		// only see users that are not already your patients
-		if(req.user.permissions.provider) {
-			var patientIds = [];
-			req.user.patients.forEach(function(patient, i){
-				patientIds.push(patient.id);
-			});
-			patientConditions['_id'] = { $nin: patientIds };
-		}
+				// get list of users who are not admins or providers
+				var patientConditions = {
+					'permissions.admin': { $ne: true },
+					'permissions.provider': { $ne: true }
+				};
 
-		User.find(patientConditions, function(err, patients) {
-			if (err) {
-				deferred.reject(new Error(err));
-			} else {
-				deferred.resolve(patients);
+				// only see users that are not already your patients
+				if(req.user.permissions.provider) {
+					var patientIds = [];
+					req.user.patients.forEach(function(patient){
+						patientIds.push(patient.id);
+					});
+					patientConditions._id = {
+						$nin: patientIds
+					};
+				}
+
+				User.find(patientConditions, function(err, patients) {
+					if (err) {
+						callback(err);
+						return;
+					}
+
+					templateVars.patients = patients;
+
+					// convert patients array to object, so we can use in template for schedules
+					templateVars.patientsObject = {};
+					templateVars.patients.forEach(function(patient) {
+						templateVars.patientsObject[patient._id] = patient;
+					});
+
+					callback();
+				});
+
+			},
+			function(callback) {
+
+				// if admin return
+				if(req.user.permissions.admin) {
+					callback();
+					return;
+				}
+
+				// get list of users who are not admins or providers
+				var patientConditions = {
+					'permissions.admin': { $ne: true },
+					'permissions.provider': { $ne: true }
+				};
+
+				// only see your own patients
+				if(req.user.permissions.provider) {
+					var patientIds = [];
+					req.user.patients.forEach(function(patient){
+						patientIds.push(patient.id);
+					});
+					patientConditions._id = { $in: patientIds };
+				}
+
+				User.find(patientConditions, function(err, patients) {
+					if (err) {
+						callback(err);
+						return;
+					}
+
+					templateVars.yourPatients = patients;
+					callback();
+				});
+
+			},
+			function(callback) {
+
+				// get full list of providers
+				if(req.user.permissions.admin) {
+					User.find({
+						'permissions.provider': true
+					}, function(err, providers) {
+						if (err) {
+							callback(err);
+							return;
+						}
+						templateVars.providers = providers;
+						callback();
+					});
+				} else {
+					callback();
+				}
+
+			},
+			function(callback) {
+
+				// get list of checkin templates
+				CheckinTemplate.find({}, function(err, checkinTemplates) {
+					if (err) {
+						callback(err);
+						return;
+					}
+					templateVars.checkinTemplates = checkinTemplates;
+
+					// convert checkinTemplates array to object, so we can use in template for schedules
+					templateVars.templatesObject = {};
+					templateVars.checkinTemplates.forEach(function(template) {
+						templateVars.templatesObject[template._id] = template;
+					});
+
+					callback();
+				});
+
+			},
+			function(callback) {
+
+				// get list of schedules
+				Schedule.find({
+				}, function(err, schedules) {
+					if (err) {
+						callback(err);
+						return;
+					}
+
+					templateVars.schedules = schedules;
+					callback();
+				});
+
 			}
-		});
+		], function(err) {
 
-		return deferred.promise;
-
-	};
-
-	var getYourPatients = function(req) {
-
-		var deferred = Q.defer();
-
-		// if admin return
-		if(req.user.permissions.admin) {
-			deferred.resolve([]);
-			return deferred.promise;
-		}
-
-		// get list of users who are not admins or providers
-		var patientConditions = {
-			'permissions.admin': { $ne: true },
-			'permissions.provider': { $ne: true }
-		};
-
-		// only see your own patients
-		if(req.user.permissions.provider) {
-			var patientIds = [];
-			req.user.patients.forEach(function(patient, i){
-				patientIds.push(patient.id);
-			});
-			patientConditions['_id'] = { $in: patientIds };
-		}
-
-		User.find(patientConditions, function(err, patients) {
 			if (err) {
-				deferred.reject(new Error(err));
-			} else {
-				deferred.resolve(patients);
-			}
-		});
-
-		return deferred.promise;
-
-	};
-
-	var getProviders = function() {
-
-		// get list of users who are not admins or providers
-		var deferred = Q.defer();
-
-		User.find({
-			'permissions.provider': true
-		}, function(err, providers) {
-			if (err) {
-				deferred.reject(new Error(err));
-			} else {
-				deferred.resolve(providers);
-			}
-		});
-
-		return deferred.promise;
-
-	};
-
-	var getCheckinTemplates = function() {
-
-		// get list of users who are not admins or providers
-		var deferred = Q.defer();
-
-		CheckinTemplate.find({}, function(err, checkinTemplates) {
-			if (err) {
-				deferred.reject(new Error(err));
-			} else {
-				deferred.resolve(checkinTemplates);
-			}
-		});
-
-		return deferred.promise;
-
-	};
-
-	var admin = function(req, res) {
-
-		var patients = [],
-			yourPatients = [],
-			providers = [];
-
-		getPatients(req)
-		.then(function(allPatients) {
-			patients = allPatients;
-			return getYourPatients(req);
-		}, function(error) {})
-		.then(function(yPatients) {
-			yourPatients = yPatients;
-			return getProviders()
-		})
-		.then(function(allProviders) {
-			providers = allProviders;
-			return getCheckinTemplates()
-		})
-		.then(function(checkinTemplates) {
-
-			var templateVars = {
-				patients: patients,
-				yourPatients: yourPatients,
-				checkinTemplates: checkinTemplates
-			};
-
-			if(req.user.permissions.admin) {
-				templateVars.providers = providers;
+				return next(err);
 			}
 
 			var adminTemplate = 'admin/provider';
 			if(req.user.permissions.admin) {
 				adminTemplate = 'admin/admin';
-			};
+			}
 
 			res.render(adminTemplate, templateVars);
 
-			return;
 		});
 
 	};
 
 	return {
 		admin: admin
-	}
-}();
+	};
+}());
