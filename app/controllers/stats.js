@@ -1,4 +1,4 @@
-/* Dashboard controller
+/* Stats controller
  */
 
 module.exports = (function() {
@@ -103,7 +103,7 @@ module.exports = (function() {
 
 	};
 
-	var dashboard = function(req, res) {
+	var view = function(req, res) {
 
 		var stats = [
 			{
@@ -173,7 +173,7 @@ module.exports = (function() {
 			.then(function(){
 				if (i === endValue) {
 
-					res.render('dashboard/dashboard.ejs', {
+					res.render('stats/stats.ejs', {
 						stats: stats
 					});
 
@@ -192,7 +192,7 @@ module.exports = (function() {
 	};
 
 	return {
-		dashboard: dashboard
+		view: view
 	};
 
 }());
