@@ -555,64 +555,44 @@ describe('Schedules', function () {
 
 			it('should delete the schedule', function (done) {
 
-				// remove the previously attached _id
-// 				delete scheduleData._id;
-//
-// 				// create a new schedule
-// 				agent
-// 				.post('/schedule')
-// 				.send(scheduleData)
-// 				.expect('Content-Type', /text/)
-// 				.expect(302)
-// 				.expect(/Moved Temporarily/)
-// 				.end(function(err, res) {
-// 					if (err) {
-// 						return done(err);
-// 					}
+				// find the new schedule
+				Schedule.findOne({
+					user_id: scheduleData.user_id
+				}).exec(function (err, schedule) {
+					if (err) {
+						return done(err);
+					}
 
-					// find the new schedule
-					Schedule.findOne({
-						user_id: scheduleData.user_id
-					}).exec(function (err, schedule) {
+					should.exist(schedule);
+
+					// delete the new schedule
+					agent
+					.post('/schedule/remove')
+					.field('id', schedule._id)
+					.expect('Content-Type', /text/)
+					.expect(302)
+					.expect(/Moved Temporarily/)
+					.end(function(err, res) {
 						if (err) {
 							return done(err);
 						}
 
-						should.exist(schedule);
-
-						// delete the new schedule
-						agent
-						.post('/schedule/remove')
-						.field('id', schedule._id)
-						.expect('Content-Type', /text/)
-						.expect(302)
-						.expect(/Moved Temporarily/)
-						.end(function(err, res) {
+						// make sure the schedule does not exist
+						Schedule.findOne({
+							user_id: scheduleData.user_id
+						}).exec(function (err, schedule) {
 							if (err) {
 								return done(err);
 							}
 
-							// make sure the schedule does not exist
-							Schedule.findOne({
-								user_id: scheduleData.user_id
-							}).exec(function (err, schedule) {
-								if (err) {
-									return done(err);
-								}
+							should.not.exist(schedule);
 
-								should.not.exist(schedule);
-
-								done();
-							});
-
+							done();
 						});
 
-						done();
 					});
 
-// 				});
-
-
+				});
 
 			});
 
