@@ -16,6 +16,10 @@ module.exports = (function() {
 		Schedule.findOne({
 			_id: req.body.id
 		}, function(err, schedule) {
+			if (err) {
+				return next(err);
+			}
+
 			if (!schedule) {
 				return next(new Error('Failed to find Schedule ' + req.body.id));
 			}
@@ -24,6 +28,41 @@ module.exports = (function() {
 
 			res.redirect('/admin');
 		});
+
+	};
+
+	var parseDates = function(obj, schedule) {
+
+		// make sure we always use UTC dates
+		if(!obj.due_date) {
+			// in case the update does not have a new due_date
+			obj.due_date = moment.utc(schedule.due_date).format('MM/DD/YYYY');
+		}
+
+		obj.due_date += ' UTC';
+
+		if(obj.expiry) {
+
+			var expiryPreset = {
+				'1m': { months: 1 },
+				'6m': { months: 6 },
+				'1y': { years: 1 }
+			};
+
+			// set proper expire_date, based on expiry select
+			if(obj.expiry === '0') {
+				obj.expires = false;
+			} else {
+				obj.expires = true;
+
+				if(obj.expiry === 'custom') {
+					obj.expire_date += ' UTC';
+				} else {
+					obj.expire_date = moment.utc(obj.due_date).add(expiryPreset[obj.expiry]).toDate();
+				}
+			}
+
+		}
 
 	};
 
@@ -39,10 +78,15 @@ module.exports = (function() {
 					return next(new Error('Failed to find Schedule ' + req.body.id));
 				}
 
+				parseDates(req.body, schedule.toObject());
+
 				// update schedule with
+				schedule.user_id = req.body.user_id || schedule.user_id;
 				schedule.template_id = req.body.template_id || schedule.template_id;
 				schedule.repeat_interval = req.body.repeat_interval || schedule.repeat_interval;
 				schedule.due_date = req.body.due_date || schedule.due_date;
+				schedule.expires = req.body.expires;
+				schedule.expire_date = req.body.expire_date || schedule.expire_date;
 
 				schedule.save(function() {
 					res.redirect('/schedule/' + schedule.id);
@@ -80,6 +124,7 @@ module.exports = (function() {
 			};
 
 			templateVars.schedule.due_date = moment(templateVars.schedule.due_date).format('MM/DD/YYYY');
+			templateVars.schedule.expire_date = moment(templateVars.schedule.expire_date).format('MM/DD/YYYY');
 
 			formView(req, res, next, templateVars);
 
@@ -91,7 +136,8 @@ module.exports = (function() {
 
 		var templateVars = {
 			schedule: {
-				due_date: moment().format('MM/DD/YYYY')
+				due_date: moment().format('MM/DD/YYYY'),
+				expire_date: moment().add('years', 1).format('MM/DD/YYYY')
 			}
 		};
 

@@ -266,14 +266,12 @@ describe('Users', function () {
 				.end(done)
 			})
 
-			it('should redirect to /dashboard', function (done) {
+			it('should respond with 403 Forbidden', function (done) {
 				agent
 				.post('/user/delete')
 				.field('userId', userId)
-				.expect('Content-Type', /plain/)
-				.expect(302)
-				.expect('Location', '/dashboard')
-				.expect(/Moved Temporarily/)
+				.expect(403)
+				.expect(/Forbidden/)
 				.end(done)
 			})
 

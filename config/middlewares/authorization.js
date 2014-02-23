@@ -37,7 +37,7 @@ module.exports = (function() {
 
 		if(!req.user.permissions.admin) {
 			req.session.returnTo = req.originalUrl;
-			return res.redirect('/dashboard');
+			return res.send(403, 'Forbidden');
 		}
 		next();
 
@@ -49,7 +49,7 @@ module.exports = (function() {
 
 		if(!req.user.permissions.provider && !req.user.permissions.admin) {
 			req.session.returnTo = req.originalUrl;
-			return res.redirect('/dashboard');
+			return res.send(403, 'Forbidden');
 		}
 		next();
 

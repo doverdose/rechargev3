@@ -77,21 +77,38 @@ module.exports = (function() {
 			}
 
 			var nextMonday = moment().day(8).hour(0).minute(0).toDate(),
-				tomorrow = moment().add('days', 1).hour(0).minute(0).toDate();
+				tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
+				today = moment().hour(0).minute(0).second(0).toDate();
 
 			// get schedules for checking-in
 			Schedule.find({
 				user_id: req.user._id,
-				$or: [
+				$and: [
 					{
-						due_date: {
-							$gte: new Date()
-						}
+						$or: [
+							{
+								expires: false
+							},
+							{
+								expire_date: {
+									$gte: today
+								}
+							}
+						]
 					},
 					{
-						repeat_interval: {
-							$gt: 0
-						}
+						$or: [
+							{
+								due_date: {
+									$gte: today
+								}
+							},
+							{
+								repeat_interval: {
+									$gt: 0
+								}
+							}
+						]
 					}
 				]
 			}, function(err, schedules) {
@@ -140,14 +157,7 @@ module.exports = (function() {
 					} else if (schedule.due_date < nextMonday) {
 						compareDate.date = nextMonday;
 						compareDate.object = 'thisWeek';
-
-						console.log('yes this week');
 					}
-
-					console.log(schedule.due_date);
-					console.log(compareDate.date);
-					console.log('luni', nextMonday);
-					console.log('tomorrow', tomorrow);
 
 					if(compareDate.date) {
 						// parse all checkins, to see if we already made the required checkin
@@ -160,8 +170,6 @@ module.exports = (function() {
 								checkin.timestamp > moment(compareDate.date).subtract(schedule.repeat_interval, 'days').toDate() &&
 								checkin.timestamp < compareDate.date
 							) {
-
-								console.log('found another');
 
 								existingCheckin = true;
 								return false;
@@ -177,8 +185,6 @@ module.exports = (function() {
 
 
 				});
-
-				console.log(templateVars.schedules);
 
 				res.render('checkin/list.ejs', templateVars);
 

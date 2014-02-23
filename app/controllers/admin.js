@@ -14,7 +14,6 @@ module.exports = (function() {
 
 		var templateVars = {};
 
-
 		async.parallel([
 			function(callback) {
 

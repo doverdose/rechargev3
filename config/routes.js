@@ -5,7 +5,7 @@ module.exports = function(app, passport) {
 	'use strict';
 
 	var site = require('../app/controllers/site'),
-		dashboard = require('../app/controllers/dashboard'),
+		stats = require('../app/controllers/stats'),
 		checkin = require('../app/controllers/checkins'),
 		checkinTemplate = require('../app/controllers/checkinTemplates'),
 		users = require('../app/controllers/users'),
@@ -36,7 +36,7 @@ module.exports = function(app, passport) {
 	app.get('/admin', auth.requiresLogin, auth.requiresProvider, admin.admin);
 
 	// restricted logged-in routes
-	app.get('/dashboard', auth.requiresLogin, dashboard.dashboard);
+	app.get('/stats', auth.requiresLogin, auth.requiresAdmin, stats.view);
 
 	app.get('/user/new', auth.requiresLogin, auth.requiresAdmin, users.newView);
 	app.get('/user/:id', auth.requiresLogin, users.view);
