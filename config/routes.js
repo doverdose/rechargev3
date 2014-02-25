@@ -9,6 +9,7 @@ module.exports = function(app, passport) {
 		checkin = require('../app/controllers/checkins'),
 		checkinTemplate = require('../app/controllers/checkinTemplates'),
 		users = require('../app/controllers/users'),
+		dashboard = require('../app/controllers/dashboard'),
 		settings = require('../app/controllers/settings'),
 		providers = require('../app/controllers/providers'),
 		admin = require('../app/controllers/admin'),
@@ -79,6 +80,9 @@ module.exports = function(app, passport) {
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
 	app.get('/settings/following', auth.requiresLogin, settings.following);
 	app.get('/settings/followers', auth.requiresLogin, settings.followers);
+
+	//dashboard
+	app.get('/dashboard', dashboard.index);
 
 	app.param('userId', users.user);
 
