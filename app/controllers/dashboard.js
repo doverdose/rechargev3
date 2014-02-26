@@ -6,8 +6,31 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		Checkin = mongoose.model('Checkin'),
-		moment = require("moment"),
+		moment = require('moment'),
 		async = require('async');
+
+	var checkinsForInterval = function(startDate, endDate, index, renderVars, callback) {
+		Checkin.find({
+			timestamp: {
+				$lt: endDate.toDate(),
+				$gt: startDate.toDate()
+			}
+		}, {
+			score: true,
+			timestamp: true
+		}, {
+			sort: {
+				timestamp: 1
+			}
+		}, function(err, results) {
+			if (err) {
+				return next(err);
+			}
+
+			renderVars[index] = results;
+			callback();
+		});
+	};
 
 	var index = function(req, res, next) {
 
@@ -21,73 +44,19 @@ module.exports = (function() {
 
 		var renderVars = {};
 		async.parallel([function(callback) {
-			Checkin.find({
-				timestamp: {
-					$lt: weekEnd.toDate(),
-					$gt: weekStart.toDate() 
-				}
-			}, {
-				score: true
-			}, {
-				sort: {
-					timestamp: 1
-				}
-			}, function(err, results) {
-				if (err) {
-					return next(err);
-				}
-
-				renderVars.weekResults = results;
-				callback();
-			});
+			checkinsForInterval(weekStart, weekEnd, 'weekResults', renderVars, callback);
 		}, function(callback) {
-			Checkin.find({
-				timestamp: {
-					$lt: monthEnd.toDate(),
-					$gt: monthStart.toDate() 
-				}
-			}, {
-				score: true
-			}, {
-				sort: {
-					timestamp: 1
-				}
-			}, function(err, results) {
-				if (err) {
-					return next(err);
-				}
-
-				renderVars.monthResults = results;
-				callback();
-			});
+			checkinsForInterval(monthStart, monthEnd, 'monthResults', renderVars, callback);
 		}, function(callback) {
-			Checkin.find({
-				timestamp: {
-					$lt: yearEnd.toDate(),
-					$gt: yearStart.toDate() 
-				}
-			}, {
-				score: true
-			}, {
-				sort: {
-					timestamp: 1
-				}
-			}, function(err, results) {
-				if (err) {
-					return next(err);
-				}
-
-				renderVars.yearResults = results;
-				callback();
-			});
+			checkinsForInterval(yearStart, yearEnd, 'yearResults', renderVars, callback);
 		}], function(err) {
 			if(err) {
 				next(err);
 			}
-			console.log(renderVars);
+			res.render('dashboard/index.ejs', {
+				jsVars: renderVars
+			});
 		});
-
-		res.render('dashboard/index.ejs');
 	};
 
 	return {

@@ -358,3 +358,36 @@ body .select2-container {
 
 	text-align: right;
 }
+
+/*Dashboard*/
+.dashboard-wrapper {
+	width: 800px;
+	margin: 0 auto;
+	margin-top: 20px;
+	text-align: center;
+	.legend {
+		font-size: 16px;
+		font-weight: bold;
+	}
+	#week-results {
+		width: 800px;
+		height: 400px;
+	}
+	#month-results {
+		width: 400px;
+		height: 250px;
+	}
+	#year-results {
+		width: 400px;
+		height: 250px;
+	}
+	.month, .year {
+		float: left; 
+	}
+	.week, .month, .year {
+		margin-top: 40px;
+	}
+	.clear {
+		clear: both;
+	}
+}

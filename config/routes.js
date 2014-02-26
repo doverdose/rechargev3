@@ -82,7 +82,7 @@ module.exports = function(app, passport) {
 	app.get('/settings/followers', auth.requiresLogin, settings.followers);
 
 	//dashboard
-	app.get('/dashboard', dashboard.index);
+	app.get('/dashboard', auth.requiresLogin, auth.requiresProvider, dashboard.index);
 
 	app.param('userId', users.user);
 

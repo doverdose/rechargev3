@@ -19,6 +19,12 @@
 	<link href="/bower_components/select2/select2.css" rel="stylesheet">
 	<link href="/bower_components/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet">
 	<!-- endbuild -->
+
+	<% if (typeof jsVars !== 'undefined') { %>
+		<script type="text/javascript">
+			var jsVars = <%- JSON.stringify(jsVars) %>;
+		</script>
+	<% } %>
 </head>
 <body>
 
@@ -55,6 +61,9 @@
 					<% if(user.permissions.provider) { %>
 						<li>
 							<a href="/admin">Provider</a>
+						</li>
+						<li>
+							<a href="/dashboard">Dashboard</a>
 						</li>
 					<% } %>
 
@@ -104,6 +113,7 @@
 	<!-- build:js /scripts/plugins.js -->
 	<script src="/bower_components/jquery/jquery.min.js"></script>
 	<script src="/bower_components/flot/jquery.flot.js"></script>
+	<script src="/bower_components/flot/jquery.flot.time.js"></script>
 	<script src="/bower_components/bootstrap-sass/dist/js/bootstrap.min.js"></script>
 	<script src="/bower_components/select2/select2.min.js"></script>
 	<script src="/bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
@@ -115,6 +125,7 @@
 	<script src="/widgets/cloneField.js"></script>
 	<script src="/widgets/visibilitySelector.js"></script>
 	<script src="/widgets/templatePopover.js"></script>
+	<script src="/widgets/dashboard.js"></script>
 	<!-- endbuild -->
 
 </body>
