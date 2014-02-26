@@ -21,6 +21,15 @@ module.exports = (function() {
 	var nodemailer = require('nodemailer'),
 		smtpTransport;
 
+	var requiredCallbacks = 0,
+		firedCallbacks = 0;
+	var checkCallbacks = function(callback) {
+		// check if all the async callbacks are done
+		if(requiredCallbacks !== 0 && requiredCallbacks === firedCallbacks) {
+			callback();
+		}
+	};
+
 	var send = function(done) {
 		var Checkin = mongoose.model('Checkin');
 		var CheckinTemplate = mongoose.model('CheckinTemplate');
@@ -70,6 +79,9 @@ module.exports = (function() {
 			model.upcoming = {};
 
 			model.users.forEach(function(patient, i) {
+
+				// increased fired callbacks
+				requiredCallbacks++;
 
 				async.parallel([
 					function(callback) {
@@ -207,12 +219,11 @@ module.exports = (function() {
 
 					console.log(model.upcoming);
 
-					// TODO check if all the asyncs are done
-					// all call done() when ready
-					// in case the asyncs do not fire in order, this will not work
-					if(i === model.users.length - 1) {
-						done();
-					}
+					// increased fired callbacks
+					firedCallbacks++;
+
+					// check if all the asyncs are done
+					checkCallbacks(done);
 
 				});
 
