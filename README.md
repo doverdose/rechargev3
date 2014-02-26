@@ -7,6 +7,17 @@ Server will be running on port `8080`, by default.
 
 	http://localhost:8080/
 
+## Requirements
+
+Make sure you have Node `0.10+` and MongoDB installed.
+
+	npm install -g bower grunt-cli
+
+If running Linux, make sure you have the following packages installed, for image optimization with Grunt:
+
+	apt-get install optipng pngnq pngquant jpegoptim gifsicle pngcrush
+
+
 ## Development
 
 	npm run-script dev
