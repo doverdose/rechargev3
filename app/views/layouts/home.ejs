@@ -48,7 +48,9 @@
 
 			<% if(user.email) { %>
 				<ul class="nav navbar-nav">
-
+					<li>
+						<a href="/dashboard">Dashboard</a>
+					</li>
 					<% if(user.permissions.admin) { %>
 						<li>
 							<a href="/admin">Admin</a>
@@ -61,9 +63,6 @@
 					<% if(user.permissions.provider) { %>
 						<li>
 							<a href="/admin">Provider</a>
-						</li>
-						<li>
-							<a href="/dashboard">Dashboard</a>
 						</li>
 					<% } %>
 

@@ -9,12 +9,13 @@ module.exports = (function() {
 		moment = require('moment'),
 		async = require('async');
 
-	var checkinsForInterval = function(startDate, endDate, index, renderVars, callback) {
+	var checkinsForInterval = function(userID, startDate, endDate, index, renderVars, callback) {
 		Checkin.find({
 			timestamp: {
 				$lt: endDate.toDate(),
 				$gt: startDate.toDate()
-			}
+			},
+			user_id: userID
 		}, {
 			score: true,
 			timestamp: true
@@ -24,11 +25,10 @@ module.exports = (function() {
 			}
 		}, function(err, results) {
 			if (err) {
-				return next(err);
+				callback(err);
 			}
-
 			renderVars[index] = results;
-			callback();
+			callback(null, results);
 		});
 	};
 
@@ -44,11 +44,11 @@ module.exports = (function() {
 
 		var renderVars = {};
 		async.parallel([function(callback) {
-			checkinsForInterval(weekStart, weekEnd, 'weekResults', renderVars, callback);
+			checkinsForInterval(req.user._id, weekStart, weekEnd, 'weekResults', renderVars, callback);
 		}, function(callback) {
-			checkinsForInterval(monthStart, monthEnd, 'monthResults', renderVars, callback);
+			checkinsForInterval(req.user._id, monthStart, monthEnd, 'monthResults', renderVars, callback);
 		}, function(callback) {
-			checkinsForInterval(yearStart, yearEnd, 'yearResults', renderVars, callback);
+			checkinsForInterval(req.user._id, yearStart, yearEnd, 'yearResults', renderVars, callback);
 		}], function(err) {
 			if(err) {
 				next(err);
@@ -60,7 +60,8 @@ module.exports = (function() {
 	};
 
 	return {
-		index: index
+		index: index,
+		checkinsForInterval: checkinsForInterval
 	};
 
 }());

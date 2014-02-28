@@ -2,7 +2,7 @@
 
 var dashboard = {
 	init: function() {
-		if($(".dashboard-wrapper").length == 0) {
+		if($(".dashboard-index").length == 0) {
 			return;
 		}
 
@@ -21,15 +21,19 @@ var dashboard = {
 			return nextDate.getTime() == currentDate.getTime();
 		});
 		dashboard.plotChart('#year-results', jsVars.yearResults, "%Y", function(currentDate, nextDate) {
+			currentDate.setMonth(1);
 			currentDate.setDate(1);
 			currentDate.setHours(0, 0, 0, 0);
+			nextDate.setMonth(1);
 			nextDate.setDate(1);
 			nextDate.setHours(0, 0, 0, 0);
 
 			return nextDate.getTime() == currentDate.getTime();
 		});
 	},
-	plotChart: function(placeHolder, rawData, timeFormat, compareDates) {
+	plotChart: function(placeHolder, rawData, timeFormat, compareDates, plot) {
+		plot = plot === undefined ? true : false;
+
 		var dataSet = [];
 		if(rawData.length > 0) {
 			for(var i = 0; i < rawData.length; i++) {
@@ -54,16 +58,21 @@ var dashboard = {
 				]);
 			}
 		}
-		$.plot($(placeHolder), [dataSet], {
-			xaxis: {
-				mode: 'time',
-				timeformat: timeFormat
-			},
-			series: {
-		        lines: { show: true, fill: true },
-        		points: { show: true, fill: false }
-		    }
-		});
+
+		if(plot == true) {
+			$.plot($(placeHolder), [dataSet], {
+				xaxis: {
+					mode: 'time',
+					timeformat: timeFormat
+				},
+				series: {
+			        lines: { show: true, fill: true },
+	        		points: { show: true, fill: false }
+			    }
+			});
+		}
+
+		return dataSet;
 	}
 };
 $(document).ready(function() {
