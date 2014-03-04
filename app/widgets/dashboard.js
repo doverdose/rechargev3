@@ -6,6 +6,10 @@ var dashboard = {
 			return;
 		}
 
+		if(jsVars.weekResults.length == 0 && jsVars.monthResults.length == 0 && jsVars.yearResults.length == 0) {
+			dashboard.showNoData("You haven't made any check-ins yet. Come back later, once you've checked-in a couple of times.");
+		}
+
 		dashboard.plotChart('#week-results', jsVars.weekResults, "%a, %e %b", function(currentDate, nextDate) {
 			currentDate.setHours(0, 0, 0, 0);
 			nextDate.setHours(0, 0, 0, 0);
@@ -31,8 +35,16 @@ var dashboard = {
 			return nextDate.getTime() == currentDate.getTime();
 		});
 	},
+	showNoData: function(message) {
+		$(".plots").hide();
+		$(".notice").html(message).show();
+	},
 	plotChart: function(placeHolder, rawData, timeFormat, compareDates, plot) {
 		plot = plot === undefined ? true : false;
+
+		if(rawData.length == 0) {
+			$(placeHolder + "-no").show();
+		}
 
 		var dataSet = [];
 		if(rawData.length > 0) {

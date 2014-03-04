@@ -370,6 +370,24 @@ body .select2-container {
 		width: 100%;
 		height: 400px;
 	}
+	#week-results-no{
+	    margin-left: 230px;
+	    margin-top: -200px;
+	    position: absolute;
+	    display: none;
+	}
+	#month-results-no {
+	    margin-left: 90px;
+	    margin-top: -140px;
+	    position: absolute;
+	    display: none;
+	}
+	#year-results-no{
+	    margin-left: 90px;
+	    margin-top: -140px;
+	    position: absolute;
+	    display: none;
+	}
 	#month-results {
 		width: 100%;
 		height: 250px;
@@ -390,5 +408,8 @@ body .select2-container {
 	}
 	.clear {
 		clear: both;
+	}
+	.notice {
+		display: none;
 	}
 }
