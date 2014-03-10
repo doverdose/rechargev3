@@ -1,6 +1,12 @@
 /* Notifications controller
  */
 
+/* TODO
+ * This controller is obsolete and should be moved to
+ * /controllers/scheduler/checkinNotifications.js
+ * to use the new scheduler.js
+ */
+
 module.exports = (function() {
 	'use strict';
 
