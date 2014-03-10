@@ -45,7 +45,6 @@ app.configure(function() {
     })
 });
 
-
 app.get('/dashboard', routes.dashboard);
 app.put('/checkin/:id.:format?', routes.checkin_update);
 app.get('/checkin/:id.:format?/edit', routes.checkin_edit);
