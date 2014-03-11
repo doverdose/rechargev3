@@ -1,4 +1,4 @@
-/* Checkins controller
+/* Dashboard controller
  */
 
 module.exports = (function() {

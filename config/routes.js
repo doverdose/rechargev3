@@ -10,6 +10,7 @@ module.exports = function(app, passport) {
 		checkinTemplate = require('../app/controllers/checkinTemplates'),
 		users = require('../app/controllers/users'),
 		dashboard = require('../app/controllers/dashboard'),
+		following = require('../app/controllers/following'),
 		settings = require('../app/controllers/settings'),
 		providers = require('../app/controllers/providers'),
 		admin = require('../app/controllers/admin'),
@@ -83,6 +84,7 @@ module.exports = function(app, passport) {
 
 	//dashboard
 	app.get('/dashboard', auth.requiresLogin, dashboard.index);
+	app.get('/following', auth.requiresLogin, following.index);
 
 	app.param('userId', users.user);
 
