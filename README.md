@@ -68,7 +68,7 @@ Run the tests with `npm test`.
 
 ## Scheduler
 
-The email sender/scheduler, that sends emails to users who need to make check-ins the next day, is built as a separate Node app, but using some of the same files (like the config files) as the main app.
+The email sender/scheduler, that sends emails to users who need to make check-ins the next day, is built as a separate Node app, but using some of the same files (like the configs or models) as the main app.
 
 The scheduler should be run in a Cron job with:
 
