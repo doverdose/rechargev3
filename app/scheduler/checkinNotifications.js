@@ -19,15 +19,18 @@ module.exports = (function() {
 		emailTemplates = require('email-templates');
 
 	var nodemailer = require('nodemailer'),
-		smtpTransport;
+		smtpTransport,
+		config;
 
 	var requiredCallbacks = 0,
 		firedCallbacks = 0;
 	var checkCallbacks = function(callback) {
+
 		// check if all the async callbacks are done
 		if(requiredCallbacks !== 0 && requiredCallbacks === firedCallbacks) {
 			callback();
 		}
+
 	};
 
 	var send = function(done) {
@@ -186,6 +189,8 @@ module.exports = (function() {
 						if(schedule.due_date < tomorrow) {
 							compareDate.date = tomorrow;
 							compareDate.object = 'today';
+
+							model.upcoming[compareDate.object] = [];
 						};
 
 						if(compareDate.date) {
@@ -215,9 +220,60 @@ module.exports = (function() {
 							}
 						}
 
+
 					});
 
 					console.log(model.upcoming);
+
+					// TODO send email for matched upcoming schedules
+					// TODO check if an email was not already sent
+					// maybe store notification emails on the schedule object?
+					emailTemplates(templatesDir, function(templateErr, template) {
+
+						if (err || templateErr) {
+							return console.log(err || templateErr);
+						}
+
+						// Prepare nodemailer transport object
+						var transport = nodemailer.createTransport(config.mail.type, config.mail.transport);
+
+						// An example users object with formatted email function
+						var locals = {
+							email: patient.email,
+							name: patient.name
+						};
+
+						// Send a single email
+						template('notification', locals, function(err, html, text) {
+							if (err) {
+								return console.log(err);
+							}
+
+							transport.sendMail({
+								from: config.mail.from,
+								to: patient.email,
+								subject: 'Notification',
+								html: html,
+								text: text
+							}, function(err, responseStatus) {
+								if (err) {
+									return console.log(err);
+								}
+
+								console.log(responseStatus.message);
+
+// 								notification.sent = 'true';
+// 								notification.sent_timestamp = new Date();
+//
+// 								notification.save(function(err) {
+// 									console.log(err);
+// 								});
+
+							});
+
+						});
+
+					});
 
 					// increased fired callbacks
 					firedCallbacks++;
@@ -234,7 +290,9 @@ module.exports = (function() {
 
 	};
 
-	return function(config) {
+	return function(conf) {
+
+		config = conf;
 
 		smtpTransport = nodemailer.createTransport(config.mail.type, config.mail.transport);
 		templatesDir = config.root + '/app/views/email';

@@ -41,8 +41,5 @@ if(env !== 'development') {
 	}));
 }
 
-// start notification watcher
-require('./app/controllers/notifications')(config);
-
 var port = process.env.PORT || 8080;
 app.listen(port);
