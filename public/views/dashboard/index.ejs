@@ -1,5 +1,35 @@
-<% layout('../layouts/default') -%>
-<div class="dashboard-wrapper">
-	<div id='week-results'>
+<% layout('../layouts/home') -%>
+<div class="container dashboard-index">
+	<div class="page-header">
+		<h2>Dashboard</h2>
 	</div>
+
+	<div class='plots'>
+		<div class='week'>
+			<div class='legend'>Chekin scores this week</div>
+			<div id='week-results'>
+			</div>
+			<div id="week-results-no">No data available yet.</div>
+		</div>
+
+		<div class='clear'></div>
+
+		<div class='month'>
+			<div class='legend'>Cheking scores this month</div>
+			<div id='month-results'>
+			</div>
+			<div id="month-results-no">No data available yet.</div>
+		</div>
+
+		<div class='year'>
+			<div class='legend'>Checking scores this year</div>
+			<div id='year-results'>
+			</div>
+			<div id="year-results-no">No data available yet.</div>
+		</div>
+
+		<div class='clear'></div>
+	</div>
+
+	<div class='notice'></div>
 </div>

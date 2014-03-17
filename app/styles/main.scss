@@ -413,3 +413,24 @@ body .select2-container {
 		display: none;
 	}
 }
+
+.following-index {
+	.following-checkin {
+		border-top: solid 1px #CCC;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 15px;
+	}
+	.following-checkin:last-child {
+		border-bottom: solid 1px #CCC;
+	}
+	.following-detail {
+		text-align: left;
+	}
+	.following-timestamp {
+		text-align: right;
+		font-size: 13px;
+		color: #666;
+		padding-right: 15px;
+	}
+}
