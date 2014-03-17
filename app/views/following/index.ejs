@@ -1,0 +1,17 @@
+<% layout('../layouts/home') -%>
+<div class="container following-index">
+	<div class="page-header">
+		<h2>Following</h2>
+	</div>
+
+	<% for(var i = 0; i < results.length; i++) { %>
+		<div class='following-checkin'>
+			<div class='following-detail'>
+				<%= results[i].user.name %> has cheked in for <%= results[i].title %>
+			</div>
+			<div class='following-timestamp'>
+				<%= results[i].date %>
+			</div>
+		</div>
+	<% } %>
+</div>

@@ -1,30 +1,31 @@
+/*global jsVars */
 'use strict';
 
 var dashboard = {
 	init: function() {
-		if($(".dashboard-index").length == 0) {
+		if($('.dashboard-index').length === 0) {
 			return;
 		}
 
-		if(jsVars.weekResults.length == 0 && jsVars.monthResults.length == 0 && jsVars.yearResults.length == 0) {
-			dashboard.showNoData("You haven't made any check-ins yet. Come back later, once you've checked-in a couple of times.");
+		if(jsVars.weekResults.length === 0 && jsVars.monthResults.length === 0 && jsVars.yearResults.length === 0) {
+			dashboard.showNoData('You haven\'t made any check-ins yet. Come back later, once you\'ve checked-in a couple of times.');
 		}
 
-		dashboard.plotChart('#week-results', jsVars.weekResults, "%a, %e %b", function(currentDate, nextDate) {
+		dashboard.plotChart('#week-results', jsVars.weekResults, '%a, %e %b', function(currentDate, nextDate) {
 			currentDate.setHours(0, 0, 0, 0);
 			nextDate.setHours(0, 0, 0, 0);
 
-			return nextDate.getTime() == currentDate.getTime();
+			return nextDate.getTime() === currentDate.getTime();
 		});
-		dashboard.plotChart('#month-results', jsVars.monthResults, "%b", function(currentDate, nextDate) {
+		dashboard.plotChart('#month-results', jsVars.monthResults, '%b', function(currentDate, nextDate) {
 			currentDate.setDate(1);
 			currentDate.setHours(0, 0, 0, 0);
 			nextDate.setDate(1);
 			nextDate.setHours(0, 0, 0, 0);
 
-			return nextDate.getTime() == currentDate.getTime();
+			return nextDate.getTime() === currentDate.getTime();
 		});
-		dashboard.plotChart('#year-results', jsVars.yearResults, "%Y", function(currentDate, nextDate) {
+		dashboard.plotChart('#year-results', jsVars.yearResults, '%Y', function(currentDate, nextDate) {
 			currentDate.setMonth(1);
 			currentDate.setDate(1);
 			currentDate.setHours(0, 0, 0, 0);
@@ -32,18 +33,18 @@ var dashboard = {
 			nextDate.setDate(1);
 			nextDate.setHours(0, 0, 0, 0);
 
-			return nextDate.getTime() == currentDate.getTime();
+			return nextDate.getTime() === currentDate.getTime();
 		});
 	},
 	showNoData: function(message) {
-		$(".plots").hide();
-		$(".notice").html(message).show();
+		$('.plots').hide();
+		$('.notice').html(message).show();
 	},
 	plotChart: function(placeHolder, rawData, timeFormat, compareDates, plot) {
 		plot = plot === undefined ? true : false;
 
-		if(rawData.length == 0) {
-			$(placeHolder + "-no").show();
+		if(rawData.length === 0) {
+			$(placeHolder + '-no').show();
 		}
 
 		var dataSet = [];
@@ -71,16 +72,22 @@ var dashboard = {
 			}
 		}
 
-		if(plot == true) {
+		if(plot === true) {
 			$.plot($(placeHolder), [dataSet], {
 				xaxis: {
 					mode: 'time',
 					timeformat: timeFormat
 				},
 				series: {
-			        lines: { show: true, fill: true },
-	        		points: { show: true, fill: false }
-			    }
+					lines: {
+						show: true,
+						fill: true
+					},
+					points: {
+						show: true,
+						fill: false
+					}
+				}
 			});
 		}
 

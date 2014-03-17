@@ -1,20 +1,17 @@
-/* Bootstrap Popover with HTML content
- */
+/* Bootstrap Popover with HTML content */
 
 (function() {
 	'use strict';
 
 	var templatePopover = (function() {
-
 		var $popover;
-
 		var init = function() {
-
 			$popover = $('[rel=popover][data-tpl]');
-
 			$popover.each(function(i, elem) {
 				var $elem = $(elem),
 					popoverTemplate = $($elem.attr('data-tpl')).html();
+
+				$($elem.attr('data-tpl')).remove();
 
 				$elem.popover({
 					html: true,
@@ -27,11 +24,8 @@
 					// init select2
 					$select2.select2();
 				});
-
 			});
-
 		};
-
 		return {
 			init: init
 		};
