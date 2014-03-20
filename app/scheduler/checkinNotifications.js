@@ -31,7 +31,7 @@ module.exports = (function() {
 
 	var send = function(done) {
 
-		tomorrow = moment().add('days', 1).hour(0).minute(0).toDate();
+		tomorrow = moment().add('days', 1).hour(23).minute(59).second(59).toDate();
 		today = moment().hour(0).minute(0).second(0).toDate();
 
 		var Checkin = mongoose.model('Checkin');
@@ -49,9 +49,7 @@ module.exports = (function() {
 					if (err) {
 						return err;
 					}
-
 					model.users = patients;
-
 					callback();
 				});
 
@@ -62,7 +60,6 @@ module.exports = (function() {
 					if (err) {
 						return err;
 					}
-
 					model.checkinTemplates = checkinTemplates;
 					callback();
 
@@ -185,9 +182,10 @@ module.exports = (function() {
 					compareDate.date = tomorrow;
 					compareDate.object = 'today';
 
-					user.upcoming[compareDate.object] = [];
+					if(user.upcoming[compareDate.object] === undefined) {
+						user.upcoming[compareDate.object] = [];
+					}
 				};
-
 				if(compareDate.date) {
 					// parse all checkins, to see if we already made the required checkin
 					var existingCheckin = false;
@@ -205,18 +203,13 @@ module.exports = (function() {
 
 						return true;
 					});
-
 					if(!existingCheckin) {
 						user.upcoming[compareDate.object].push(schedule);
 					}
 				}
 			});
-
-			console.log(user);
 			if(user.upcoming['today'] && user.upcoming['today'].length) {
-				user.upcoming['today'].forEach(function(schedule) {
-					mailer.push(sendMail(schedule, patient));
-				});
+				mailer.push(sendMail(user.upcoming['today'], patient));
 			}
 
 			callback();
@@ -225,82 +218,107 @@ module.exports = (function() {
 
 	};
 
-	var sendMail = function(schedule, patient) {
+	var sendMail = function(schedules, patient) {
 		return function(done) {
-			// Prepare nodemailer transport object
 			var transport = nodemailer.createTransport(config.mail.type, config.mail.transport);
 
-			// An example users object with formatted email function
 			var locals = {
 				email: patient.email,
 				name: patient.name,
-				schedule: schedule
+				schedules: []
 			};
+			var existingSchedules = [];
 
-			// check if an email was not already sent in the last 24h
-			Notification.find({
-				user_id: patient._id,
-				schedule_id: schedule._id,
-				status: 'sent',
-				timestamp: {
-					$gt: today
-				}
-			}, function(err, notifications) {
-				if (err) {
-					return err;
-				}
-
-				if(notifications.length) {
-
-					done();
-
-				} else {
-					// if no other notifications where sent today
-					// send notification
-
-					// send email
-					templates('notification', locals, function(err, html, text) {
+			async.each(schedules, function(item, callback) {
+				var currentItem = item;
+				existingSchedules.push(function(callback) {
+					Notification.find({
+						user_id: patient._id,
+						schedule_id: currentItem._id,
+						status: 'sent',
+						timestamp: {
+							$gt: today
+						}
+					}).exec(function(err, notifications) {
 						if (err) {
-							return console.log(err);
+							callback(err, null);
+							return;
 						}
 
-						var notif = new Notification({
-							user_id: patient._id,
-							schedule_id: schedule._id,
-							status: 'pending',
-							timestamp: new Date()
-						});
+						if(notifications.length) {
+							callback(null, null);
+							return;
+						}
 
-						notif.save();
-
-						transport.sendMail({
-							from: config.mail.from,
-							to: patient.email,
-							subject: 'ReCharge Health scheduled check-in',
-							html: html,
-							text: text
-						}, function(err, responseStatus) {
+						callback(null, currentItem);
+					});
+				});
+				callback(null);
+			}, function(err) {
+				async.parallel(existingSchedules, function(err, results) {
+					for(var i = 0; i < results.length; i++) {
+						if(results[i] != null) {
+							locals.schedules.push(results[i]);
+						}
+					}
+					if(locals.schedules.length) {
+						console.log("Sending " + locals.schedules.length + " schedules.");
+						templates('notification', locals, function(err, html, text) {
 							if (err) {
 								return console.log(err);
 							}
 
-							notif.status = 'sent';
-							notif.response = responseStatus.message;
-							notif.timestamp = new Date();
+							var notifs = [];
+							for(var i = 0; i < locals.schedules.length; i++) {
+								var notif = new Notification({
+									user_id: patient._id,
+									schedule_id: locals.schedules[i]._id,
+									status: 'pending',
+									timestamp: new Date()
+								});
+								notif.save();
 
-							notif.save(function(err) {
-								if(err) {
+								notifs.push(notif);
+							}
+
+							transport.sendMail({
+								from: config.mail.from,
+								to: patient.email,
+								subject: 'ReCharge Health scheduled check-in',
+								html: html,
+								text: text
+							}, function(err, responseStatus) {
+								if (err) {
 									return console.log(err);
 								}
 
-								done();
+								async.each(notifs, function(item, callback) {
+									item.status = 'sent';
+									item.response = responseStatus.message;
+									item.timestamp = new Date();
+
+									item.save(function(err) {
+										if(err) {
+											callback(err);
+											return;
+										}
+										callback();
+									});
+								}, function(err) {
+									if(err) {
+										console.log(err);
+									}
+									done();
+								});
 							});
 						});
-					});
-				}
+					} else {
+						console.log("Nothing to send.");
+						done();
+					}
+				});
 			});
-		}
-
+		};
 	};
 
 	return function(conf) {

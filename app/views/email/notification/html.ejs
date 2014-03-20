@@ -3,11 +3,13 @@
 <h3>Hi <%= name %>!</h3>
 <p>This is a notification from ReCharge Health because you have a checked-in scheduled for today.  </p>
 
-<p>
-	<a href="#">
-		<%= schedule.template.title %> <br>
-		<%= schedule.template.question %> <br>
-	</a>
-</p>
+<% for(var i = 0; i < schedules.length; i++) { %>
+	<p>
+		<a href="#">
+			<%= schedules[i].template.title %> <br>
+			<%= schedules[i].template.question %> <br>
+		</a>
+	</p>
+<% } %>
 
 <small>This email was automatically sent to <%= email %> by ReCharge Health. </small>
