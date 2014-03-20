@@ -8,55 +8,6 @@ module.exports = (function() {
 		User = mongoose.model('User'),
 		Q = require('q');
 
-	/**
-	* Find user by id
-	*/
-
-// 	var user = function (req, res, next, id) {
-// 		User.findOne({ _id : id })
-// 			.exec(function (err, user) {
-// 				if (err) {
-// 					return next(err);
-// 				}
-// 				if (!user) {
-// 					return next(new Error('Failed to load User ' + id));
-// 				}
-// 				req.profile = user;
-// 				next();
-// 			});
-// 	};
-
-	/* Edit user
-	*/
-
-// 	var update = function (req, res, next) {
-//
-// 		User.findOne({ _id : req.body.id })
-// 			.exec(function (err, user) {
-// 				if (err) {
-// 					return next(err);
-// 				}
-// 				if (!user) {
-// 					return next(new Error('Failed to load User ' + req.body.id));
-// 				}
-//
-// 				user.name = req.body.name || user.name;
-// 				user.email = req.body.email || user.email;
-// 				user.username = req.body.username || user.username;
-// 				user.password = req.body.password || user.password;
-//
-// 				user.save(function(err) {
-// 					if (err) {
-// 						return console.log(err);
-// 					}
-// 				});
-//
-// 			});
-//
-// 		res.redirect('/user/' + req.body.id);
-//
-// 	};
-
 	/* Edit profile
 	 */
 	var profile = function(req, res) {

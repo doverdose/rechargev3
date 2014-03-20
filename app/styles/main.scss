@@ -358,3 +358,79 @@ body .select2-container {
 
 	text-align: right;
 }
+
+/*Dashboard*/
+.container {
+	.legend {
+		font-size: 16px;
+		font-weight: bold;
+		padding-left: 25px;
+	}
+	#week-results {
+		width: 100%;
+		height: 400px;
+	}
+	#week-results-no{
+	    margin-left: 230px;
+	    margin-top: -200px;
+	    position: absolute;
+	    display: none;
+	}
+	#month-results-no {
+	    margin-left: 90px;
+	    margin-top: -140px;
+	    position: absolute;
+	    display: none;
+	}
+	#year-results-no{
+	    margin-left: 90px;
+	    margin-top: -140px;
+	    position: absolute;
+	    display: none;
+	}
+	#month-results {
+		width: 100%;
+		height: 250px;
+	}
+	#year-results {
+		width: 100%;
+		height: 250px;
+	}
+	.month, .year {
+		float: left; 
+	}
+	.week, .month, .year {
+		margin-top: 40px;
+		width: 100%;
+	}
+	.month, .year {
+		width: 50%;
+	}
+	.clear {
+		clear: both;
+	}
+	.notice {
+		display: none;
+	}
+}
+
+.following-index {
+	.following-checkin {
+		border-top: solid 1px #CCC;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 15px;
+	}
+	.following-checkin:last-child {
+		border-bottom: solid 1px #CCC;
+	}
+	.following-detail {
+		text-align: left;
+	}
+	.following-timestamp {
+		text-align: right;
+		font-size: 13px;
+		color: #666;
+		padding-right: 15px;
+	}
+}

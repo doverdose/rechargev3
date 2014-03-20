@@ -218,69 +218,42 @@ module.exports = (function() {
 	};
 
 	var update = function(req, res, next) {
+		CheckinTemplate.findOne({
+			_id: req.body.templateId
+		}, function(err, template) {
+			if(err) {
+				return next(err);
+			}
 
-		if(req.body.id) {
+			if (!template) {
+				return next(new Error('Failed to load Check-in Template' + req.body.templateId));
+			}
 
-// 			// update
-// 			Checkin.findOne({
-// 				_id: req.body.id
-// 			}, function(err, c) {
-// 				if (!c) return res.redirect('/checkin');
-//
-// 				c.type = req.body.type || c.type;
-// 				c.title = req.body.title || c.title;
-// 				c.question = req.body.question || c.question;
-//
-// 				if(req.body.answers && req.body.answers.length) {
-// 					c.answers = parseForm(req.body).answers;
-// 				};
-//
-// 				c.save(function() {
-// 					res.redirect('/checkin/' + c.id);
-// 				});
-// 			});
+			template = template.toObject();
 
-		} else {
+			// copy the properties from the checkin template
+			req.body.type = template.type;
+			req.body.title = template.title;
+			req.body.question = template.question;
+			req.body.tips = template.tips;
+			req.body.score = template.score;
+			req.body.title = template.title;
 
-			CheckinTemplate.findOne({
-				_id: req.body.templateId
-			}, function(err, template) {
+			var formParams = parseForm(req.body);
+
+			// create new checkin
+			var checkin = new Checkin(formParams);
+			checkin.user_id = req.user.id;
+
+			checkin.save(function(err, newCheckin) {
 				if(err) {
 					return next(err);
 				}
 
-				if (!template) {
-					return next(new Error('Failed to load Check-in Template' + req.body.templateId));
-				}
-
-				template = template.toObject();
-
-				// copy the properties from the checkin template
-				req.body.type = template.type;
-				req.body.title = template.title;
-				req.body.question = template.question;
-				req.body.tips = template.tips;
-				req.body.score = template.score;
-				req.body.title = template.title;
-
-				var formParams = parseForm(req.body);
-
-				// create new checkin
-				var checkin = new Checkin(formParams);
-				checkin.user_id = req.user.id;
-
-				checkin.save(function(err, newCheckin) {
-					if(err) {
-						return next(err);
-					}
-
-					res.redirect('/checkin/' + newCheckin.id);
-				});
-
+				res.redirect('/checkin/' + newCheckin.id);
 			});
 
-
-		}
+		});
 
 	};
 

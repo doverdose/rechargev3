@@ -32,7 +32,6 @@
 		};
 
 		var checkRemovable = function() {
-
 			// check if there are multiple fields
 			var $fields = $(fieldSelector, $container);
 			if($fields.length > 1) {
@@ -40,7 +39,6 @@
 			} else {
 				$(removeBtn, $fields).attr('disabled', true);
 			}
-
 		};
 
 		var init = function() {
