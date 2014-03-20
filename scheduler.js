@@ -39,12 +39,9 @@ module.exports = (function() {
 	// run checkin notification sender
 	var checkinNotifications = require(__dirname + '/app/scheduler/checkinNotifications')(config);
 	checkinNotifications.send(function() {
-
 		// once done, exit
 		process.exit();
-
 	});
 
 	return {};
-
 }());
