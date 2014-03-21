@@ -29,6 +29,8 @@ module.exports = (function() {
 	var tomorrow,
 		today;
 
+	var resulted = [];
+
 	var send = function(done) {
 
 		tomorrow = moment().add('days', 1).hour(23).minute(59).second(59).toDate();
@@ -47,28 +49,29 @@ module.exports = (function() {
 					'permissions.provider': { $ne: true }
 				}, function(err, patients) {
 					if (err) {
-						return err;
+						callback(err);
+						return;
 					}
 					model.users = patients;
 					callback();
 				});
-
 			},
 			function(callback) {
 				// get list of all checkin templates
 				CheckinTemplate.find({}, function(err, checkinTemplates) {
 					if (err) {
-						return err;
+						callback(err);
+						return;
 					}
 					model.checkinTemplates = checkinTemplates;
 					callback();
-
 				});
 
 			}
 		], function(err) {
 			if(err) {
-				return err;
+				done(err);
+				return;
 			}
 			model.users.forEach(function(patient, i) {
 				scheduler.push(function(callback) {
@@ -78,19 +81,20 @@ module.exports = (function() {
 
 			async.parallel(scheduler, function(err) {
 				if(err) {
-					console.log(err);
+					done(err);
+					return;
 				}
 				// run mailer async
 				async.parallel(mailer, function(err) {
 					if(err) {
-						console.log(err);
+						done(err);
+						return;
 					}
 					// done sending emails
 					done();
 				});
 
 			});
-
 		});
 
 	};
@@ -107,7 +111,8 @@ module.exports = (function() {
 					user_id: patient._id
 				}, function(err, checkins) {
 					if (err) {
-						return err;
+						callback(err);
+						return;
 					}
 					user.checkins = checkins;
 					callback();
@@ -139,7 +144,8 @@ module.exports = (function() {
 					}]
 				}, function(err, schedules) {
 					if (err) {
-						return err;
+						callback(err);
+						return;
 					}
 					user.schedules = schedules;
 
@@ -148,7 +154,8 @@ module.exports = (function() {
 			}
 		], function(err) {
 			if(err) {
-				return err;
+				callback(err);
+				return;
 			}
 			// for recurring dates, set the next
 			user.schedules.forEach(function(schedule) {
@@ -211,9 +218,7 @@ module.exports = (function() {
 			if(user.upcoming['today'] && user.upcoming['today'].length) {
 				mailer.push(sendMail(user.upcoming['today'], patient));
 			}
-
 			callback();
-
 		});
 
 	};
@@ -261,12 +266,15 @@ module.exports = (function() {
 							locals.schedules.push(results[i]);
 						}
 					}
+
 					if(locals.schedules.length) {
-						console.log("Sending " + locals.schedules.length + " schedules.");
 						templates('notification', locals, function(err, html, text) {
 							if (err) {
-								return console.log(err);
+								done(err);
+								return;
 							}
+
+							resulted.push(locals);
 
 							var notifs = [];
 							for(var i = 0; i < locals.schedules.length; i++) {
@@ -289,7 +297,8 @@ module.exports = (function() {
 								text: text
 							}, function(err, responseStatus) {
 								if (err) {
-									return console.log(err);
+									done(err);
+									return;
 								}
 
 								async.each(notifs, function(item, callback) {
@@ -306,14 +315,14 @@ module.exports = (function() {
 									});
 								}, function(err) {
 									if(err) {
-										console.log(err);
+										done(err);
+										return;
 									}
 									done();
 								});
 							});
 						});
 					} else {
-						console.log("Nothing to send.");
 						done();
 					}
 				});
@@ -322,7 +331,6 @@ module.exports = (function() {
 	};
 
 	return function(conf) {
-
 		config = conf;
 
 		smtpTransport = nodemailer.createTransport(config.mail.type, config.mail.transport);
@@ -331,15 +339,14 @@ module.exports = (function() {
 		// get all email templates in folder
 		emailTemplates(templatesDir, function(err, tmpl) {
 			if (err) {
-				return console.log(err);
+				return err;
 			}
-
 			templates = tmpl;
-
 		});
 
 		return {
-			send: send
+			send: send,
+			resulted: resulted
 		}
 	};
 
