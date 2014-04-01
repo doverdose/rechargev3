@@ -13,6 +13,7 @@ module.exports = function(app, passport) {
 		following = require('../app/controllers/following'),
 		settings = require('../app/controllers/settings'),
 		providers = require('../app/controllers/providers'),
+		surveys = require('../app/controllers/surveys'),
 		admin = require('../app/controllers/admin'),
 		schedules = require('../app/controllers/schedules'),
 		auth = require('./middlewares/authorization');
@@ -81,6 +82,13 @@ module.exports = function(app, passport) {
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
 	app.get('/settings/following', auth.requiresLogin, settings.following);
 	app.get('/settings/followers', auth.requiresLogin, settings.followers);
+
+	app.post('/surveys/new', auth.requiresLogin, auth.requiresAdmin, surveys.create);
+	app.post('/surveys/delete', auth.requiresLogin, auth.requiresAdmin, surveys.remove);
+	app.post('/surveys/remove/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.removeTemplate);
+	app.post('/surveys/add/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.addTemplate);
+	app.get('/surveys/create', auth.requiresLogin, auth.requiresAdmin, surveys.create);
+	app.get('/surveys/:id', auth.requiresLogin, auth.requiresAdmin, surveys.view);
 
 	//dashboard
 	app.get('/dashboard', auth.requiresLogin, dashboard.index);
