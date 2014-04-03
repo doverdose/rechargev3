@@ -72,7 +72,10 @@ module.exports = function(app, passport) {
 	app.post('/checkin', auth.requiresLogin, checkin.update);
 	app.post('/checkin/remove', auth.requiresLogin, checkin.remove);
 	app.post('/checkin/new', auth.requiresLogin, checkin.createView);
-	app.get('/checkin', auth.requiresLogin, checkin.list);
+	app.post('/checkin/edit', auth.requiresLogin, checkin.editCheckin);
+	app.post('/checkin/update', auth.requiresLogin, checkin.addAnswer);
+	app.get('/checkin', auth.requiresLogin, checkin.listSurveys);
+	app.get('/checkin/survey/:id', auth.requiresLogin, checkin.list);
 	app.get('/checkin/:id', auth.requiresLogin, checkin.view);
 
 	app.get('/settings', auth.requiresLogin, function(req, res) {

@@ -66,7 +66,6 @@ module.exports = (function() {
 						$nin: survey.checkinTemplates
 					}
 				}, function(err, missingTemplates) {
-					console.log(survey.checkinTemplates);
 					res.render('surveys/view', {
 						templates: templates,
 						survey: survey,
@@ -80,7 +79,6 @@ module.exports = (function() {
 	var create = function(req, res, next) {
 		if(req.body.id) {
 			if(req.body.checkinTemplates && req.body.title) {
-				console.log(req.body);
 				if(req.body.id === 'false') {
 					var data = {
 						checkinTemplates: req.body.checkinTemplates,
