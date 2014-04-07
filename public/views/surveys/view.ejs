@@ -1,0 +1,60 @@
+<% layout('../layouts/default') -%>
+
+<div class="page-header">
+	<h2>Survey details</h2>
+</div>
+
+<div class="header-actions">
+	<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-questionadd-template">Add question</button>
+</div>
+
+<div class="list-group large-list">
+	<% for(var i = 0; i < templates.length; i++) { %>
+		<div class="list-group-item">
+			<div class="row">
+				<div class="col-xs-5">
+					<a href="/checkintemplate/<%= templates[i].id %>">
+						<%= templates[i].title %>
+					</a>
+				</div>
+				<div class="col-xs-7 text-right">
+					<form action="/surveys/remove/checkin" method="post">
+						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+						<input type="hidden" name="id" value="<%= templates[i].id %>">
+						<input type="hidden" name="surveyID" value="<%= survey.id %>">
+						<button type="submit" class="btn btn-danger">
+							Remove
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	<% } %>
+</div>
+
+
+<div class="js-template js-questionadd-template">
+	<% if(missingTemplates.length > 0) { %>
+		<form action="/surveys/add/checkin" method="post">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+			<input type="hidden" name="surveyID" value="<%= survey.id %>">
+
+			<div class="form-group">
+				<label for="templateId">Select question</label>
+				<select class="js-select2" id="id" name="id">
+					<% for(var i = 0; i < missingTemplates.length; i++) { %>
+						<option value="<%= missingTemplates[i].id %>">
+							<%= missingTemplates[i].title %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-block">
+				Add
+			</button>
+		</form>
+	<% } else { %>
+		Nothing to add.
+	<% } %>
+</div>

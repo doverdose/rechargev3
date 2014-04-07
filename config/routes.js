@@ -9,8 +9,11 @@ module.exports = function(app, passport) {
 		checkin = require('../app/controllers/checkins'),
 		checkinTemplate = require('../app/controllers/checkinTemplates'),
 		users = require('../app/controllers/users'),
+		dashboard = require('../app/controllers/dashboard'),
+		following = require('../app/controllers/following'),
 		settings = require('../app/controllers/settings'),
 		providers = require('../app/controllers/providers'),
+		surveys = require('../app/controllers/surveys'),
 		admin = require('../app/controllers/admin'),
 		schedules = require('../app/controllers/schedules'),
 		auth = require('./middlewares/authorization');
@@ -69,7 +72,10 @@ module.exports = function(app, passport) {
 	app.post('/checkin', auth.requiresLogin, checkin.update);
 	app.post('/checkin/remove', auth.requiresLogin, checkin.remove);
 	app.post('/checkin/new', auth.requiresLogin, checkin.createView);
-	app.get('/checkin', auth.requiresLogin, checkin.list);
+	app.post('/checkin/edit', auth.requiresLogin, checkin.editCheckin);
+	app.post('/checkin/update', auth.requiresLogin, checkin.addAnswer);
+	app.get('/checkin', auth.requiresLogin, checkin.listSurveys);
+	app.get('/checkin/survey/:id', auth.requiresLogin, checkin.list);
 	app.get('/checkin/:id', auth.requiresLogin, checkin.view);
 
 	app.get('/settings', auth.requiresLogin, function(req, res) {
@@ -79,6 +85,17 @@ module.exports = function(app, passport) {
 	app.get('/settings/providers', auth.requiresLogin, settings.providers);
 	app.get('/settings/following', auth.requiresLogin, settings.following);
 	app.get('/settings/followers', auth.requiresLogin, settings.followers);
+
+	app.post('/surveys/new', auth.requiresLogin, auth.requiresAdmin, surveys.create);
+	app.post('/surveys/delete', auth.requiresLogin, auth.requiresAdmin, surveys.remove);
+	app.post('/surveys/remove/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.removeTemplate);
+	app.post('/surveys/add/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.addTemplate);
+	app.get('/surveys/create', auth.requiresLogin, auth.requiresAdmin, surveys.create);
+	app.get('/surveys/:id', auth.requiresLogin, auth.requiresAdmin, surveys.view);
+
+	//dashboard
+	app.get('/dashboard', auth.requiresLogin, dashboard.index);
+	app.get('/following', auth.requiresLogin, following.index);
 
 	app.param('userId', users.user);
 
