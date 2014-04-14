@@ -17,7 +17,7 @@ module.exports = (function() {
 		name: { type: String, default: '' },
 		email: { type: String, default: '' },
 		phoneNumber: { type: String, default: '' },
-		smsNotifications { type: Boolean, default: 'false' },
+		smsNotifications: { type: Boolean, default: false },
 		username: { type: String, default: '' },
 		provider: { type: String, default: '' },
 		hashed_password: { type: String, default: '' },

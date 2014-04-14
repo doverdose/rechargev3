@@ -23,6 +23,12 @@
 				orientation: 'top auto',
 				startDate: new Date()
 			});
+
+			if($("#smsNotifications").length > 0) {
+				$("#smsNotifications").change(function() {
+					$("#_smsNotifications").val($("#smsNotifications").is(":checked"));
+				});
+			}
 		};
 
 		return {
