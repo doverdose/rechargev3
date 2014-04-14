@@ -16,6 +16,8 @@ module.exports = (function() {
 	var UserSchema = new Schema({
 		name: { type: String, default: '' },
 		email: { type: String, default: '' },
+		phoneNumber: { type: String, default: '' },
+		smsNotifications { type: Boolean, default: 'false' },
 		username: { type: String, default: '' },
 		provider: { type: String, default: '' },
 		hashed_password: { type: String, default: '' },

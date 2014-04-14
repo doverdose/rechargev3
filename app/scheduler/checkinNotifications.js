@@ -13,6 +13,7 @@ module.exports = (function() {
 		Schedule = mongoose.model('Schedule'),
 		Checkin = mongoose.model('Checkin'),
 		Notification = mongoose.model('Notification'),
+		twilio = require('twilio'),
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
 	var templatesDir,
@@ -301,7 +302,7 @@ module.exports = (function() {
 									return;
 								}
 
-								async.each(notifs, function(item, callback) {
+								var eachNotif = function(item, callback) {
 									item.status = 'sent';
 									item.response = responseStatus.message;
 									item.timestamp = new Date();
@@ -313,13 +314,32 @@ module.exports = (function() {
 										}
 										callback();
 									});
-								}, function(err) {
+								};
+								var afterEachNotif = function(err) {
 									if(err) {
 										done(err);
 										return;
 									}
 									done();
-								});
+								};
+
+								if(patient.phoneNumber !== '' && patient.smsNotifications === true) {
+									var client = new twilio.RestClient(config.sms.transport.auth.user, config.sms.transport.auth.pass);
+									client.sms.messages.create({
+									    to: patient.phoneNumber,
+									    from: config.sms.from,
+									    body: "This is a notification from ReCharge Health because you have a checked-in scheduled for today."
+									}, function(err) {
+									    if (err) {
+											done(err);
+											return;
+										}
+
+										async.each(notifs, eachNotif, afterEachNotif);
+									});
+								} else {
+									async.each(notifs, eachNotif, afterEachNotif);
+								}
 							});
 						});
 					} else {
