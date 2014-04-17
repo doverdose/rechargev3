@@ -8,7 +8,6 @@
 	'use strict';
 
 	var cloneField = (function() {
-
 		var $container,
 			fieldSelector,
 			$clone,
@@ -27,7 +26,6 @@
 
 		var removeField = function() {
 			$(this).parents(fieldSelector).remove();
-
 			checkRemovable();
 		};
 

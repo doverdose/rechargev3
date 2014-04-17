@@ -434,3 +434,16 @@ body .select2-container {
 		padding-right: 15px;
 	}
 }
+.schedule-answer-wrapper {
+	border: solid 1px #CCC;
+	padding: 5px;
+	border-radius: 3px;
+	margin-bottom: 20px;
+}
+
+.schedule-answer-wrapper {
+	.schedule-for-answer {
+		text-decoration: underline;
+		font-weight: bold;
+	}
+}

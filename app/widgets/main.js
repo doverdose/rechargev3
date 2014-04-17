@@ -24,6 +24,7 @@
 				startDate: new Date()
 			});
 
+			//init sms notification
 			if($("#smsNotifications").length > 0) {
 				$("#smsNotifications").change(function() {
 					$("#_smsNotifications").val($("#smsNotifications").is(":checked"));
