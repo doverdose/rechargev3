@@ -1,0 +1,34 @@
+<% layout('../layouts/default') -%>
+
+<div class="page-header">
+	<h3>
+		<small>Checkin from</small>
+		<abbr title="<%= Date(c.timestamp) %>"><%=: c.timestamp | fromNow %></abbr>
+	</h3>
+</div>
+
+<h3>
+	<%= c.question %>
+</h3>
+
+<small class="text-muted">You answered</small>
+<% if(choice) { %>
+	<ul>
+<% } %>
+	<% for(var i=0; i < c.answers.length; i++) { %>
+		<% if(choice) { %>
+			<li>
+		<% } %>
+
+			<p class="muted">
+				<%= c.answers[i].text %>
+			</p>
+
+		<% if(choice) { %>
+			</li>
+		<% } %>
+	<% } %>
+<% if(choice) { %>
+	</ul>
+<% } %>
+

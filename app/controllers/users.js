@@ -301,6 +301,8 @@ module.exports = (function() {
 				user.name = req.body.name || user.name;
 				user.email = req.body.email || user.email;
 				user.username = req.body.username || user.username;
+				user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+				user.smsNotifications = req.body._smsNotifications || user.smsNotifications;
 
 				if(user.password) {
 					user.password = req.body.password;

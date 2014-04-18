@@ -18,6 +18,9 @@
 	<li>
 		<a href="#checkin-schedules" data-toggle="tab">Schedules</a>
 	</li>
+	<li>
+		<a href="#checkin-surveys" data-toggle="tab">Surveys</a>
+	</li>
 </ul>
 
 <div class="tab-content">
@@ -127,6 +130,9 @@
 					</div>
 					<div class="col-xs-7 text-right">
 						<form action="/checkintemplate/remove" method="post" class="form-inline">
+							<% if(checkinTemplates[i].type != 'text') { %>
+								<a class="btn btn-primary" href="/checkintemplate/link/<%= checkinTemplates[i].id %>">Link to schedule</a>
+							<% } %>
 							<a class="btn btn-primary" href="/checkintemplate/<%= checkinTemplates[i].id %>/edit">Edit</a>
 
 							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
@@ -221,6 +227,42 @@
 			<h4 class="text-muted text-center">There are check-in schedules set-up. </h4>
 		<% } %>
 
+	</div>
+
+	<div class="tab-pane" id="checkin-surveys">
+		<div class="btn-toolbar toolbar-actions" role="toolbar">
+			<a class="btn btn-default" href="/surveys/create">
+				<i class="glyphicon glyphicon-plus"></i>
+				New Survey
+			</a>
+		</div>
+
+		<div class="list-group large-list">
+			<% for(var i = 0; i < surveys.length; i++) { %>
+				<div class="list-group-item">
+					<div class="row">
+						<div class="col-xs-5">
+							<a href="/surveys/<%= surveys[i].id %>">
+								<%= surveys[i].title %>
+							</a>
+						</div>
+						<div class="col-xs-7 text-right">
+							<form action="/surveys/delete" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="id" value="<%= surveys[i].id %>">
+								<button type="submit" class="btn btn-danger">
+									Delete
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			<% } %>
+		</div>
+
+		<% if(!surveys.length) { %>
+			<h4 class="text-muted text-center">There are no surveys. </h4>
+		<% } %>
 	</div>
 
 </div>

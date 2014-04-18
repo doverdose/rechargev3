@@ -1,0 +1,123 @@
+<% layout('../layouts/default') -%>
+
+<div class="js-checkinselector-container">
+	<div class="page-header">
+		<h2>
+			Surveys
+		</h2>
+		<div class="header-actions">
+			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
+		</div>
+	</div>
+
+	<% Object.keys(schedules).forEach(function(key) { %>
+		<% if(schedules[key].length) { %>
+			<div class="panel <%= (key==='today') ? 'panel-warning' : 'panel-primary' %>">
+				<div class="panel-heading">
+					Please make these check-ins
+					<strong>
+						<% if(key === 'today') { %>
+							today
+						<% } %>
+						<% if(key === 'thisWeek') { %>
+							this week
+						<% } %>
+					</strong>
+				</div>
+
+				<div class="panel-body checkins-upcoming">
+					<ul class="row list-unstyled">
+					<% schedules[key].forEach(function(schedule) { %>
+						<li class="col-sm-6">
+							<form action="/checkin/new" method="post">
+								<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+								<input type="hidden" name="id" value="<%= schedule.template_id %>">
+
+								<button type="submit" class="btn btn-default">
+									<h3><%= schedule.template.title %></h3>
+									<p class="text-muted">
+										<%= schedule.template.question.substr(0, 80) %>&hellip;
+									</p>
+									<p title="<%= schedule.due_date %>">
+										<i class="glyphicon glyphicon-th"></i>
+										due <%=: schedule.due_date | fromNow %>
+									</p>
+								</button>
+							</form>
+						</li>
+					<% }) %>
+					</ul>
+				</div>
+			</div>
+		<% } %>
+	<% }) %>
+
+
+	<% if(surveys.length) { %>
+		<h4>Past surveys</h4>
+		<%
+			var scoreClass = 'warning';
+			if(totalScore > 10) {
+				scoreClass = 'info';
+			}
+			if(totalScore > 50) {
+				scoreClass = 'success';
+			}
+		%>
+
+		<div class="alert alert-dismissable alert-<%= scoreClass %>">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<p>
+				<strong>Your current check-in score is <%= totalScore %>. </strong>
+			</p>
+			<% if(scoreClass === 'warning') { %>
+				Improve it by checking-in more often.
+			<% } %>
+			<% if(scoreClass === 'info') { %>
+				Keep up the good work!
+			<% } %>
+			<% if(scoreClass === 'success') { %>
+				Great work!
+			<% } %>
+		</div>
+
+		<div class="list-group large-list">
+			<% surveys.forEach(function(survey) { %>
+				<div class="list-group-item">
+					<div class="row">
+						<div class="col-xs-8">
+							<a href="/checkin/survey/<%= survey._id %>">
+								<h3 data-toggle="tooltip" data-placement="bottom">
+									<%= survey.title %>
+								</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+			<% }) %>
+		</div>
+	<% } else { %>
+		<h4 class="text-center text-muted">You haven't completed any surveys yet</h4>
+	<% } %>
+
+	<div class="js-template js-checkinselector-template">
+		<form action="/checkin/new" method="post">
+			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+
+			<div class="form-group">
+				<label for="templateId">Select checkin type</label>
+				<select class="js-select2" id="id" name="id">
+					<% for(var i = 0; i < surveyTemplates.length; i++) { %>
+						<option value="<%= surveyTemplates[i].id %>">
+							<%= surveyTemplates[i].title %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-block">
+				Check-in
+			</button>
+		</form>
+	</div>
+</div>

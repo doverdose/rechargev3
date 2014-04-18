@@ -21,7 +21,8 @@
 		"async": "~0",
 		"connect-livereload" : "*",
 		"mquery" : "*",
-		"mongodb" : "*"
+		"mongodb" : "*",
+		"twilio" : "*"
 	},
 	"devDependencies": {
 		"supertest": "latest",

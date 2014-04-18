@@ -7,6 +7,7 @@ module.exports = (function() {
 	var mongoose = require('mongoose'),
 		async = require('async'),
 		User = mongoose.model('User'),
+		Survey = mongoose.model('Survey'),
 		CheckinTemplate = mongoose.model('CheckinTemplate'),
 		Schedule = mongoose.model('Schedule');
 
@@ -139,6 +140,18 @@ module.exports = (function() {
 					callback();
 				});
 
+			},
+			function(callback) {
+				// get full list of surveys
+				Survey.find({
+				}, function(err, surveys) {
+					if (err) {
+						callback(err);
+						return;
+					}
+					templateVars.surveys = surveys;
+					callback();
+				});
 			}
 		], function(err) {
 
