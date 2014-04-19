@@ -15,13 +15,19 @@
 			showClass = 'js-visibility-select-show';
 
 		var showElement = function() {
-			// hide previous selection
-			$('.' + showClass).removeClass(showClass);
-
-			// show element for current selection
 			var optionSelected = $('option:selected', this);
-			elementSelector = optionSelected.attr('data-show');
-			$(elementSelector).addClass(showClass);
+			elementSelector = optionSelected.attr('data-hide');
+
+			if(elementSelector !== undefined) {
+				$(elementSelector).removeClass(showClass);
+				$(elementSelector).addClass(hideClass);
+			}	
+
+			elementSelector = optionSelected.attr('data-show');	
+			if(elementSelector !== undefined) {
+				$(elementSelector).removeClass(hideClass);
+				$(elementSelector).addClass(showClass);
+			}
 		};
 
 		var init = function() {

@@ -19,6 +19,13 @@ module.exports = (function() {
 		title: String,
 		answers: [{
 			text: String
+		}],
+		schedules: [{
+			answer: String,
+			due_date: Date,
+			repeat_interval: Number,
+			expires: Boolean,
+			expire_date: Date
 		}]
 	});
 

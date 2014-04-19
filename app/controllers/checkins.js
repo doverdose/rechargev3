@@ -252,30 +252,65 @@ module.exports = (function() {
 						}
 
 						template = template.toObject();
+						var schedulesSave = [];
 
-						var checkinData = {};
-						checkinData.template_id = template._id;
-						checkinData.type = template.type;
-						checkinData.title = template.title;
-						checkinData.question = template.question;
-						checkinData.tips = template.tips;
-						checkinData.score = template.score;
-						checkinData.title = template.title;
-						checkinData.answers = answers;
-						checkinData.survey_id = req.body.surveyID;
-
-						var formParams = parseForm(checkinData);
-
-						// create new checkin
-						var checkin = new Checkin(formParams);
-						checkin.user_id = req.user.id;
-
-						checkin.save(function(err) {
-							if(err) {
-								callback(err);
-								return;
+						for(var j = 0; j < answers.length; j++) {
+							for(var k = 0; k < template.schedules.length; k++) {
+								if(answers[j] == template.schedules[k].answer) {
+									var schedule = {};
+									schedule.user_id = req.user.id;
+									schedule.template_id = template._id;
+									schedule.repeat_interval = template.schedules[k].repeat_interval;
+									schedule.due_date = template.schedules[k].due_date;
+									schedule.expires = template.schedules[k].expires;
+									schedule.expire_date = template.schedules[k].expire_date;
+									schedulesSave.push(
+										(function(schedule) {
+											return function(callback) {
+												var obj = new Schedule(schedule);
+												obj.save(function(err) {
+													if(err) {
+														callback(err);
+														return;
+													}
+													callback();
+												});
+											}
+										})(schedule)
+									);
+								}
 							}
-							callback();
+						}
+
+						async.parallel(schedulesSave, function(err) {
+							if(err) {
+								next(err);
+							}
+
+							var checkinData = {};
+							checkinData.template_id = template._id;
+							checkinData.type = template.type;
+							checkinData.title = template.title;
+							checkinData.question = template.question;
+							checkinData.tips = template.tips;
+							checkinData.score = template.score;
+							checkinData.title = template.title;
+							checkinData.answers = answers;
+							checkinData.survey_id = req.body.surveyID;
+
+							var formParams = parseForm(checkinData);
+
+							// create new checkin
+							var checkin = new Checkin(formParams);
+							checkin.user_id = req.user.id;
+
+							checkin.save(function(err) {
+								if(err) {
+									callback(err);
+									return;
+								}
+								callback();
+							});
 						});
 					});
 				};
@@ -380,6 +415,7 @@ module.exports = (function() {
 				if(err) {
 					next(err);
 				}
+
 				res.redirect('/checkin/' + req.body.id);
 			});
 		});
