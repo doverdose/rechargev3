@@ -123,7 +123,7 @@ module.exports = (function() {
 				_id: req.body.id
 			}, function(err, checkin) {
 				if(err) {
-					nex(err);
+					next(err);
 				}
 				checkin.schedules = [];
 				for(var i = 0; i < req.body.due.length; i++) {
@@ -137,7 +137,7 @@ module.exports = (function() {
 				}
 				checkin.save(function(err) {
 					if(err) {
-						nex(err);
+						next(err);
 					}
 					res.redirect('/admin/');
 				});
