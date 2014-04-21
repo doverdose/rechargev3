@@ -8,7 +8,6 @@ module.exports = (function() {
 		CheckinTemplate = mongoose.model('CheckinTemplate');
 
 	var remove = function(req, res, next) {
-
 		CheckinTemplate.findOne({
 			_id: req.body.id
 		}, function(err, c) {
@@ -20,13 +19,10 @@ module.exports = (function() {
 
 			res.redirect('/admin');
 		});
-
 	};
 
 	var parseForm = function(form) {
-
 		var newAnswers = [];
-
 		if(form.answers && form.answers.length) {
 			form.answers.forEach(function(answer) {
 				// don't add if just whitespace
@@ -39,15 +35,12 @@ module.exports = (function() {
 		}
 
 		form.answers = newAnswers;
-
 		return form;
 
 	};
 
 	var update = function(req, res, next) {
-
 		if(req.body.id) {
-
 			// update
 			CheckinTemplate.findOne({
 				_id: req.body.id
@@ -72,14 +65,10 @@ module.exports = (function() {
 					res.redirect('/checkintemplate/' + c.id);
 				});
 			});
-
 		} else {
-
 			var formParams = parseForm(req.body);
-
 			// create
 			var c = new CheckinTemplate(formParams);
-
 			c.save(function(err, newCheckin) {
 				if (err) {
 					return next(err);
@@ -87,13 +76,10 @@ module.exports = (function() {
 
 				res.redirect('/checkintemplate/' + newCheckin.id);
 			});
-
 		}
-
 	};
 
 	var updateView = function(req, res, next) {
-
 		CheckinTemplate.findOne({
 			_id: req.params.id
 		}, function(err, c) {
@@ -105,45 +91,78 @@ module.exports = (function() {
 				c: c
 			});
 		});
-
 	};
 
 	var createView = function (req, res) {
-
 		// we do this so we can re-use the same template
 		// when both editing and creating templates
 		var c = {
 			answers: [{ text: '' }]
 		};
-
 		res.render('checkinTemplates/checkinTemplateEdit.ejs', {
 			c: c
 		});
 	};
 
 	var view = function(req, res, next) {
-
 		CheckinTemplate.findOne({
 			_id: req.params.id
 		}, function(err, c) {
 			if (!c) {
 				return next(new Error('Failed to load Check-in Template' + req.params.id));
 			}
-
 			res.render('checkinTemplates/checkinTemplateView.ejs', {
 				c: c
 			});
 		});
-
 	};
 
+	var linkToSchedule = function(req, res, next) {
+		if(req.body.id) {
+			CheckinTemplate.findOne({
+				_id: req.body.id
+			}, function(err, checkin) {
+				if(err) {
+					next(err);
+				}
+				checkin.schedules = [];
+				for(var i = 0; i < req.body.due.length; i++) {
+					var scheduleTemplate = {};
+					scheduleTemplate.answer = checkin.answers[i].text;
+					scheduleTemplate.due_date = req.body.due[i];
+					scheduleTemplate.repeat_interval = req.body.interval[i];
+					scheduleTemplate.expire_date = req.body['expire_date' + i];
+					scheduleTemplate.expires = req.body.expiry[i];
+					checkin.schedules.push(scheduleTemplate);
+				}
+				checkin.save(function(err) {
+					if(err) {
+						next(err);
+					}
+					res.redirect('/admin/');
+				});
+			});
+		} else {
+			CheckinTemplate.findOne({
+				_id: req.params.id
+			}, function(err, c) {
+				if (!c) {
+					return next(new Error('Failed to load Check-in Template' + req.params.id));
+				}
+				res.render('checkinTemplates/linkToSchedule.ejs', {
+					c: c
+				});
+			});
+		}
+	};
 
 	return {
 		createView: createView,
 		update: update,
 		updateView: updateView,
 		remove: remove,
-		view: view
+		view: view,
+		linkToSchedule: linkToSchedule
 	};
 
 }());

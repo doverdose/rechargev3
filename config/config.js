@@ -23,6 +23,18 @@ module.exports = function() {
 					}
 				}
 			},
+			sms: {
+				from: 'TWILIO_NUMBER',
+				type: 'SMS',
+				transport: {
+					// nodemailer transport
+					service: 'TWILIO',
+					auth: {
+						user: 'TWILIO_SID',
+						pass: 'TWILIO_AUTH_TOKEN'
+					}
+				}
+			},
 			app: {}
 		},
 		nitrous: {
@@ -37,6 +49,18 @@ module.exports = function() {
 					auth: {
 						user: 'rechargeapp.donotreply@gmail.com',
 						pass: 'thisisjustwhatweneeded'
+					}
+				}
+			},
+			sms: {
+				from: 'TWILIO_NUMBER',
+				type: 'SMS',
+				transport: {
+					// nodemailer transport
+					service: 'TWILIO',
+					auth: {
+						user: 'TWILIO_NUMBER',
+						pass: 'TWILIO_AUTH_TOKEN'
 					}
 				}
 			},
@@ -57,6 +81,18 @@ module.exports = function() {
 					}
 				}
 			},
+			sms: {
+				from: 'TWILIO_NUMBER',
+				type: 'SMS',
+				transport: {
+					// nodemailer transport
+					service: 'TWILIO',
+					auth: {
+						user: 'TWILIO_NUMBER',
+						pass: 'TWILIO_AUTH_TOKEN'
+					}
+				}
+			},
 			app: {}
 		},
 		staging: {
@@ -74,6 +110,18 @@ module.exports = function() {
 					}
 				}
 			},
+			sms: {
+				from: 'TWILIO_NUMBER',
+				type: 'SMS',
+				transport: {
+					// nodemailer transport
+					service: 'TWILIO',
+					auth: {
+						user: 'TWILIO_NUMBER',
+						pass: 'TWILIO_AUTH_TOKEN'
+					}
+				}
+			},
 			app: {}
 		},
 		production: {
@@ -88,6 +136,18 @@ module.exports = function() {
 					auth: {
 						user: 'rechargeapp.donotreply@gmail.com',
 						pass: 'thisisjustwhatweneeded'
+					}
+				}
+			},
+			sms: {
+				from: 'TWILIO_NUMBER',
+				type: 'SMS',
+				transport: {
+					// nodemailer transport
+					service: 'TWILIO',
+					auth: {
+						user: 'TWILIO_NUMBER',
+						pass: 'TWILIO_AUTH_TOKEN'
 					}
 				}
 			},

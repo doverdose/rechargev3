@@ -1,0 +1,74 @@
+<% layout('../layouts/default') -%>
+
+<div class="page-header">
+	<h3><%= c.title %></h3>
+</div>
+
+<h4 class="text-muted">Question:</h4>
+<p><%= c.question %></p>
+
+<h4 class="text-muted">Score:</h4>
+<p><%= c.score %></p>
+
+<h4 class="text-muted">Tips:</h4>
+<p><%= c.tips %></p>
+
+<form role="form" action="/checkintemplate/link" method="post">
+	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+	<input type="hidden" name="id" value="<%= c._id || '' %>">
+	<% if(c.type.indexOf('choice') !== -1 && c.answers && c.answers.length) { %>
+		<h4 class="text-muted">Possible answers:</h4>
+			<% for(var i = 0; i < c.answers.length; i++) { %>
+				<div class='schedule-answer-wrapper'>
+					<span class='schedule-for-answer'><%= c.answers[i].text %></span>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="due_date">Due date</label>
+
+								<div class="input-group date js-upcoming-date">
+									<input type="text" class="form-control" name="due[]" value="" required>
+									<span class="input-group-addon">
+										<i class="glyphicon glyphicon-th"></i>
+									</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="repeat_interval">Repeat</label>
+								<select class="form-control" name="interval[]">
+									<option value="0">Never</option>
+									<option value="1">Every day</option>
+									<option value="7">Every week</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="expiry">Expires in</label>
+								<select class="form-control js-visibility-select" name="expiry[]">
+									<option data-hide=".expiry-date<%=i%>" value="0">Doesn't expire</option>
+									<option data-hide=".expiry-date<%=i%>" value="1m">1 Month</option>
+									<option data-hide=".expiry-date<%=i%>" value="6m">6 Months</option>
+									<option data-hide=".expiry-date<%=i%>" value="1y">1 Year</option>
+									<option data-show=".expiry-date<%=i%>" value="custom">Other</option>
+								</select>
+							</div>
+							<div class="expiry-date<%=i%> js-visibility-select-hide">
+								<div class="form-group">
+									<label for="expire_date">Expiry date</label>
+									<div class="input-group date js-upcoming-date">
+										<input type="text" class="form-control" name="expire_date<%=i%>" value="">
+										<span class="input-group-addon">
+											<i class="glyphicon glyphicon-th"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<% } %>
+	<% }%>
+	<button type="submit" class="btn btn-info">Link</button>
+</form>

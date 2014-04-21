@@ -65,8 +65,10 @@ module.exports = function(app, passport) {
 
 	app.post('/checkintemplate', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.update);
 	app.post('/checkintemplate/remove', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.remove);
+	app.post('/checkintemplate/link', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.linkToSchedule);
 	app.get('/checkintemplate/new', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.createView);
 	app.get('/checkintemplate/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.view);
+	app.get('/checkintemplate/link/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.linkToSchedule);
 	app.get('/checkintemplate/:id/edit', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.updateView);
 
 	app.post('/checkin', auth.requiresLogin, checkin.update);

@@ -6,7 +6,7 @@ var express = require('express'),
 
 var app = express();
 
-var env = process.env.NODE_ENV || 'development',
+var env = process.env.NODE_ENV || 'staging',
 	config = require('./config/config')(app)[env];
 
 // Bootstrap db connection
@@ -40,9 +40,6 @@ if(env !== 'development') {
 		filename: 'error.log'
 	}));
 }
-
-// start notification watcher
-require('./app/controllers/notifications')(config);
 
 var port = process.env.PORT || 8080;
 app.listen(port);
