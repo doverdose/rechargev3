@@ -24,11 +24,10 @@ module.exports = (function() {
 			answer: String,
 			due_date: Date,
 			repeat_interval: Number,
-			expires: Boolean,
+			expires: String,
 			expire_date: Date
 		}]
 	});
-
 	/**
 	* Virtuals
 	*/

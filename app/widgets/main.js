@@ -5,6 +5,21 @@
 	'use strict';
 
 	var main = (function() {
+		var providerFilter = function() {
+			if($('.provider-select').length !== 1) {
+				return;
+			}
+
+			$('.provider-select').on('change', function() {
+				$.get('/schedule/patients/' + $('.provider-select').val(), function(response) {
+					$('.patient-select').html('');
+					for(var i = 0; i < response.length; i++) {
+						$('.patient-select').append('<option value="' + response[i]._id + '">' + response[i].name + '</option>');
+					}
+				}, 'json');
+			});
+		};
+
 		var init = function() {
 			// initialize bootstrap tooltips
 			$('[data-toggle="tooltip"]').tooltip();
@@ -25,11 +40,13 @@
 			});
 
 			//init sms notification
-			if($("#smsNotifications").length > 0) {
-				$("#smsNotifications").change(function() {
-					$("#_smsNotifications").val($("#smsNotifications").is(":checked"));
+			if($('#smsNotifications').length > 0) {
+				$('#smsNotifications').change(function() {
+					$('#_smsNotifications').val($('#smsNotifications').is(':checked'));
 				});
 			}
+
+			providerFilter();
 		};
 
 		return {

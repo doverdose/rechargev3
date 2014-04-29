@@ -35,6 +35,25 @@
 		<input type="text" class="form-control" id="username" name="username" value="<%= user.username %>">
 	</div>
 
+	<% if(!user.permissions.provider && !user.permissions.admin) { %>
+		<div class="form-group">
+			<label for="username">Phone number</label>
+			<input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="<%= user.phoneNumber %>">
+		</div>
+
+		<div class="form-group">
+			<label for="username">
+				SMS notifications
+			</label>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="smsNotifications" name="smsNotifications" <% if(user.smsNotifications === true) {%>checked="checked"<% } %> onclick="">Enable
+					<input type="hidden" id="_smsNotifications" name="_smsNotifications" <% if(user.smsNotifications === true) {%> value="true" <% } else { %> value="false" <% } %> >
+				</label>
+			</div>
+		</div>
+	<% } %>
+
 	<div class="form-group js-password-container">
 		<label for="password">PIN Password</label>
 		<p>Change your password by entering a new PIN password with the keypad bellow. </p>

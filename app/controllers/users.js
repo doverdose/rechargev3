@@ -85,7 +85,6 @@ module.exports = (function() {
 		user.save(function (err) {
 
 			if(req.body.admin) {
-
 				if(err && err.errors) {
 					return res.render('users/new', {
 						errors: err.errors,
@@ -98,7 +97,6 @@ module.exports = (function() {
 				return res.redirect('/admin');
 
 			} else {
-
 				if(err) {
 					return res.render('users/signup', {
 						errors: err.errors,

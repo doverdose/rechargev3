@@ -21,9 +21,9 @@
 			if(elementSelector !== undefined) {
 				$(elementSelector).removeClass(showClass);
 				$(elementSelector).addClass(hideClass);
-			}	
+			}
 
-			elementSelector = optionSelected.attr('data-show');	
+			elementSelector = optionSelected.attr('data-show');
 			if(elementSelector !== undefined) {
 				$(elementSelector).removeClass(hideClass);
 				$(elementSelector).addClass(showClass);
