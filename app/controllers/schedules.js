@@ -86,7 +86,19 @@ module.exports = (function() {
 				if (err) {
 					return next(err);
 				}
-				res.redirect('/schedule/' + newSchedule.id);
+
+				parseDates(req.body, newSchedule.toObject());
+
+				newSchedule.user_id = req.body.user_id || newSchedule.user_id;
+				newSchedule.template_id = req.body.template_id || newSchedule.template_id;
+				newSchedule.repeat_interval = req.body.repeat_interval || newSchedule.repeat_interval;
+				newSchedule.due_date = req.body.due_date || newSchedule.due_date;
+				newSchedule.expires = req.body.expires;
+				newSchedule.expire_date = req.body.expire_date || newSchedule.expire_date;
+
+				schedule.save(function() {
+					res.redirect('/schedule/' + newSchedule.id);
+				});
 			});
 		}
 	};

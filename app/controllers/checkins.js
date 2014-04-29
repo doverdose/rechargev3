@@ -233,6 +233,34 @@ module.exports = (function() {
 
 	};
 
+	var parseDates = function(obj, schedule) {
+		// make sure we always use UTC dates
+		if(!obj.due_date) {
+			// in case the update does not have a new due_date
+			obj.due_date = moment.utc(schedule.due_date).format('MM/DD/YYYY');
+		}
+
+		obj.due_date += ' UTC';
+		if(obj.expiry) {
+			var expiryPreset = {
+				'1m': { months: 1 },
+				'6m': { months: 6 },
+				'1y': { years: 1 }
+			};
+			// set proper expire_date, based on expiry select
+			if(obj.expiry === '0') {
+				obj.expires = false;
+			} else {
+				obj.expires = true;
+				if(obj.expiry === 'custom') {
+					obj.expire_date += ' UTC';
+				} else {
+					obj.expire_date = moment.utc(obj.due_date).add(expiryPreset[obj.expiry]).toDate();
+				}
+			}
+		}
+	};
+
 	var update = function(req, res, next) {
 		var functions = [];
 		for(var i = 0; i < req.body.data.length; i++) {
@@ -262,8 +290,24 @@ module.exports = (function() {
 									schedule.template_id = template._id;
 									schedule.repeat_interval = template.schedules[k].repeat_interval;
 									schedule.due_date = template.schedules[k].due_date;
-									schedule.expires = template.schedules[k].expires;
-									schedule.expire_date = template.schedules[k].expire_date;
+
+									var expiryPreset = {
+										'1m': { months: 1 },
+										'6m': { months: 6 },
+										'1y': { years: 1 }
+									};
+
+									if(template.schedules[k].expires === '0') {
+										schedule.expires = false;
+									} else {
+										schedule.expires = true;
+										if(template.schedules[k].expires === 'custom') {
+											schedule.expire_date = template.schedules[k].expire_date;
+										} else {
+											schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
+										}
+									}
+
 									schedulesSave.push(
 										(function(schedule) {
 											return function(callback) {
