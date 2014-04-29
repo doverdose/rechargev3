@@ -145,7 +145,20 @@ module.exports = (function() {
 					templateVars.patients = patients;
 					callback();
 				});
-			}
+			},
+			function(callback) {
+				User.find({
+					'permissions.admin': { $ne: true },
+					'permissions.provider': true
+				}, function(err, providers) {
+					if (err) {
+						callback(err);
+						return;
+					}
+					templateVars.providers = providers;
+					callback();
+				});
+			},
 		], function(err) {
 			if (err) {
 				return next(err);
@@ -196,12 +209,60 @@ module.exports = (function() {
 		});
 	};
 
+	var patients = function(req, res, next) {
+		if(req.params.id === "-1") {
+			User.find({
+				'permissions.admin': { $ne: true },
+				'permissions.provider': { $ne: true }
+			}, {
+				_id: true,
+				name: true
+			}, function(err, patients) {
+				if (err) {
+					next(err);
+					return;
+				}
+				res.json(patients);
+			});
+		} else {
+			User.findOne({
+				_id: req.params.id
+			}, function(err, user) {
+				if (err) {
+					next(err);
+					return;
+				}
+
+				var ids = [];
+				for(var i = 0; i < user.patients.length; i++) {
+					ids.push(user.patients[i].id);
+				}
+
+				User.find({
+					_id: {
+						$in: ids
+					}
+				}, {
+					_id: true,
+					name: true
+				}, function(err, patients) {
+					if (err) {
+						next(err);
+						return;
+					}
+					res.json(patients);
+				});
+			});
+		}
+	};
+
 	return {
 		createView: createView,
 		update: update,
 		updateView: updateView,
 		remove: remove,
-		view: view
+		view: view,
+		patients: patients
 	};
 
 }());

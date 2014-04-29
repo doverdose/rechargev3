@@ -24,14 +24,14 @@ module.exports = function() {
 				}
 			},
 			sms: {
-				from: 'TWILIO_NUMBER',
+				from: '+15005550006',
 				type: 'SMS',
 				transport: {
 					// nodemailer transport
 					service: 'TWILIO',
 					auth: {
-						user: 'TWILIO_SID',
-						pass: 'TWILIO_AUTH_TOKEN'
+						user: 'AC835359afad5b61ba3265f88539c31869',
+						pass: '62e248ecd443bdd162b43791dfbf8d7c'
 					}
 				}
 			},
@@ -53,14 +53,14 @@ module.exports = function() {
 				}
 			},
 			sms: {
-				from: 'TWILIO_NUMBER',
+				from: '+15005550006',
 				type: 'SMS',
 				transport: {
 					// nodemailer transport
 					service: 'TWILIO',
 					auth: {
-						user: 'TWILIO_NUMBER',
-						pass: 'TWILIO_AUTH_TOKEN'
+						user: 'AC835359afad5b61ba3265f88539c31869',
+						pass: '62e248ecd443bdd162b43791dfbf8d7c'
 					}
 				}
 			},
@@ -82,14 +82,14 @@ module.exports = function() {
 				}
 			},
 			sms: {
-				from: 'TWILIO_NUMBER',
+				from: '+15005550006',
 				type: 'SMS',
 				transport: {
 					// nodemailer transport
 					service: 'TWILIO',
 					auth: {
-						user: 'TWILIO_NUMBER',
-						pass: 'TWILIO_AUTH_TOKEN'
+						user: 'AC835359afad5b61ba3265f88539c31869',
+						pass: '62e248ecd443bdd162b43791dfbf8d7c'
 					}
 				}
 			},
@@ -111,14 +111,14 @@ module.exports = function() {
 				}
 			},
 			sms: {
-				from: 'TWILIO_NUMBER',
+				from: '+15005550006',
 				type: 'SMS',
 				transport: {
 					// nodemailer transport
 					service: 'TWILIO',
 					auth: {
-						user: 'TWILIO_NUMBER',
-						pass: 'TWILIO_AUTH_TOKEN'
+						user: 'AC835359afad5b61ba3265f88539c31869',
+						pass: '62e248ecd443bdd162b43791dfbf8d7c'
 					}
 				}
 			},
@@ -140,14 +140,14 @@ module.exports = function() {
 				}
 			},
 			sms: {
-				from: 'TWILIO_NUMBER',
+				from: '+15005550006',
 				type: 'SMS',
 				transport: {
 					// nodemailer transport
 					service: 'TWILIO',
 					auth: {
-						user: 'TWILIO_NUMBER',
-						pass: 'TWILIO_AUTH_TOKEN'
+						user: 'AC835359afad5b61ba3265f88539c31869',
+						pass: '62e248ecd443bdd162b43791dfbf8d7c'
 					}
 				}
 			},

@@ -32,7 +32,7 @@
 		<% } %>
 
 			<p class="muted">
-				<%= c.answers[i].text %>
+				<span><%= c.answers[i].text %></span><small class="pull-right">(<%=: c.answers[i].timestamp | fromNow %>)</small>
 			</p>
 
 		<% if(choice) { %>
@@ -41,6 +41,30 @@
 	<% } %>
 
 
+<% if(choice) { %>
+	</ul>
+<% } %>
+
+
+<small class="text-muted">Past answers</small>
+
+<% if(choice) { %>
+	<ul>
+<% } %>
+
+	<% for(var i=0; i < c.pastAnswers.length; i++) { %>
+		<% if(choice) { %>
+			<li>
+		<% } %>
+
+			<p class="muted">
+				<span><%= c.pastAnswers[i].text %></span><small class="pull-right">(<%=: c.pastAnswers[i].timestamp | fromNow %>)</small>
+			</p>
+
+		<% if(choice) { %>
+			</li>
+		<% } %>
+	<% } %>
 <% if(choice) { %>
 	</ul>
 <% } %>

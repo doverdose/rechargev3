@@ -256,7 +256,7 @@ module.exports = (function() {
 
 						for(var j = 0; j < answers.length; j++) {
 							for(var k = 0; k < template.schedules.length; k++) {
-								if(answers[j] == template.schedules[k].answer) {
+								if(answers[j] === template.schedules[k].answer) {
 									var schedule = {};
 									schedule.user_id = req.user.id;
 									schedule.template_id = template._id;
@@ -275,7 +275,7 @@ module.exports = (function() {
 													}
 													callback();
 												});
-											}
+											};
 										})(schedule)
 									);
 								}
@@ -407,7 +407,7 @@ module.exports = (function() {
 
 			var data = {
 				answers: req.body.answers
-			}
+			};
 			data = parseForm(data);
 			checkin.answers = data.answers;
 

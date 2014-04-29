@@ -44,12 +44,14 @@
 
 			<% if(user.email) { %>
 				<ul class="nav navbar-nav">
-					<li>
-						<a href="/dashboard">Dashboard</a>
-					</li>
-					<li>
-						<a href="/following">Following</a>
-					</li>
+					<% if(!user.permissions.provider && !user.permissions.admin) { %>
+						<li>
+							<a href="/dashboard">Dashboard</a>
+						</li>
+						<li>
+							<a href="/following">Following</a>
+						</li>
+					<% } %>
 					<% if(user.permissions.admin) { %>
 						<li>
 							<a href="/admin">Admin</a>
@@ -65,9 +67,11 @@
 						</li>
 					<% } %>
 
-					<li>
-						<a href="/checkin">Check-ins</a>
-					</li>
+					<% if(!user.permissions.provider && !user.permissions.admin) { %>
+						<li>
+							<a href="/checkin">Check-ins</a>
+						</li>
+					<% } %>
 					<li>
 						<a href="/settings/profile">Settings</a>
 					</li>
@@ -102,7 +106,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<p class="text-center myf">&copy 2013 ReCharge Health. All Rights Reserved.</p>
+					<p class="text-center myf">&copy 2013 ReCharge Health. All Rights Reserved. </p>
 				</div>
 			</div>
 		</div>
