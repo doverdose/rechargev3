@@ -97,7 +97,6 @@ module.exports = (function() {
 				return res.redirect('/admin');
 
 			} else {
-				console.log(err.errors);
 				if(err) {
 					return res.render('users/signup', {
 						errors: err.errors,
