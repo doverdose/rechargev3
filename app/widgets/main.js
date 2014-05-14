@@ -20,6 +20,20 @@
 			});
 		};
 
+		var passwordInit = function() {
+			if($("#password-input").length == 1) {
+				if($(window).width() > 1024) {
+					$("#password-input").css("cursor", "default");
+					$("#password-input").keyup(function(e) {
+						if(parseInt(e.key)) {
+							numpad.addDigitManual(e.key);
+						}
+					});
+					$(".password-keypad").hide();
+				}
+			}
+		}
+
 		var init = function() {
 			// initialize bootstrap tooltips
 			$('[data-toggle="tooltip"]').tooltip();
@@ -47,6 +61,7 @@
 			}
 
 			providerFilter();
+			passwordInit();
 		};
 
 		return {

@@ -306,7 +306,7 @@ module.exports = (function() {
 				user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
 				user.smsNotifications = req.body._smsNotifications || user.smsNotifications;
 
-				if(user.password) {
+				if(req.body.password) {
 					user.password = req.body.password;
 				}
 
@@ -318,7 +318,7 @@ module.exports = (function() {
 
 			});
 
-		res.redirect('/user/' + req.body.id);
+		res.redirect('/settings/profile');
 
 	};
 

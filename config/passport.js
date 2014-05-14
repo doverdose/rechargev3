@@ -9,18 +9,15 @@ module.exports = (function() {
 		User = mongoose.model('User');
 
 	return function (passport) {
-
 		// serialize sessions
 		passport.serializeUser(function(user, done) {
 			done(null, user.id);
 		});
-
 		passport.deserializeUser(function(id, done) {
 			User.findOne({ _id: id }, function (err, user) {
 				done(err, user);
 			});
 		});
-
 		// use local strategy
 		passport.use(new LocalStrategy({
 				usernameField: 'email',
