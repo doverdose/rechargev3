@@ -5,6 +5,9 @@
 module.exports = (function() {
 	'use strict';
 
+	var mongoose = require('mongoose'),
+		RHistory = mongoose.model('RHistory');
+
 	var requiresLogin = function (req, res, next) {
 
 		if(req.method === 'GET') {
@@ -16,7 +19,14 @@ module.exports = (function() {
 			req.session.returnTo = req.originalUrl;
 			return res.redirect('/login');
 		}
-		next();
+
+		var history = new RHistory();
+		history.url = req.originalUrl;
+		history.user_id = req.user._id;
+
+		history.save(function(err) {
+			next();
+		});
 	};
 
 	/* If user is logged-in, redirect to dashboard.

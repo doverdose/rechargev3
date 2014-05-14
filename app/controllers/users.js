@@ -37,7 +37,11 @@ module.exports = (function() {
 			return;
 		}
 
-		res.redirect('/');
+		if(req.user.permissions.provider || req.user.permissions.admin) {
+			res.redirect('/admin');
+		} else {
+			res.redirect('/dashboard');
+		}
 	};
 
 	/**
