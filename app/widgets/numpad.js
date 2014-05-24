@@ -35,6 +35,13 @@
 			updatePassword();
 		};
 
+		var addDigitManual = function(digit) {
+			if(passwordValue.length < 10) {
+				passwordValue = passwordValue + digit.toString();
+			}
+			updatePassword();
+		};
+
 		var removeDigit = function() {
 			if(passwordValue.length > 0) {
 				passwordValue = passwordValue.substr(0, passwordValue.length-1);
@@ -77,11 +84,14 @@
 			$btnSubmit.click(submitForm);
 		};
 		return {
-			init: init
+			init: init,
+			addDigitManual: addDigitManual
 		};
 
 	}());
 
 	$(document).ready(numpad.init);
+
+	window.numpad = numpad;
 
 })();

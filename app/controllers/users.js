@@ -37,7 +37,11 @@ module.exports = (function() {
 			return;
 		}
 
-		res.redirect('/');
+		if(req.user.permissions.provider || req.user.permissions.admin) {
+			res.redirect('/admin');
+		} else {
+			res.redirect('/dashboard');
+		}
 	};
 
 	/**
@@ -85,7 +89,6 @@ module.exports = (function() {
 		user.save(function (err) {
 
 			if(req.body.admin) {
-
 				if(err && err.errors) {
 					return res.render('users/new', {
 						errors: err.errors,
@@ -98,7 +101,6 @@ module.exports = (function() {
 				return res.redirect('/admin');
 
 			} else {
-
 				if(err) {
 					return res.render('users/signup', {
 						errors: err.errors,
@@ -304,7 +306,7 @@ module.exports = (function() {
 				user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
 				user.smsNotifications = req.body._smsNotifications || user.smsNotifications;
 
-				if(user.password) {
+				if(req.body.password) {
 					user.password = req.body.password;
 				}
 
@@ -316,7 +318,7 @@ module.exports = (function() {
 
 			});
 
-		res.redirect('/user/' + req.body.id);
+		res.redirect('/settings/profile');
 
 	};
 

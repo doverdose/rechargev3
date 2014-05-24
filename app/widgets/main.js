@@ -2,40 +2,73 @@
  */
 
 (function() {
-    'use strict';
+	'use strict';
 
-    var main = (function() {
-        var init = function() {
-	    // initialize bootstrap tooltips
-            $('[data-toggle="tooltip"]').tooltip();
+	var main = (function() {
+		var providerFilter = function() {
+			if($('.provider-select').length !== 1) {
+				return;
+			}
 
-	    // initialize tabs
-            $('[data-toggle="tab"]').click(function (e) {
-                e.preventDefault();
-                $(this).tab('show');
-              });
+			$('.provider-select').on('change', function() {
+				$.get('/schedule/patients/' + $('.provider-select').val(), function(response) {
+					$('.patient-select').html('');
+					for(var i = 0; i < response.length; i++) {
+						$('.patient-select').append('<option value="' + response[i]._id + '">' + response[i].name + '</option>');
+					}
+				}, 'json');
+			});
+		};
 
-            // init select2
-            $('.js-select2 not:js-following-popover-template').select2();
+		var passwordInit = function() {
+			if($("#password-input").length == 1) {
+				if($(window).width() > 1024) {
+					$("#password-input").css("cursor", "default");
+					$("#password-input").keyup(function(e) {
+						if(parseInt(e.key)) {
+							numpad.addDigitManual(e.key);
+						}
+					});
+					$(".password-keypad").hide();
+				}
+			}
+		}
 
-	    // init datepicker
-            $('.js-upcoming-date').datepicker({
-                orientation: 'top auto',
-                startDate: new Date()
-              });
+		var init = function() {
+			// initialize bootstrap tooltips
+			$('[data-toggle="tooltip"]').tooltip();
 
-            //init sms notification
-            if($('#smsNotifications').length > 0) {
-              $('#smsNotifications').change(function() {
-                $('#_smsNotifications').val($('#smsNotifications').is(':checked'));
-              });
-            }
-          };
+			// initialize tabs
+			$('[data-toggle="tab"]').click(function (e) {
+				e.preventDefault();
+				$(this).tab('show');
+			});
 
-        return {
-          init: init
-        };
-      }());
+			// init select2
+			$('.js-select2 not:js-following-popover-template').select2();
 
-    $(document).ready(main.init);
-  })();
+			// init datepicker
+			$('.js-upcoming-date').datepicker({
+				orientation: 'top auto',
+				startDate: new Date()
+			});
+
+			//init sms notification
+			if($('#smsNotifications').length > 0) {
+				$('#smsNotifications').change(function() {
+					$('#_smsNotifications').val($('#smsNotifications').is(':checked'));
+				});
+			}
+
+			providerFilter();
+			passwordInit();
+		};
+
+		return {
+			init: init
+		};
+	}());
+
+	$(document).ready(main.init);
+})();
+

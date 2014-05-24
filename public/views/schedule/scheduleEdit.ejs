@@ -25,10 +25,25 @@
 	<div class="row">
 
 		<div class="col-sm-12">
+			<div class="form-group">
+				<label for="user_id">Provider filter</label>
+				<select class="js-select2 provider-select" id="provider_id" name="provider_id">
+					<option value="-1">
+						All Providers
+					</option>
+					<% for(var i = 0; i < providers.length; i++) { %>
+						<option value="<%= providers[i]._id %>">
+							<%= providers[i].name %>
+						</option>
+					<% } %>
+				</select>
+			</div>
+		</div>
 
+		<div class="col-sm-12">
 			<div class="form-group">
 				<label for="user_id">Patient</label>
-				<select class="js-select2" id="user_id" name="user_id">
+				<select class="js-select2 patient-select" id="user_id" name="user_id">
 					<% for(var i = 0; i < patients.length; i++) { %>
 						<option value="<%= patients[i]._id %>">
 							<%= patients[i].name %>
@@ -36,7 +51,6 @@
 					<% } %>
 				</select>
 			</div>
-
 		</div>
 
 		<div class="col-sm-12">
