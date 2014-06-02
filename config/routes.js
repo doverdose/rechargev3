@@ -51,6 +51,7 @@ module.exports = function(app, passport) {
 	app.post('/user/unfollow', auth.requiresLogin, users.unfollow);
 	app.post('/follower/approve', auth.requiresLogin, users.approveFollow);
 	app.post('/follower/reject', auth.requiresLogin, users.rejectFollow);
+	app.post('/user/autoAssign', auth.requiresLogin, users.autoAssign);
 
 	app.post('/provider/user/remove', auth.requiresLogin, providers.removePatient);
 	app.post('/provider/user/add', auth.requiresLogin, providers.addPatient);

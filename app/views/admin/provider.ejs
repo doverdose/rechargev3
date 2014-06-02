@@ -23,7 +23,16 @@
 				<%= yourPatients[i].name %>
 			</a>
 		</div>
-		<div class="col-xs-6 text-right">
+		<div class="col-xs-4 text-right">
+			<form action="/user/autoAssign" method="post">
+				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+				<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
+				<input type="hidden" name="userId" id="userId" value="<%= yourPatients[i].id %>">
+
+				<button type="submit" class="btn btn-primary">Assign survey</button>
+			</form>
+		</div>
+		<div class="col-xs-2 text-right">
 			<form action="/provider/user/remove" method="post">
 				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 				<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">

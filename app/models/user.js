@@ -22,6 +22,7 @@ module.exports = (function() {
 		provider: { type: String, default: '' },
 		hashed_password: { type: String, default: '' },
 		salt: { type: String, default: '' },
+		autoAssign: { type: Number, default: 0 },
 		authToken: { type: String, default: '' },
 		permissions: {
 			admin: {
