@@ -1,11 +1,17 @@
-/* Users controller
- */
+/* Users controller */
 
 module.exports = (function() {
 	'use strict';
 
 	var mongoose = require('mongoose'),
+		demo = require('./components/demo'),
 		User = mongoose.model('User');
+
+	var autoAssign = function(req, res, next) {
+		demo.autoAssign(req.body.userId, function() {
+			res.redirect('/user/' + req.body.userId);
+		});
+	};
 
 	var login = function (req, res, next) {
 		// update last_login date
@@ -114,7 +120,14 @@ module.exports = (function() {
 					if (err) {
 						return next(err);
 					}
-					return res.redirect('/');
+
+					if(user.permissions.provider == true) {
+						demo.createPatient(user._id, function() {
+							return res.redirect('/');
+						});
+					} else {
+						return res.redirect('/');
+					}
 				});
 			}
 		});
@@ -130,9 +143,7 @@ module.exports = (function() {
 		res.redirect('/login');
 	};
 
-	/**
-	* Find user by id
-	*/
+	/* Find user by id */
 
 	var user = function (req, res, next, id) {
 		User.findOne({ _id : id })
@@ -150,31 +161,9 @@ module.exports = (function() {
 			});
 	};
 
-
-// 	var getProviderPatients = function(patientIds) {
-//
-// 		// get list of users who are not admins or providers
-// 		var deferred = Q.defer();
-//
-// 		User.find({
-// 			'_id': { $in: patientIds }
-// 		}, function(err, patients){
-// 			if (err) {
-// 				deferred.reject(new Error(err));
-// 			} else {
-// 				deferred.resolve(patients);
-// 			}
-// 		});
-//
-// 		return deferred.promise;
-//
-// 	};
-
-	/* View user
-	*/
+	/* View user */
 
 	var view = function (req, res, next) {
-
 		var providerPatients = [],
 			allPatients = [],
 			patientIds = [];
@@ -238,9 +227,8 @@ module.exports = (function() {
 								'_id': { $nin: patientIds }
 							}, function(err, patients) {
 								if (err) {
-									//
+									next(err);
 								} else {
-
 									allPatients = patients;
 
 									res.render('users/view.ejs', {
@@ -255,9 +243,7 @@ module.exports = (function() {
 
 						}
 					});
-
 				} else {
-
 					res.render('users/view.ejs', {
 						title: 'Details',
 						profile: user
@@ -273,7 +259,6 @@ module.exports = (function() {
 	*/
 
 	var newView = function (req, res) {
-
 		// TODO if provider, assign users to yourself
 		// if patient, see only your profile
 		// do this in the template
@@ -490,7 +475,8 @@ module.exports = (function() {
 		follow: follow,
 		approveFollow: approveFollow,
 		rejectFollow: rejectFollow,
-		unfollow: unfollow
+		unfollow: unfollow,
+		autoAssign: autoAssign
 	};
 
 }());
