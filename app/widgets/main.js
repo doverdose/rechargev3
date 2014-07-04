@@ -25,8 +25,9 @@
 				if($(window).width() > 1024) {
 					$("#password-input").css("cursor", "default");
 					$("#password-input").keyup(function(e) {
-						if(parseInt(e.key)) {
-							numpad.addDigitManual(e.key);
+						var charCode = e.keyCode ? e.keyCode : e.which;
+						if (charCode >= 48  && charCode <= 57) {
+							numpad.addDigitManual(String.fromCharCode(charCode));
 						}
 					});
 					$(".password-keypad").hide();
