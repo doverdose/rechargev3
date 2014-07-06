@@ -29,12 +29,11 @@ module.exports = (function() {
 		});
 	};
 
-	var autoAssign = function(userID, callback) {
+	var autoAssign = function(userID, exampleID, callback) {
 		User.findOne({
 			_id: userID
 		}, function(err, patient) {
-			patient.autoAssign = Math.floor(Math.random() * 3) + 1
-
+			patient.autoAssign = exampleID
 			patient.save(function() {
 				callback();
 			});

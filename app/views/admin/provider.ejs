@@ -18,16 +18,23 @@
 
 <% for(var i = 0; i < yourPatients.length; i++) { %>
 	<div class="row stats">
-		<div class="col-xs-6">
-			<a href="/user/<%= yourPatients[i].id %>">
+		<div class="col-xs-4">
+			<a href="/user/<%= yourPatients[i].id %>" style='line-height: 35px;'>
 				<%= yourPatients[i].name %>
 			</a>
 		</div>
-		<div class="col-xs-4 text-right">
+		<div class="col-xs-6 text-right">
 			<form action="/user/autoAssign" method="post">
 				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 				<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
 				<input type="hidden" name="userId" id="userId" value="<%= yourPatients[i].id %>">
+
+				<select name='exampleID' class="form-control" style='float: left;width: 150px;'>
+				  <option value='1'>Survey 1</option>
+				  <option value='2'>Survey 2</option>
+				  <option value='3'>Survey 3</option>
+				</select>
+
 
 				<button type="submit" class="btn btn-primary">Assign survey</button>
 			</form>
