@@ -23,10 +23,11 @@
 		var passwordInit = function() {
 			if($("#password-input").length == 1) {
 				if($(window).width() > 1024) {
+
 					$("#password-input").css("cursor", "default");	
 					$("#password-input").keyup(function(e) {
-						if(parseInt(e.key)) {
-							numpad.addDigitManual(e.key);
+						if(e.which) {
+								numpad.addDigitManual(String.fromCharCode(e.which));
 						}
 					});
 					$(".password-keypad").hide();
