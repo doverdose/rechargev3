@@ -25,7 +25,7 @@ module.exports = (function() {
 	});
 
 	// if not in development, log to file
-	if(env !== 'development') {
+	if(env !== 'development' && env !== 'nitrous') {
 		console.log('Starting logger...');
 		winston.add(winston.transports.File, {
 			filename: 'api.log'

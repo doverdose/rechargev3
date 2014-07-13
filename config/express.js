@@ -14,7 +14,7 @@ module.exports = function(app, config, passport, env) {
 		app.engine('ejs', engine);
 
 		// set views path, template engine and default layout
-		if(env === 'development') {
+		if(env === 'development' || env ==='nitrous') {
 			app.set('views', config.root + '/app/views');
 		} else {
 			app.set('views', config.root + '/public/views');
@@ -34,7 +34,9 @@ module.exports = function(app, config, passport, env) {
 			app.use(require('connect-livereload')({
 				port: 35729
 			}));
+		}
 
+		if(env === 'development' || env === 'nitrous') {
 			app.use(express.static(config.root + '/app'));
 			app.use(express.static(config.root + '/.tmp'));
 		}
@@ -97,7 +99,7 @@ module.exports = function(app, config, passport, env) {
 		app.use(app.router);
 
 		// pretty 500 errors
-		if(env !== 'development') {
+		if(env !== 'development' && env !== 'nitrous') {
 			// assume "not found" in the error msgs
 			app.use(function(err, req, res, next){
 				// treat as 404

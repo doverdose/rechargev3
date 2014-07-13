@@ -8,7 +8,8 @@ module.exports = (function() {
 		User = mongoose.model('User');
 
 	var autoAssign = function(req, res, next) {
-		demo.autoAssign(req.body.userId, function() {
+		console.log(req.body);
+		demo.autoAssign(req.body.userId, req.body.exampleID, function() {
 			res.redirect('/user/' + req.body.userId);
 		});
 	};

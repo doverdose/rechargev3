@@ -30,6 +30,12 @@
 	</li>
 </ul>
 
+<% if(profile.autoAssign && user.permissions.provider) { %>
+	<div class='user-auto-survey-results'>
+		<iframe class='report-iframe' frameborder='0' src='/widgets/demo/ex<%=profile.autoAssign%>.html'></iframe>
+	</div>
+<% } %>
+
 <% if((user.permissions.admin || user.permissions.provider) && profile.permissions.provider) { %>
 
 	<div class="row stats">

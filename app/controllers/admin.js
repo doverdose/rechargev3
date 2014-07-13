@@ -163,7 +163,7 @@ module.exports = (function() {
 			if(req.user.permissions.admin) {
 				adminTemplate = 'admin/admin';
 			}
-
+				
 			res.render(adminTemplate, templateVars);
 
 		});
