@@ -45,9 +45,21 @@
 				<label for="user_id">Patient</label>
 				<select class="js-select2 patient-select" id="user_id" name="user_id">
 					<% for(var i = 0; i < patients.length; i++) { %>
-						<option value="<%= patients[i]._id %>">
-							<%= patients[i].name %>
-						</option>
+						<%if(typeof schedule.user_id !== 'undefined') { %>
+							<% if(patients[i]._id.toString() === schedule.user_id.toString()) { %>
+								<option value="<%= patients[i]._id %>" selected='selected'>
+									<%= patients[i].name %>
+								</option>
+							<% } else { %>
+								<option value="<%= patients[i]._id %>">
+									<%= patients[i].name %>
+								</option>
+							<% } %>
+						<% } else { %>
+							<option value="<%= patients[i]._id %>">
+								<%= patients[i].name %>
+							</option>
+						<% } %>
 					<% } %>
 				</select>
 			</div>
@@ -59,9 +71,21 @@
 				<label for="template_id">Checkin template</label>
 				<select class="js-select2" id="template_id" name="template_id">
 					<% for(var i = 0; i < templates.length; i++) { %>
-						<option value="<%= templates[i]._id %>">
-							<%= templates[i].title %>
-						</option>
+						<%if(typeof schedule.user_id !== 'undefined') { %>
+							<% if(templates[i]._id.toString() === schedule.template_id.toString()) { %>
+								<option value="<%= templates[i]._id %>" selected='selected'>
+									<%= templates[i].title %>
+								</option>
+							<% } else { %>
+								<option value="<%= templates[i]._id %>">
+									<%= templates[i].title %>
+								</option>
+							<% } %>
+						<% } else { %>
+							<option value="<%= templates[i]._id %>">
+								<%= templates[i].title %>
+							</option>
+						<% } %>
 					<% } %>
 				</select>
 			</div>

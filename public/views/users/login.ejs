@@ -20,12 +20,12 @@
 
 		<div class="form-group js-password-container">
 			<label for="password">PIN Password</label>
-			<p>Use the keypad bellow, to enter your PIN password. </p>
+			<p class='password-hint'>Use the keypad bellow, to enter your PIN password. </p>
 			<div class="input-group">
 
 				<input type="hidden" class="form-control js-password-real" id="password" name="password" maxlength="10">
 
-				<input type="text" class="form-control js-password" maxlength="10" readonly>
+				<input id='password-input' type="text" class="form-control js-password" maxlength="10" readonly>
 
 				<span class="input-group-btn">
 					<button class="btn btn-default js-btn-delete-char" type="button" title="Clear PIN">
