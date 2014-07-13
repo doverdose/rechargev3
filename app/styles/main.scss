@@ -342,7 +342,7 @@ body .select2-container {
 	display: block;
 	margin-top: emCalc(80);
 	background: $color1;
-	padding: emCalc(20);
+	padding: emCalc(0);
 
 	color: lighten($color1, 30%);
 
