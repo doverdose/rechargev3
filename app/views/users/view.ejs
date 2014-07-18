@@ -1,7 +1,14 @@
 <% layout('../layouts/default') -%>
 
+
+  
 <div class="page-header">
-	<h2>User details</h2>
+  <% if(viewer && viewer.permissions.admin) { %>
+    <div class="btn-group pull-right">
+      <a href="/admin" class="btn btn-default">Back to admin</a>
+    </div>
+  <% } %>
+  <h2>User details</h2>
 </div>
 
 <h3>

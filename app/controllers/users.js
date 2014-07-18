@@ -234,6 +234,7 @@ module.exports = (function() {
 
 									res.render('users/view.ejs', {
 										title: 'Details',
+                    viewer: req.user,
 										profile: user,
 										providerPatients: providerPatients,
 										allPatients: allPatients
@@ -247,6 +248,7 @@ module.exports = (function() {
 				} else {
 					res.render('users/view.ejs', {
 						title: 'Details',
+            viewer: req.user,
 						profile: user
 					});
 
