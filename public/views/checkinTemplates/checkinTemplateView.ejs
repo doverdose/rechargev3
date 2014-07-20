@@ -2,7 +2,8 @@
 
 <div class="page-header">
 	<form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
-		<a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
+		<a href="/admin" class="btn btn-default">Back to Admin</a>
+    <a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
 
 		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 		<input type="hidden" name="id" id="id" value="<%= c.id %>">
@@ -26,7 +27,20 @@
 	<ul>
 		<% for(var i=0; i < c.answers.length; i++) { %>
 			<li>
-				<%= c.answers[i].text %>
+        <%= c.answers[i].text %>
+        <ul>
+          <% if(c.schedules && c.schedules.length > i) { %>
+          <li>
+            <%= c.schedules[i].due_date %>
+          </li>
+          <li>
+            Repeat every <%= c.schedules[i].repeat_interval %> day(s)
+          </li>
+          <li>
+            Expires: <%= c.schedules[i].expires %>
+          </li>
+          <% } %>
+        </ul>
 			</li>
 		<% } %>
 	</ul>
