@@ -344,14 +344,14 @@ module.exports = (function() {
 
 	var remove = function (req, res, next) {
 
-		User.findOne({ _id : req.body.userId })
+		User.findOne({ _id : req.params.id })
 			.exec(function (err, user) {
 				if (err) {
 					return next(err);
 				}
 
 				if (!user) {
-					return next(new Error('Failed to load User ' + req.body.userId));
+					return next(new Error('Failed to load User ' + req.params.id));
 				}
 
 				user.remove();

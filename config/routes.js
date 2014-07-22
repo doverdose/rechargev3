@@ -46,7 +46,7 @@ module.exports = function(app, passport) {
 	app.get('/user/:id/edit', auth.requiresLogin, users.edit);
 
 	app.post('/user/update', auth.requiresLogin, users.update);
-	app.post('/user/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
+  app.post('/user/:id/delete', auth.requiresLogin, auth.requiresAdmin, users.remove);
 	app.post('/user/follow', auth.requiresLogin, users.follow);
 	app.post('/user/unfollow', auth.requiresLogin, users.unfollow);
 	app.post('/follower/approve', auth.requiresLogin, users.approveFollow);
