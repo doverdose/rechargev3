@@ -5,6 +5,10 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		demo = require('./components/demo'),
+		moment = require('moment'),      
+    CheckinTemplate = mongoose.model('CheckinTemplate'),
+    Survey = mongoose.model('Survey'),
+    Schedule = mongoose.model('Schedule'),
 		User = mongoose.model('User');
 
 	var autoAssign = function(req, res, next) {
@@ -13,6 +17,51 @@ module.exports = (function() {
 			res.redirect('/user/' + req.body.userId);
 		});
 	};
+  
+  var assign = function(req, res, next) {
+    User.findOne({
+      _id: req.body.userId
+    }, function(err, u){
+      if (!u) {
+        return next(new Error('Could not find User'));
+      } else {
+        // User exists, find schedule
+        
+        Survey.findOne({
+          _id: req.body.surveyId
+        }, function(err, s){
+          if (!s) {
+            return next(new Error('Could not find Survey'));
+          } else {
+             // Survey exists, find checkin templates
+            console.log(s);
+            var schedule;
+            s.checkinTemplates.forEach(function(template){
+              //schedule[template] = new Schedule();
+              //sched.user_id = u._id;
+              //sched.template_id = template;
+              //sched.repeat_interval = 0;
+              //sched.due_date = moment.utc().format('MM/DD/YYYY') + " UTC";
+              //sched.expires = false;
+              //sched.expire_date = moment.utc().add({years:1}).toDate();
+              
+              console.log(template);
+            });
+           
+              /*
+              var schedule = new Schedule(sched);
+              console.log(schedule);
+              schedule.save(function() {
+              }); 
+             
+            */
+            res.redirect('/admin');
+          }
+        });
+                
+      }
+    });
+  };
 
 	var login = function (req, res, next) {
 		// update last_login date
@@ -122,13 +171,8 @@ module.exports = (function() {
 						return next(err);
 					}
 
-					if(user.permissions.provider == true) {
-						demo.createPatient(user._id, function() {
-							return res.redirect('/');
-						});
-					} else {
-						return res.redirect('/');
-					}
+					return res.redirect('/');
+			
 				});
 			}
 		});
@@ -479,7 +523,8 @@ module.exports = (function() {
 		approveFollow: approveFollow,
 		rejectFollow: rejectFollow,
 		unfollow: unfollow,
-		autoAssign: autoAssign
+		autoAssign: autoAssign,
+    assign: assign
 	};
 
 }());
