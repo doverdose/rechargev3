@@ -12,7 +12,8 @@ module.exports = (function() {
 
 	var SurveySchema = new Schema({
 		title: String,
-		checkinTemplates: []
+		checkinTemplates: [],
+        isStartingSurvey: Boolean
 	});
 
 	/**

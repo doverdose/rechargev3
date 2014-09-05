@@ -5,14 +5,35 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		demo = require('./components/demo'),
-		User = mongoose.model('User');
+		User = mongoose.model('User'),
+        AssignedSurvey = mongoose.model('AssignedSurvey'),
+        CheckinTemplate = mongoose.model('CheckinTemplate'),
+        Survey = mongoose.model('Survey');
 
 	var autoAssign = function(req, res, next) {
 		console.log(req.body);
-		demo.autoAssign(req.body.userId, req.body.exampleID, function() {
+		demo.autoAssign(req.body.userId, req.body.surveyId, function() {
 			res.redirect('/user/' + req.body.userId);
 		});
 	};
+
+    var assignSurvey = function(req, res, next) {
+        //do something here
+
+        var surveyId = req.body.surveyId,
+            userId = req.body.userId;
+
+        var data ={
+            userId:userId,
+            surveyId:surveyId
+        };
+
+        var assignedSurvey = new AssignedSurvey(data);
+        assignedSurvey.save(function(err, savedObj) {});
+        demo.autoAssign(userId, surveyId, function() {
+            res.redirect('/user/' + userId);
+        });
+    };
 
 	var login = function (req, res, next) {
 		// update last_login date
@@ -47,7 +68,29 @@ module.exports = (function() {
 		if(req.user.permissions.provider || req.user.permissions.admin) {
 			res.redirect('/admin');
 		} else {
-			res.redirect('/dashboard');
+
+            //if the person has some assigned surveys in the queue, redirect him to the first one found
+            // same as if he would navigate to /checkin/new
+            AssignedSurvey.findOne({userId: req.user.id},"", function(err, assignedSurvey){
+                if(assignedSurvey){
+                    Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                        if (!template) {
+                            res.redirect('/dashboard');
+                        }
+
+                        CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                            res.render('checkin/checkinEdit.ejs', {
+                                checkin: {},
+                                templates: templates,
+                                survey: template
+                            });
+                        });
+                    });
+                }
+                else{
+                    res.redirect('/dashboard');
+                }
+            });
 		}
 	};
 
@@ -477,7 +520,8 @@ module.exports = (function() {
 		approveFollow: approveFollow,
 		rejectFollow: rejectFollow,
 		unfollow: unfollow,
-		autoAssign: autoAssign
+		autoAssign: autoAssign,
+        assignSurvey: assignSurvey
 	};
 
 }());

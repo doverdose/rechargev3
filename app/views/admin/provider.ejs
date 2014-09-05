@@ -24,15 +24,15 @@
 			</a>
 		</div>
 		<div class="col-xs-6 text-right">
-			<form action="/user/autoAssign" method="post">
+			<form action="/user/assignSurvey" method="post">
 				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 				<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
-				<input type="hidden" name="userId" id="userId" value="<%= yourPatients[i].id %>">
+				<input type="hidden" name="userId" id="userId" value="<%=yourPatients[i].id%>">
 
-				<select name='exampleID' class="form-control" style='float: left;width: 150px;'>
-				  <option value='1'>Survey 1</option>
-				  <option value='2'>Survey 2</option>
-				  <option value='3'>Survey 3</option>
+				<select name='surveyId' class="form-control" style='float: left;width: 150px;'>
+                    <% for(var j = 0; j < surveys.length; j++) { %>
+                        <option value="<%=surveys[j].id%>"><%= surveys[j].title %></option>
+                    <% }%>
 				</select>
 
 

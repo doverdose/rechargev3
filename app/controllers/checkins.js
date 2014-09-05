@@ -10,7 +10,8 @@ module.exports = (function() {
 		Schedule = mongoose.model('Schedule'),
 		Checkin = mongoose.model('Checkin'),
 		Survey = mongoose.model('Survey'),
-		CheckinTemplate = mongoose.model('CheckinTemplate');
+		CheckinTemplate = mongoose.model('CheckinTemplate'),
+        AssignedSurvey = mongoose.model('AssignedSurvey');
 
 	var view = function(req, res, next) {
 		Checkin.findOne({
@@ -353,6 +354,16 @@ module.exports = (function() {
 									callback(err);
 									return;
 								}
+
+                                //here take the newly submitted survey and delete it from the assignedSurvey collection in DB
+                                var surveyId = req.body.surveyID;
+                                var userId = req.user.id;
+                                AssignedSurvey.findOne({surveyId: surveyId, userId: userId}, function (err, assignedSurvey) {
+                                    if (assignedSurvey) {
+                                        assignedSurvey.remove();
+                                    }
+                                });
+
 								callback();
 							});
 						});
