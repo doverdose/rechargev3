@@ -13,7 +13,7 @@ module.exports = (function() {
 		CheckinTemplate = mongoose.model('CheckinTemplate'),
         AssignedSurvey = mongoose.model('AssignedSurvey');
 
-	var view = function(req, res, next) {
+    var view = function(req, res, next) {
 		Checkin.findOne({
 			_id: req.params.id
 		}, function(err, c) {
@@ -359,17 +359,7 @@ module.exports = (function() {
                                 var surveyId = req.body.surveyID;
                                 var userId = req.user.id;
 
-                                AssignedSurvey.update({surveyId: surveyId, userId: userId},{isDone:true},function(err,num){
-                                    console.log("Updated.......................................");
-                                    console.log(num);
-                                });
-
-//                                AssignedSurvey.findOne({surveyId: surveyId, userId: userId}, function (err, assignedSurvey) {
-//                                    if (assignedSurvey) {
-//                                        assignedSurvey.remove();
-//                                    }
-//                                });
-
+                                AssignedSurvey.update({surveyId: surveyId, userId: userId},{isDone:true},function(err,num){});
 								callback();
 							});
 						});

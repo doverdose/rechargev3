@@ -104,7 +104,7 @@ module.exports = (function() {
                             Survey.update({_id: {$ne:savedSurvey._id} },{isStartingSurvey:false},{multi:true}, function(err,num){});
 
                             if(savedSurvey.isStartingSurvey){
-                                User.find({},"",function(err, allUsers){
+                                User.find({ 'permissions.admin':false,'permissions.provider':false},"",function(err, allUsers){
                                     if(err){}
                                     else{
                                         AssignedSurvey.find({surveyId:savedSurvey._id},"",function(err, assignedSurveys){
