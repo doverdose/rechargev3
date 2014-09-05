@@ -358,11 +358,17 @@ module.exports = (function() {
                                 //here take the newly submitted survey and delete it from the assignedSurvey collection in DB
                                 var surveyId = req.body.surveyID;
                                 var userId = req.user.id;
-                                AssignedSurvey.findOne({surveyId: surveyId, userId: userId}, function (err, assignedSurvey) {
-                                    if (assignedSurvey) {
-                                        assignedSurvey.remove();
-                                    }
+
+                                AssignedSurvey.update({surveyId: surveyId, userId: userId},{isDone:true},function(err,num){
+                                    console.log("Updated.......................................");
+                                    console.log(num);
                                 });
+
+//                                AssignedSurvey.findOne({surveyId: surveyId, userId: userId}, function (err, assignedSurvey) {
+//                                    if (assignedSurvey) {
+//                                        assignedSurvey.remove();
+//                                    }
+//                                });
 
 								callback();
 							});

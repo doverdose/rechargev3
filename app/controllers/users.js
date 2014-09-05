@@ -71,7 +71,7 @@ module.exports = (function() {
 
             //if the person has some assigned surveys in the queue, redirect him to the first one found
             // same as if he would navigate to /checkin/new
-            AssignedSurvey.findOne({userId: req.user.id},"", function(err, assignedSurvey){
+            AssignedSurvey.findOne({userId: req.user.id, isDone:false},"", function(err, assignedSurvey){
                 if(assignedSurvey){
                     Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
                         if (!template) {
