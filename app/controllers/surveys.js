@@ -38,14 +38,20 @@ module.exports = (function() {
 	};
 
 	var remove = function(req, res, next) {
-		Survey.findOneAndRemove({
-			_id: req.body.id
-		}, function(err) {
-			if(err) {
-				next(err);
-			}
-			res.redirect('/admin');
-		});
+        //when removing the survey, also remove the assignedSurvey items that reference that survey
+        AssignedSurvey.find({surveyId:req.body.id}).remove(function(err, num){
+            if(err){}
+            else{
+                Survey.findOneAndRemove({
+                    _id: req.body.id
+                }, function(err) {
+                    if(err) {
+                        next(err);
+                    }
+                    res.redirect('/admin');
+                });
+            }
+        });
 	};
 
 	var view = function(req, res, next) {
@@ -91,7 +97,9 @@ module.exports = (function() {
 					var data = {
 						checkinTemplates: req.body.checkinTemplates,
 						title: req.body.title,
-                        isStartingSurvey: isStartingSurvey
+                        isStartingSurvey: isStartingSurvey,
+                        duration: req.body.duration,
+                        recurrence: req.body.recurrence
 					};
 
 					var survey = new Survey(data);
@@ -100,10 +108,11 @@ module.exports = (function() {
 							next(err);
 						}
                         else {
-                            //update all the surveys different than the current one with the value of "isStartingSurvey" set to false
-                            Survey.update({_id: {$ne:savedSurvey._id} },{isStartingSurvey:false},{multi:true}, function(err,num){});
-
+                            //if "is starting survey" checkbox was set
                             if(savedSurvey.isStartingSurvey){
+                                //update all the surveys different than the current one with the value of "isStartingSurvey" set to false
+                                Survey.update({_id: {$ne:savedSurvey._id} },{isStartingSurvey:false},{multi:true}, function(err,num){});
+
                                 User.find({ 'permissions.admin':false,'permissions.provider':false},"",function(err, allUsers){
                                     if(err){}
                                     else{
@@ -127,6 +136,7 @@ module.exports = (function() {
                                                             userId: user.id,
                                                             surveyId: savedSurvey.id,
                                                             isDone:false,
+                                                            showDate:null,
                                                             _v:0
                                                         });
                                                     }

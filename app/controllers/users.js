@@ -23,15 +23,113 @@ module.exports = (function() {
         var surveyId = req.body.surveyId,
             userId = req.body.userId;
 
-        var data ={
-            userId:userId,
-            surveyId:surveyId
-        };
+        //find survey in DB, so you can check if it has its "duration" and "recurrence" fields set
+        Survey.findOne({_id:surveyId}, function(err, survey){
+            if(survey && survey.duration && survey.recurrence){
 
-        var assignedSurvey = new AssignedSurvey(data);
-        assignedSurvey.save(function(err, savedObj) {});
-        demo.autoAssign(userId, surveyId, function() {
-            res.redirect('/user/' + userId);
+                    var todayDate = new Date();
+                    //set the time to 0, so when we schedule surveys we schedule them for midnight
+                    todayDate.setUTCHours(0,0,0,0);
+                    var endDate = new Date(todayDate);
+
+                    switch (survey.duration) {
+                        case '1week':
+                            endDate.setDate(todayDate.getDate() + 7);
+                            break;
+                        case '1month':
+                            endDate.setMonth(todayDate.getMonth() + 1);
+                            break;
+                        case '2months':
+                            endDate.setMonth(todayDate.getMonth() + 2);
+                            break;
+                        case '3months':
+                            endDate.setMonth(todayDate.getMonth() + 3);
+                            break;
+                        case '4months':
+                            endDate.setMonth(todayDate.getMonth() + 4);
+                            break;
+                        case '5months':
+                            endDate.setMonth(todayDate.getMonth() + 5);
+                            break;
+                        case '6months':
+                            endDate.setMonth(todayDate.getMonth() + 6);
+                            break;
+                    }
+
+                    var currentDate = todayDate;
+                    var datesToAssign = [];
+                    switch (survey.recurrence) {
+                        case '1day':
+                            //schedule an assigned survey each day until endDate
+                            while(currentDate < endDate){
+                                datesToAssign.push(new Date(currentDate));
+                                currentDate.setDate(currentDate.getDate()+1);
+                            }
+                            break;
+                        case '1week':
+                            while(currentDate < endDate){
+                                datesToAssign.push(new Date(currentDate));
+                                currentDate.setDate(currentDate.getDate()+7);
+                            }
+                            break;
+                        case '2weeks':
+                            while(currentDate < endDate){
+                                datesToAssign.push(new Date(currentDate));
+                                currentDate.setDate(currentDate.getDate()+14);
+                            }
+                            break;
+                        case '1month':
+                            while(currentDate < endDate){
+                                datesToAssign.push(new Date(currentDate));
+                                currentDate.setDate(currentDate.getMonth()+1);
+                            }
+                            break;
+                        case '2months':
+                            while(currentDate < endDate){
+                                datesToAssign.push(new Date(currentDate));
+                                currentDate.setDate(currentDate.getMonth()+2);
+                            }
+                            break;
+                    }
+
+                    // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
+                    // before inserting new items in
+                    AssignedSurvey.find({surveyId:surveyId}).remove(function(err, num){
+                        if(err){}
+                        else{
+                            var assignedSurveysToInsert = [];
+
+                            datesToAssign.forEach(function(date){
+                                assignedSurveysToInsert.push({
+                                    userId: userId,
+                                    surveyId: surveyId,
+                                    isDone:false,
+                                    showDate:date,
+                                    _v:0
+                                });
+                            });
+
+                            AssignedSurvey.collection.insert(assignedSurveysToInsert, function(err,items){});
+
+                            demo.autoAssign(userId, surveyId, function() {
+                                res.redirect('/user/' + userId);
+                            });
+                        }
+                    });
+            }
+            else{
+                var data ={
+                    userId:userId,
+                    surveyId:surveyId
+                };
+
+                var assignedSurvey = new AssignedSurvey(data);
+                assignedSurvey.save(function(err, savedObj) {});
+
+                demo.autoAssign(userId, surveyId, function() {
+                    res.redirect('/user/' + userId);
+                });
+            }
         });
     };
 
@@ -71,24 +169,50 @@ module.exports = (function() {
 
             //if the person has some assigned surveys in the queue, redirect him to the first one found
             // same as if he would navigate to /checkin/new
-            AssignedSurvey.findOne({userId: req.user.id, isDone:false},"", function(err, assignedSurvey){
-                if(assignedSurvey){
-                    Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                        if (!template) {
-                            res.redirect('/dashboard');
-                        }
 
-                        CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                            res.render('checkin/checkinEdit.ejs', {
-                                checkin: {},
-                                templates: templates,
-                                survey: template
+            AssignedSurvey.findOne({userId:req.user.id, isDone:false, showDate:{$ne:null, $lt:new Date()}},{},function(err,assignedSurvey){
+                if(err){}
+                else{
+                    if(assignedSurvey){
+                        Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                            if (!template) {
+                                res.redirect('/dashboard');
+                            }
+
+                            CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                                res.render('checkin/checkinEdit.ejs', {
+                                    checkin: {},
+                                    templates: templates,
+                                    survey: template,
+                                    assignedSurvey:assignedSurvey
+                                });
                             });
                         });
-                    });
-                }
-                else{
-                    res.redirect('/dashboard');
+                    }
+                    else{
+                        // try again for all the assignedSurvey items that have showDate = null
+                        AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
+                            if(assignedSurvey){
+                                Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                                    if (!template) {
+                                        res.redirect('/dashboard');
+                                    }
+
+                                    CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                                        res.render('checkin/checkinEdit.ejs', {
+                                            checkin: {},
+                                            templates: templates,
+                                            survey: template,
+                                            assignedSurvey:assignedSurvey
+                                        });
+                                    });
+                                });
+                            }
+                            else{
+                                res.redirect('/dashboard');
+                            }
+                        });
+                    }
                 }
             });
 		}

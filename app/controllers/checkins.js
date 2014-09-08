@@ -355,12 +355,11 @@ module.exports = (function() {
 									return;
 								}
 
-                                //here take the newly submitted survey and delete it from the assignedSurvey collection in DB
-                                var surveyId = req.body.surveyID;
-                                var userId = req.user.id;
+                                //here take the newly submitted survey and set it to "isDone:true" in assignedSurvey collection in DB
+                                var assignedSurveyId = req.body.assignedSurveyId;
+                                AssignedSurvey.update({_id: assignedSurveyId},{isDone:true},function(err,num){});
 
-                                AssignedSurvey.update({surveyId: surveyId, userId: userId},{isDone:true},function(err,num){});
-								callback();
+                                callback();
 							});
 						});
 					});

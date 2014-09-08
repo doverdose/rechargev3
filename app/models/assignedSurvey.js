@@ -13,6 +13,7 @@ module.exports = (function () {
     var AssignedSurveySchema = new Schema({
         userId: String,
         surveyId: String,
+        showDate: Date,
         isDone: {type: Boolean, default: false}
     });
 
