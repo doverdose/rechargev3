@@ -24,19 +24,21 @@
 			</a>
 		</div>
 		<div class="col-xs-6 text-right">
-			<form action="/user/assign" method="post">
-				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-				<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
-				<input type="hidden" name="userId" id="userId" value="<%= yourPatients[i].id %>">
 
-				<select name='surveyId' class="form-control" style='float: left;width: 150px;'>
-          <% for(var j=0; j < surveys.length; j++) { %>
-				  <option value="<%= surveys[j].id %>"> <%= surveys[j].title %> </option>
-          <% } %>
-				</select>
+      <form action="/user/assignSurvey" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+        <input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
+        <input type="hidden" name="userId" id="userId" value="<%=yourPatients[i].id%>">
 
-				<button type="submit" class="btn btn-primary">Assign survey</button>
-			</form>
+        <select name='surveyId' class="form-control" style='float: left;width: 150px;'>
+
+          <% for(var j = 0; j < surveys.length; j++) { %>
+          <option value="<%=surveys[j].id%>"><%= surveys[j].title %></option>
+          <% }%>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Assign survey!</button>
+      </form>
 		</div>
 		<div class="col-xs-2 text-right">
 			<form action="/provider/user/remove" method="post">
