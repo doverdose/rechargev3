@@ -52,7 +52,7 @@ module.exports = function(app, passport) {
 	app.post('/follower/approve', auth.requiresLogin, users.approveFollow);
 	app.post('/follower/reject', auth.requiresLogin, users.rejectFollow);
 	app.post('/user/autoAssign', auth.requiresLogin, users.autoAssign);
-  app.post('/user/assign', auth.requiresLogin, users.assign);
+  app.post('/user/assignSurvey', auth.requiresLogin, users.assignSurvey);
 
 	app.post('/provider/user/remove', auth.requiresLogin, providers.removePatient);
 	app.post('/provider/user/add', auth.requiresLogin, providers.addPatient);

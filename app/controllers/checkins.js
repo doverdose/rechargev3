@@ -2,235 +2,236 @@
 /* Checkins controller */
 
 module.exports = (function() {
-        'use strict';
 
-        var mongoose = require('mongoose'),
-                async = require('async'),
-                moment = require('moment'),
-                Schedule = mongoose.model('Schedule'),
-                Checkin = mongoose.model('Checkin'),
-                Survey = mongoose.model('Survey'),
-                CheckinTemplate = mongoose.model('CheckinTemplate');
+	'use strict';
 
-        var view = function(req, res, next) {
-                Checkin.findOne({
-                        _id: req.params.id
-                }, function(err, c) {
-                        if (!c) {
-                                return next(new Error('Failed to load Check-in ' + req.params.id));
-                        }
-                        c.pastAnswers.reverse();
-                        res.render('checkin/checkinView.ejs', {
-                                c: c,
-                                choice: (c.type.indexOf('choice') !== -1)
-                        });
-                });
-        };
+	var mongoose = require('mongoose'),
+		async = require('async'),
+		moment = require('moment'),
+		Schedule = mongoose.model('Schedule'),
+		Checkin = mongoose.model('Checkin'),
+		Survey = mongoose.model('Survey'),
+		CheckinTemplate = mongoose.model('CheckinTemplate'),
+        AssignedSurvey = mongoose.model('AssignedSurvey');
 
-        var listSurveys = function(req, res, next) {
-                var templateVars = {};
-                Survey.find({}, function(err, surveyTemplates) {
-                        //all surveys list
-                        if (err) {
-                                return next(err);
-                        }
-                        templateVars.surveyTemplates = surveyTemplates;
+    var view = function(req, res, next) {
+		Checkin.findOne({
+			_id: req.params.id
+		}, function(err, c) {
+			if (!c) {
+				return next(new Error('Failed to load Check-in ' + req.params.id));
+			}
+			c.pastAnswers.reverse();
+			res.render('checkin/checkinView.ejs', {
+				c: c,
+				choice: (c.type.indexOf('choice') !== -1)
+			});
+		});
+	};
 
-                        Checkin.find({
-                                user_id: req.user._id
-                        }, {
-                                survey_id: true,
-                        }, function(err, results) {
-                                if(err) {
-                                        next(err);
-                                }
-                                var surveys = [];
-                                for(var i = 0; i < results.length; i++) {
-                                        surveys.push(results[i].survey_id);
-                                }
+	var listSurveys = function(req, res, next) {
+		var templateVars = {};
+		Survey.find({}, function(err, surveyTemplates) {
+			//all surveys list
+			if (err) {
+				return next(err);
+			}
+			templateVars.surveyTemplates = surveyTemplates;
 
-                                Survey.find({
-                                        _id: {
-                                                $in: surveys
-                                        }
-                                }, function(err, surveysFound) {
-                                        templateVars.surveys = surveysFound;
+			Checkin.find({
+				user_id: req.user._id
+			}, {
+				survey_id: true,
+			}, function(err, results) {
+				if(err) {
+					next(err);
+				}
+				var surveys = [];
+				for(var i = 0; i < results.length; i++) {
+					surveys.push(results[i].survey_id);
+				}
 
-                                        async.parallel([
-                                                function(callback) {
-                                                        // get checkin details
-                                                        Checkin.find({
-                                                                user_id: req.user._id
-                                                        }, function(err, checkins) {
-                                                                if (err) {
-                                                                        return next(err);
-                                                                }
+				Survey.find({
+					_id: {
+						$in: surveys
+					}
+				}, function(err, surveysFound) {
+					templateVars.surveys = surveysFound;
 
-                                                                templateVars.checkins = checkins.reverse();
-                                                                callback();
-                                                        });
-                                                },
-                                                function(callback) {
-                                                        // get total score from all checkins
-                                                        Checkin.find({
-                                                                user_id: req.user._id
-                                                        }, function(err, checkins) {
-                                                                if (err) {
-                                                                        return next(err);
-                                                                }
+					async.parallel([
+						function(callback) {
+							// get checkin details
+							Checkin.find({
+								user_id: req.user._id
+							}, function(err, checkins) {
+								if (err) {
+									return next(err);
+								}
 
-                                                                // calculate user score
-                                                                var totalScore = 0;
-                                                                checkins.forEach(function(checkin) {
-                                                                        totalScore += checkin.score || 0;
-                                                                });
+								templateVars.checkins = checkins.reverse();
+								callback();
+							});
+						},
+						function(callback) {
+							// get total score from all checkins
+							Checkin.find({
+								user_id: req.user._id
+							}, function(err, checkins) {
+								if (err) {
+									return next(err);
+								}
 
-                                                                templateVars.totalScore = totalScore;
-                                                                callback();
-                                                        });
-                                                },
-                                                function(callback) {
-                                                        CheckinTemplate.find({}, function(err, checkinTemplates) {
-                                                                if (err) {
-                                                                        return next(err);
-                                                                }
-                                                                templateVars.checkinTemplates = checkinTemplates;
-                                                                callback();
-                                                        });
-                                                }
-                                        ], function(err) {
-                                                if(err) {
-                                                        next(err);
-                                                }
+								// calculate user score
+								var totalScore = 0;
+								checkins.forEach(function(checkin) {
+									totalScore += checkin.score || 0;
+								});
 
-                                                var nextMonday = moment().day(8).hour(0).minute(0).toDate(),
-                                                        tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
-                                                        today = moment().hour(0).minute(0).second(0).toDate();
+								templateVars.totalScore = totalScore;
+								callback();
+							});
+						},
+						function(callback) {
+							CheckinTemplate.find({}, function(err, checkinTemplates) {
+								if (err) {
+									return next(err);
+								}
+								templateVars.checkinTemplates = checkinTemplates;
+								callback();
+							});
+						}
+					], function(err) {
+						if(err) {
+							next(err);
+						}
 
-                                                // get schedules for checking-in
-                                                Schedule.find({
-                                                        user_id: req.user._id,
-                                                        $and: [{
-                                                                $or: [{
-                                                                        expires: false
-                                                                }, {
-                                                                        expire_date: {
-                                                                                $gte: today
-                                                                        }
-                                                                }]
-                                                        }, {
-                                                                $or: [{
-                                                                        due_date: {
-                                                                                $gte: today
-                                                                        }
-                                                                }, {
-                                                                        repeat_interval: {
-                                                                                $gt: 0
-                                                                        }
-                                                                }]
-                                                        }]
-                                                }, function(err, schedules) {
-                                                        if (err) {
-                                                                return next(err);
-                                                        }
+						var nextMonday = moment().day(8).hour(0).minute(0).toDate(),
+							tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
+							today = moment().hour(0).minute(0).second(0).toDate();
 
-                                                        templateVars.schedules = {
-                                                                today: [],
-                                                                thisWeek: []
-                                                        };
+						// get schedules for checking-in
+						Schedule.find({
+							user_id: req.user._id,
+							$and: [{
+								$or: [{
+									expires: false
+								}, {
+									expire_date: {
+										$gte: today
+									}
+								}]
+							}, {
+								$or: [{
+									due_date: {
+										$gte: today
+									}
+								}, {
+									repeat_interval: {
+										$gt: 0
+									}
+								}]
+							}]
+						}, function(err, schedules) {
+							if (err) {
+								return next(err);
+							}
 
-                                                        // for recurring dates, set the next
-                                                        schedules.forEach(function(schedule) {
-                                                                // if the due_date has passed, but this is a recurring check-in
-                                                                if(schedule.due_date < new Date() && schedule.repeat_interval) {
-                                                                        // calculate the number of possible recurring times
-                                                                        // then add one more to get the 'next' recurring date
-                                                                        var recurringTimes = parseInt(moment().diff(schedule.due_date, 'days') / schedule.repeat_interval) + 1;
-                                                                        var nextDueDate = moment(schedule.due_date).add('days', schedule.repeat_interval * recurringTimes).toDate();
-                                                                        schedule.due_date = nextDueDate;
-                                                                }
+							templateVars.schedules = {
+								today: [],
+								thisWeek: []
+							};
 
-                                                                templateVars.checkinTemplates.every(function(template) {
-                                                                        if(schedule.template_id.equals(template._id)) {
-                                                                                schedule.template = template;
-                                                                                return false;
-                                                                        }
-                                                                        return true;
-                                                                });
+							// for recurring dates, set the next
+							schedules.forEach(function(schedule) {
+								// if the due_date has passed, but this is a recurring check-in
+								if(schedule.due_date < new Date() && schedule.repeat_interval) {
+									// calculate the number of possible recurring times
+									// then add one more to get the 'next' recurring date
+									var recurringTimes = parseInt(moment().diff(schedule.due_date, 'days') / schedule.repeat_interval) + 1;
+									var nextDueDate = moment(schedule.due_date).add('days', schedule.repeat_interval * recurringTimes).toDate();
+									schedule.due_date = nextDueDate;
+								}
 
-                                                                var compareDate = {
-                                                                        date: null,
-                                                                        object: null
-                                                                };
+								templateVars.checkinTemplates.every(function(template) {
+									if(schedule.template_id.equals(template._id)) {
+										schedule.template = template;
+										return false;
+									}
+									return true;
+								});
 
-                                                                // check if the user has already checked-in in the last interval
-                                                                if(schedule.due_date < tomorrow) {
-                                                                        compareDate.date = tomorrow;
-                                                                        compareDate.object = 'today';
-                                                                } else if (schedule.due_date < nextMonday) {
-                                                                        compareDate.date = nextMonday;
-                                                                        compareDate.object = 'thisWeek';
-                                                                }
+								var compareDate = {
+									date: null,
+									object: null
+								};
 
-                                                                if(compareDate.date) {
-                                                                        // parse all checkins, to see if we already made the required checkin
-                                                                        var existingCheckin = false;
-                                                                        templateVars.checkins.every(function(checkin) {
-                                                                                // look for a template with the same title made in the last day
-                                                                                if(checkin.title === schedule.template.title &&
-                                                                                        checkin.timestamp > moment(compareDate.date).subtract(schedule.repeat_interval, 'days').toDate() &&
-                                                                                        checkin.timestamp < compareDate.date) {
+								// check if the user has already checked-in in the last interval
+								if(schedule.due_date < tomorrow) {
+									compareDate.date = tomorrow;
+									compareDate.object = 'today';
+								} else if (schedule.due_date < nextMonday) {
+									compareDate.date = nextMonday;
+									compareDate.object = 'thisWeek';
+								}
 
-                                                                                        existingCheckin = true;
-                                                                                        return false;
-                                                                                }
-                                                                                return true;
-                                                                        });
+								if(compareDate.date) {
+									// parse all checkins, to see if we already made the required checkin
+									var existingCheckin = false;
+									templateVars.checkins.every(function(checkin) {
+										// look for a template with the same title made in the last day
+										if(checkin.title === schedule.template.title &&
+											checkin.timestamp > moment(compareDate.date).subtract(schedule.repeat_interval, 'days').toDate() &&
+											checkin.timestamp < compareDate.date) {
 
-                                                                        if(!existingCheckin) {
-                                                                                templateVars.schedules[compareDate.object].push(schedule);
-                                                                        }
-                                                                }
-                                                        });
-                                                        res.render('checkin/listSurveys.ejs', templateVars);
-                                                });
-                                        });
-                                });
-                        });
-                });
-        };
+											existingCheckin = true;
+											return false;
+										}
+										return true;
+									});
 
-        var list = function(req, res, next) {
-                var templateVars = {};
+									if(!existingCheckin) {
+										templateVars.schedules[compareDate.object].push(schedule);
+									}
+								}
+							});
+							res.render('checkin/listSurveys.ejs', templateVars);
+						});
+					});
+				});
+			});
+		});
+	};
 
-                Checkin.find({
-                        user_id: req.user._id,
-                        survey_id: req.params.id
-                }, function(err, checkins) {
-                        if (err) {
-                                return next(err);
-                        }
+	var list = function(req, res, next) {
+		var templateVars = {};
 
-                        templateVars.checkins = checkins.reverse();
-                        res.render('checkin/list.ejs', templateVars);
-                });
-        };
+		Checkin.find({
+			user_id: req.user._id,
+			survey_id: req.params.id
+		}, function(err, checkins) {
+			if (err) {
+				return next(err);
+			}
 
-        var parseForm = function(form) {
-                var newAnswers = [];
-                if(form.answers && form.answers.length) {
-                        form.answers.forEach(function(answer) {
-                                // don't add if just whitespace
-                                if(answer.trim()) {
-                                        newAnswers.push({
-                                                text: answer
-                                        });
-                                }
-                        });
-                }
-                form.answers = newAnswers;
-                return form;
+			templateVars.checkins = checkins.reverse();
+			res.render('checkin/list.ejs', templateVars);
+		});
+	};
 
+	var parseForm = function(form) {
+		var newAnswers = [];
+		if(form.answers && form.answers.length) {
+			form.answers.forEach(function(answer) {
+				// don't add if just whitespace
+				if(answer.trim()) {
+					newAnswers.push({
+						text: answer
+					});
+				}
+			});
+		}
+		form.answers = newAnswers;
+		return form;
 	};
 
 	var parseDates = function(obj, schedule) {
@@ -353,7 +354,12 @@ module.exports = (function() {
 									callback(err);
 									return;
 								}
-								callback();
+
+                                //here take the newly submitted survey and set it to "isDone:true" in assignedSurvey collection in DB
+                                var assignedSurveyId = req.body.assignedSurveyId;
+                                AssignedSurvey.update({_id: assignedSurveyId},{isDone:true},function(err,num){});
+
+                                callback();
 							});
 						});
 					});

@@ -1,5 +1,41 @@
 <% layout('../layouts/default') -%>
 
+<script>
+    var checkIsStartingSurvey = function(tag){
+        if($(tag).prop('checked')){
+            $('#duration-select, #recurrence-select').prop('disabled', true);
+        }
+        else{
+            $('#duration-select, #recurrence-select').prop('disabled', false);
+        }
+    };
+
+    setTimeout(function(){
+        $('#duration-select').on('click',function(){
+            if($(this).val()){
+                if(!$('#recurrence-select').val()){
+                    $('#recurrence-select').find('.empty-option').next().prop('selected', true);
+                }
+
+            }else {
+                $('#recurrence-select').find('.empty-option').prop('selected', true);
+            }
+        });
+
+        $('#recurrence-select').on('click',function(){
+            if($(this).val()){
+                if(!$('#duration-select').val()){
+                    $('#duration-select').find('.empty-option').next().prop('selected', true);
+                }
+
+            }else {
+                $('#duration-select').find('.empty-option').prop('selected', true);
+            }
+        });
+    }, 100);
+
+</script>
+
 <div class="page-header">
 	<h2>New survey</h2>
 </div>
@@ -18,14 +54,45 @@
 		<label for="disabledSelect">Select templates</label>
 		<select multiple class="form-control" name='checkinTemplates'>
 			<% for(var i = 0; i < templates.length; i++) { %>
-				<option value="<%= templates[i].id %>" /><%= templates[i].title %></option>
+				<option value="<%= templates[i].id %>"><%= templates[i].title %></option>
 			<% } %>
 		</select>
 		<% if(typeof error !== 'undefined' && typeof error.template !== 'undefined') { %>
 			<p class="text-warning"><%= error.template %></p>
 		<% } %>
 	</div>
+    <div class="form-group">
+        <label for="isStartingSurvey">Is starting survey</label>
+        <p>
+            <input onclick="checkIsStartingSurvey(this)" type="checkbox" name="isStartingSurvey">
+        </p>
+    </div>
+    <div class="form-group">
+        <label for="duration">Duration</label>
+        <select onclick="onSelectClick(this)" id="duration-select" class="form-control" name='duration'>
+            <option class="empty-option" value=""></option>
+            <option value="1week">1 week</option>
+            <option value="1month">1 month</option>
+            <option value="2months">2 months</option>
+            <option value="3months">3 months</option>
+            <option value="4months">4 months</option>
+            <option value="5months">5 months</option>
+            <option value="6months">6 months</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="recurrence">Repeat survey once</label>
+        <select onclick="onSelectClick(this)" id="recurrence-select" class="form-control" name='recurrence'>
+            <option class="empty-option" value=""></option>
+            <option value="1day">a day</option>
+            <option value="1week">a week</option>
+            <option value="2weeks">every 2 weeks</option>
+            <option value="1month">a month</option>
+            <option value="2months">every 2 months</option>
+        </select>
+    </div>
 	<div class="form-group">
 		<button type="submit" class="btn btn-primary btn-lg js-btn-submit">Save</button>
 	</div>
+
 </form>
