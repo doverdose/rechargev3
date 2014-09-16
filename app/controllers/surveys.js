@@ -141,7 +141,11 @@ module.exports = (function() {
                                                         });
                                                     }
                                                 });
-
+                                                // this type of insert uses mongoDB directly, bypassing the Mongoose schema;
+                                                // the reason for this is that Mongoose cannot technically do multiple inserts,
+                                                // what it does is an insert per each item to be inserted, thus lowering performance
+                                                // and raising the risks for inconsistent data if anything fails during a high
+                                                // number of inserts
                                                 AssignedSurvey.collection.insert(assignedSurveysToInsert, function(err,items){});
                                             }
                                         });

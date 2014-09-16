@@ -14,6 +14,7 @@ module.exports = function(app, passport) {
 		settings = require('../app/controllers/settings'),
 		providers = require('../app/controllers/providers'),
 		surveys = require('../app/controllers/surveys'),
+        medications = require('../app/controllers/medications'),
 		admin = require('../app/controllers/admin'),
 		schedules = require('../app/controllers/schedules'),
 		auth = require('./middlewares/authorization');
@@ -97,6 +98,12 @@ module.exports = function(app, passport) {
 	app.post('/surveys/add/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.addTemplate);
 	app.get('/surveys/create', auth.requiresLogin, auth.requiresAdmin, surveys.create);
 	app.get('/surveys/:id', auth.requiresLogin, auth.requiresAdmin, surveys.view);
+
+    app.get('/medications/new', auth.requiresLogin, auth.requiresAdmin, medications.createView);
+    app.post('/medications/create', auth.requiresLogin, auth.requiresAdmin, medications.create);
+    app.get('/medications/:id/edit', auth.requiresLogin, auth.requiresAdmin, medications.updateView);
+    app.post('/medications/update', auth.requiresLogin, auth.requiresAdmin, medications.update);
+    app.post('/medications/delete', auth.requiresLogin, auth.requiresAdmin, medications.remove);
 
 	//dashboard
 	app.get('/dashboard', auth.requiresLogin, dashboard.index);

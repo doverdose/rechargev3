@@ -9,7 +9,8 @@ module.exports = (function() {
 		User = mongoose.model('User'),
 		Survey = mongoose.model('Survey'),
 		CheckinTemplate = mongoose.model('CheckinTemplate'),
-		Schedule = mongoose.model('Schedule');
+		Schedule = mongoose.model('Schedule'),
+        Medication = mongoose.model('Medication');
 
 	var admin = function(req, res, next) {
 
@@ -152,7 +153,19 @@ module.exports = (function() {
 					templateVars.surveys = surveys;
 					callback();
 				});
-			}
+			},
+            function(callback) {
+//                get full medication list
+                Medication.find({
+                }, function(err, items) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    templateVars.medication = items;
+                    callback();
+                });
+            }
 		], function(err) {
 
 			if (err) {
