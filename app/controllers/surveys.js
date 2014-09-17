@@ -93,13 +93,19 @@ module.exports = (function() {
                     if(req.body.isStartingSurvey){
                         isStartingSurvey = true;
                     }
+                    var isWizardSurvey = false;
+                    if(req.body.isWizardSurvey){
+                        isWizardSurvey = true;
+                    }
 
 					var data = {
 						checkinTemplates: req.body.checkinTemplates,
 						title: req.body.title,
                         isStartingSurvey: isStartingSurvey,
-                        duration: req.body.duration,
-                        recurrence: req.body.recurrence
+                        duration: req.body.duration || "",
+                        recurrence: req.body.recurrence || "",
+                        isWizardSurvey: isWizardSurvey,
+                        maximumIterations: req.body.maximumIterations || ""
 					};
 
 					var survey = new Survey(data);

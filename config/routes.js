@@ -84,6 +84,8 @@ module.exports = function(app, passport) {
 	app.get('/checkin/survey/:id', auth.requiresLogin, checkin.list);
 	app.get('/checkin/:id', auth.requiresLogin, checkin.view);
 
+//    app.post('/checkin/add-iteration', auth.requiresLogin, checkin.addIteration);
+
 	app.get('/settings', auth.requiresLogin, function(req, res) {
 		res.redirect('/settings/profile');
 	});
