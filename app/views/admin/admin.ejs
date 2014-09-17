@@ -95,8 +95,14 @@
 						</a>
 					</div>
 					<div class="col-xs-7 text-right">
-						<a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
-						<a class="btn btn-danger" href="/user/<%= patients[i].id %>/delete"> Delete </a>
+                        <form action="/user/delete" method="post">
+                            <a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
+                            <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+                            <input type="hidden" name="userId" id="userId" value="<%= patients[i].id %>">
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
 					</div>
 				</div>
 			</div>
