@@ -143,7 +143,7 @@ module.exports = (function() {
                                                             surveyId: savedSurvey.id,
                                                             isDone:false,
                                                             showDate:null,
-                                                            _v:0
+                                                            __v:0
                                                         });
                                                     }
                                                 });
