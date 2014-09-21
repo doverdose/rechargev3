@@ -12,7 +12,8 @@ module.exports = (function() {
 		Checkin = mongoose.model('Checkin'),
 		Survey = mongoose.model('Survey'),
 		CheckinTemplate = mongoose.model('CheckinTemplate'),
-        AssignedSurvey = mongoose.model('AssignedSurvey');
+        AssignedSurvey = mongoose.model('AssignedSurvey'),
+        Medication = mongoose.model('Medication');
 
     var view = function(req, res, next) {
 		Checkin.findOne({
@@ -395,15 +396,47 @@ module.exports = (function() {
 				return next(new Error('Failed to load Check-in Template ' + req.body.id));
 			}
 
-			CheckinTemplate.find({
-				_id: { $in: template.checkinTemplates}
-			}, function(err, templates) {
-				res.render('checkin/checkinEdit.ejs', {
-					checkin: {},
-					templates: templates,
-					survey: template
-				});
-			});
+            Medication.find({},function(err,dropdownItems){
+                if(err){
+                    next(err);
+                }
+
+                if(dropdownItems){
+                    var stringValues = [];
+                    var tempString = "";
+
+                    dropdownItems.forEach(function(item){
+                        tempString = "";
+
+                        //convert ongoose object to actual js object
+                        item = item.toObject();
+                        for(var property in item){
+                            if (item.hasOwnProperty(property)) {
+                                if(property !="_id" && property != "__v"){
+                                    if(!tempString){
+                                        tempString = item[property];
+                                    }else{
+                                        tempString = tempString + ", " + item[property];
+                                    }
+                                }
+                            }
+                        }
+                        stringValues.push(tempString);
+                    });
+                    dropdownItems = stringValues;
+                }
+
+                CheckinTemplate.find({
+                    _id: { $in: template.checkinTemplates}
+                }, function(err, templates) {
+                    res.render('checkin/checkinEdit.ejs', {
+                        checkin: {},
+                        templates: templates,
+                        survey: template,
+                        dropdownDataSource:dropdownItems
+                    });
+                });
+            });
 		});
 	};
 

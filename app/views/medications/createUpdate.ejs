@@ -1,0 +1,34 @@
+<% layout('../layouts/default')%>
+
+<div class="page-header">
+	<h3>
+        <%=title%>
+    </h3>
+</div>
+
+
+<form role="form" action="<%=formAction%>" method="post">
+	<input type="hidden" name="admin" value="true">
+	<input type="hidden" name="_csrf" value="<%= csrf_token %>">
+
+    <input type="hidden" name="medication[id]" value="<%= medication.id || '' %>">
+
+
+	<div class="form-group">
+		<label for="generic-name">Generic Name</label>
+		<input type="text" class="form-control" id="generic-name" name="medication[genericName]" value="<%=medication.genericName || '' %>">
+        <% if(typeof error !== 'undefined' && typeof error.genericName !== 'undefined') { %>
+            <p class="text-warning"><%= error.genericName %></p>
+        <% } %>
+	</div>
+
+    <div class="form-group">
+        <label for="trade-name">Trade Name</label>
+        <input type="text" class="form-control" id="trade-name" name="medication[tradeName]" value="<%=medication.tradeName || '' %>">
+        <% if(typeof error !== 'undefined' && typeof error.tradeName !== 'undefined') { %>
+            <p class="text-warning"><%= error.tradeName %></p>
+        <% } %>
+    </div>
+
+	<button type="submit" class="btn btn-primary btn-lg js-btn-submit"><%=submitButtonText%></button>
+</form>

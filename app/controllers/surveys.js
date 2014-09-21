@@ -93,13 +93,19 @@ module.exports = (function() {
                     if(req.body.isStartingSurvey){
                         isStartingSurvey = true;
                     }
+                    var isWizardSurvey = false;
+                    if(req.body.isWizardSurvey){
+                        isWizardSurvey = true;
+                    }
 
 					var data = {
 						checkinTemplates: req.body.checkinTemplates,
 						title: req.body.title,
                         isStartingSurvey: isStartingSurvey,
-                        duration: req.body.duration,
-                        recurrence: req.body.recurrence
+                        duration: req.body.duration || "",
+                        recurrence: req.body.recurrence || "",
+                        isWizardSurvey: isWizardSurvey,
+                        maximumIterations: req.body.maximumIterations || ""
 					};
 
 					var survey = new Survey(data);
@@ -137,11 +143,15 @@ module.exports = (function() {
                                                             surveyId: savedSurvey.id,
                                                             isDone:false,
                                                             showDate:null,
-                                                            _v:0
+                                                            __v:0
                                                         });
                                                     }
                                                 });
-
+                                                // this type of insert uses mongoDB directly, bypassing the Mongoose schema;
+                                                // the reason for this is that Mongoose cannot technically do multiple inserts,
+                                                // what it does is an insert per each item to be inserted, thus lowering performance
+                                                // and raising the risks for inconsistent data if anything fails during a high
+                                                // number of inserts
                                                 AssignedSurvey.collection.insert(assignedSurveysToInsert, function(err,items){});
                                             }
                                         });

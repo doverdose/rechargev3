@@ -15,7 +15,9 @@ module.exports = (function() {
 		checkinTemplates: [],
         isStartingSurvey: Boolean,
         duration: String,
-        recurrence: String
+        recurrence: String,
+        isWizardSurvey: Boolean,
+        maximumIterations: String
 	});
 
 	/**

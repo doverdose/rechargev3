@@ -151,7 +151,7 @@ module.exports = (function() {
                                     surveyId: surveyId,
                                     isDone:false,
                                     showDate:date,
-                                    _v:0
+                                    __v:0
                                 });
                             });
 
@@ -243,7 +243,6 @@ module.exports = (function() {
                                     if (!template) {
                                         res.redirect('/dashboard');
                                     }
-
                                     CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
                                         res.render('checkin/checkinEdit.ejs', {
                                             checkin: {},
