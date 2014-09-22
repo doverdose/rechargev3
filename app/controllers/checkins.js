@@ -367,7 +367,7 @@ module.exports = (function() {
 				};
 			})(i, req.body.data[i].answers));
 		}
-		async.parallel(functions, function(err) {
+		async.series(functions, function(err) {
 			if(err) {
 				next(err);
 			}
@@ -388,6 +388,31 @@ module.exports = (function() {
 		});
 	};
 
+    var getStringValuesFromItemsArray = function(items){
+        var stringValues = [];
+        var tempString = "";
+
+        items.forEach(function(item){
+            tempString = "";
+
+            //convert mongoose object to actual js object
+            item = item.toObject();
+            for(var property in item){
+                if (item.hasOwnProperty(property)) {
+                    if(property !="_id" && property != "__v"){
+                        if(!tempString){
+                            tempString = item[property];
+                        }else{
+                            tempString = tempString + ", " + item[property];
+                        }
+                    }
+                }
+            }
+            stringValues.push(tempString);
+        });
+        return stringValues;
+    }
+
 	var createView = function (req, res, next) {
 		Survey.findOne({
 			_id: req.body.id
@@ -402,28 +427,7 @@ module.exports = (function() {
                 }
 
                 if(dropdownItems){
-                    var stringValues = [];
-                    var tempString = "";
-
-                    dropdownItems.forEach(function(item){
-                        tempString = "";
-
-                        //convert ongoose object to actual js object
-                        item = item.toObject();
-                        for(var property in item){
-                            if (item.hasOwnProperty(property)) {
-                                if(property !="_id" && property != "__v"){
-                                    if(!tempString){
-                                        tempString = item[property];
-                                    }else{
-                                        tempString = tempString + ", " + item[property];
-                                    }
-                                }
-                            }
-                        }
-                        stringValues.push(tempString);
-                    });
-                    dropdownItems = stringValues;
+                    dropdownItems = getStringValuesFromItemsArray(dropdownItems);
                 }
 
                 CheckinTemplate.find({
@@ -466,11 +470,23 @@ module.exports = (function() {
 				if(err) {
 					next(err);
 				}
-				res.render('checkin/editView.ejs', {
-					c: c,
-					template: template,
-					choice: (c.type.indexOf('choice') !== -1)
-				});
+
+                Medication.find({},function(err,dropdownItems){
+                    if(err){
+                        next(err);
+                    }
+
+                    if(dropdownItems){
+                        dropdownItems = getStringValuesFromItemsArray(dropdownItems);
+                    }
+
+                    res.render('checkin/editView.ejs', {
+                        c: c,
+                        template: template,
+                        choice: (c.type.indexOf('choice') !== -1),
+                        dropdownDataSource:dropdownItems
+                    });
+                });
 			});
 		});
 	};

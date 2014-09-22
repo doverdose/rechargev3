@@ -31,5 +31,27 @@
 		<div class='clear'></div>
 	</div>
 
+    <%if(Object.keys(recentCheckins).length > 0){%>
+    <div>
+        <h3>Most recent medication:</h3>
+        <table class="table">
+            <tr>
+                <%var answerCount%>
+                <%for(attr in recentCheckins){%>
+                <%if(!answerCount){answerCount = recentCheckins[attr].length}%>
+                <th><%=attr%></th>
+                <%}%>
+            </tr>
+
+            <%for(var i = 0; i < answerCount; i++){%>
+            <tr>
+                <%for(attr in recentCheckins){%>
+                <td><%=recentCheckins[attr][i]%></td>
+                <%}%>
+            </tr>
+            <%}%>
+        </table>
+    </div>
+    <%}%>
 	<div class='notice'></div>
 </div>
