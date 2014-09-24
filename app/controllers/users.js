@@ -8,7 +8,33 @@ module.exports = (function() {
 		User = mongoose.model('User'),
         AssignedSurvey = mongoose.model('AssignedSurvey'),
         CheckinTemplate = mongoose.model('CheckinTemplate'),
-        Survey = mongoose.model('Survey');
+        Survey = mongoose.model('Survey'),
+        Medication = mongoose.model('Medication');
+
+    var getStringValuesFromItemsArray = function (items) {
+        var stringValues = [];
+        var tempString = "";
+
+        items.forEach(function (item) {
+            tempString = "";
+
+            //convert mongoose object to actual js object
+            item = item.toObject();
+            for (var property in item) {
+                if (item.hasOwnProperty(property)) {
+                    if (property != "_id" && property != "__v") {
+                        if (!tempString) {
+                            tempString = item[property];
+                        } else {
+                            tempString = tempString + ", " + item[property];
+                        }
+                    }
+                }
+            }
+            stringValues.push(tempString);
+        });
+        return stringValues;
+    }
 
 	var autoAssign = function(req, res, next) {
 		console.log(req.body);
@@ -170,49 +196,61 @@ module.exports = (function() {
             //if the person has some assigned surveys in the queue, redirect him to the first one found
             // same as if he would navigate to /checkin/new
 
-            AssignedSurvey.findOne({userId:req.user.id, isDone:false, showDate:{$ne:null, $lt:new Date()}},{},function(err,assignedSurvey){
-                if(err){}
-                else{
-                    if(assignedSurvey){
-                        Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                            if (!template) {
-                                res.redirect('/dashboard');
-                            }
+            Medication.find({}, function (err, dropdownItems) {
+                if (err) {
+                    next(err);
+                }
 
-                            CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                                res.render('checkin/checkinEdit.ejs', {
-                                    checkin: {},
-                                    templates: templates,
-                                    survey: template,
-                                    assignedSurvey:assignedSurvey
-                                });
-                            });
-                        });
-                    }
+                if (dropdownItems) {
+                    dropdownItems = getStringValuesFromItemsArray(dropdownItems);
+                }
+
+                AssignedSurvey.findOne({userId:req.user.id, isDone:false, showDate:{$ne:null, $lt:new Date()}},{},function(err,assignedSurvey){
+                    if(err){}
                     else{
-                        // try again for all the assignedSurvey items that have showDate = null
-                        AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
-                            if(assignedSurvey){
-                                Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                                    if (!template) {
-                                        res.redirect('/dashboard');
-                                    }
-                                    CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                                        res.render('checkin/checkinEdit.ejs', {
-                                            checkin: {},
-                                            templates: templates,
-                                            survey: template,
-                                            assignedSurvey:assignedSurvey
-                                        });
+                        if(assignedSurvey){
+                            Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                                if (!template) {
+                                    res.redirect('/dashboard');
+                                }
+
+                                CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                                    res.render('checkin/checkinEdit.ejs', {
+                                        checkin: {},
+                                        templates: templates,
+                                        survey: template,
+                                        assignedSurvey:assignedSurvey,
+                                        dropdownDataSource: dropdownItems
                                     });
                                 });
-                            }
-                            else{
-                                res.redirect('/dashboard');
-                            }
-                        });
+                            });
+                        }
+                        else{
+                            // try again for all the assignedSurvey items that have showDate = null
+                            AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
+                                if(assignedSurvey){
+                                    Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                                        if (!template) {
+                                            res.redirect('/dashboard');
+                                        }
+                                        CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                                            res.render('checkin/checkinEdit.ejs', {
+                                                checkin: {},
+                                                templates: templates,
+                                                survey: template,
+                                                assignedSurvey:assignedSurvey,
+                                                dropdownDataSource: dropdownItems
+                                            });
+                                        });
+                                    });
+                                }
+                                else{
+                                    res.redirect('/dashboard');
+                                }
+                            });
+                        }
                     }
-                }
+                });
             });
 		}
 	};

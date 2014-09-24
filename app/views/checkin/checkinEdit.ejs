@@ -13,14 +13,16 @@
 
     setTimeout(function(){
         survey = <%- JSON.stringify(survey) %>;
-        dropdownDataSource = <%- JSON.stringify(dropdownDataSource) %>;
-        firstIterationDiv = $('.iteration')[0];
-        firstIterationDivClone = $(firstIterationDiv).clone();
+        <%if(typeof dropdownDataSource != 'undefined'){%>
+            dropdownDataSource = <%- JSON.stringify(dropdownDataSource) %>;
+            firstIterationDiv = $('.iteration')[0];
+            firstIterationDivClone = $(firstIterationDiv).clone();
 
-        nrOfTemplates = $(firstIterationDiv).find(".template").length;
-        currentIndex = nrOfTemplates;
+            nrOfTemplates = $(firstIterationDiv).find(".template").length;
+            currentIndex = nrOfTemplates;
 
-        setupDropdownBindings();
+            setupDropdownBindings();
+        <%}%>
 
     }, 1000);
 
@@ -167,11 +169,19 @@
                                 </div>
                                 <% } %>
 
-                                <% if(templates[i].type === 'dropdowntext') { %>
+                                <% if(templates[i].type === 'dropdownText') { %>
                                 <div class="form-group">
                                     <input type="text" class="form-control typeahead"  name="data[<%= i %>][answers][]" required />
                                 </div>
+                                <% } %>
 
+                                <% if(templates[i].type === 'medicationCheckin') { %>
+                                    <%templates[i].questions.forEach(function(question, index){%>
+                                    <%-question.text%>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control"  name="data[<%= i %>][answers][]" required />
+                                    </div>
+                                    <% }) %>
                                 <% } %>
                             </div>
                         </div>
