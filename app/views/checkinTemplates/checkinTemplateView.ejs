@@ -15,6 +15,12 @@
 <h4 class="text-muted">Question:</h4>
 <p><%= c.question %></p>
 
+<%if(c.questions){%>
+    <% c.questions.forEach(function(question){%>
+    <p><%- question.text %></p>
+    <%})%>
+<%}%>
+
 <h4 class="text-muted">Score:</h4>
 <p><%= c.score %></p>
 

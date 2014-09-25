@@ -17,7 +17,8 @@ module.exports = (function() {
         duration: String,
         recurrence: String,
         isWizardSurvey: Boolean,
-        maximumIterations: String
+        maximumIterations: String,
+        isGenerated:Boolean
 	});
 
 	/**

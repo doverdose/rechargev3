@@ -18,6 +18,11 @@
 								</strong>
 								<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkin.tips || '' %>">
 									<%= checkin.question %>
+                                    <%if(typeof questions != 'undefined'){%>
+                                        <% questions.forEach(function(question){%>
+                                            <p><%- question.text %></p>
+                                        <%})%>
+                                    <%}%>
 								</h3>
 							</a>
 						</div>
