@@ -20,7 +20,7 @@ module.exports = (function() {
     var sendNotificationEmail = function(to,subject,html){
         transporter.sendMail({
             from: 'Recharge Notification Robot <baranditest1@gmail.com>', // sender address
-            to: 'ionut.nan@barandisolutions.ro',
+            to: to,
             subject: subject,
             html: html
         }, function(error, info){
