@@ -14,7 +14,8 @@ module.exports = (function () {
         userId: String,
         surveyId: String,
         showDate: Date,
-        isDone: {type: Boolean, default: false}
+        isDone: {type: Boolean, default: false},
+        hasNotifications: Boolean
     });
 
     /**

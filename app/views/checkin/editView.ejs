@@ -1,5 +1,55 @@
 <% layout('../layouts/default') -%>
 
+<script>
+    var dropdownDataSource = [];
+
+    setTimeout(function(){
+        dropdownDataSource = <%- JSON.stringify(dropdownDataSource) %>;
+        setupDropdownBindings();
+
+    }, 1000);
+
+    var setupDropdownBindings = function(){
+        $('.typeahead').typeahead('destroy');
+        //setup dropdowns for dropdown text type of inputs
+        $('.typeahead').typeahead(
+                {
+                    hint: true,
+                    highlight: true,
+                    minLength: 1
+                },
+                {
+                    source: substringMatcher(dropdownDataSource)
+                }
+        );
+    }
+
+    var substringMatcher = function(strs) {
+        return function findMatches(q, cb) {
+            var matches, substrRegex;
+
+            // an array that will be populated with substring matches
+            matches = [];
+
+            // regex used to determine if a string contains the substring `q`
+            substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function(i, str) {
+                if (substrRegex.test(str)) {
+                    // the typeahead jQuery plugin expects suggestions to a
+                    // JavaScript object, refer to typeahead docs for more info
+                    matches.push({ value: str });
+                }
+            });
+
+            cb(matches);
+        };
+    };
+
+</script>
+
 <div class="page-header">
 	<h3>
 		<small>Checkin from</small>
@@ -72,6 +122,11 @@
 					<textarea class="form-control"  name="answers[]" required></textarea>
 				</div>
 			<% } %>
+            <% if(template.type === 'dropdownText') { %>
+                <div class="form-group">
+                    <input type="text" class="form-control typeahead"  name="answers[]" required />
+                </div>
+            <% } %>
 		</div>
 	</div>
 

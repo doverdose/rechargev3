@@ -150,7 +150,20 @@ module.exports = (function() {
 						callback(err);
 						return;
 					}
-					templateVars.surveys = surveys;
+
+                    var assignableSurveys = [];
+                    surveys.forEach(function(survey){
+                        if(!survey.isGenerated){
+                            assignableSurveys.push(survey);
+                        }
+                    });
+
+                    if(req.user.permissions.admin){
+                        templateVars.surveys = surveys;
+
+                    } else{
+                        templateVars.surveys = assignableSurveys;
+                    }
 					callback();
 				});
 			},

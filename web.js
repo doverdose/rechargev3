@@ -27,6 +27,9 @@ require('./config/express')(app, config, passport, env);
 // Bootstrap routes
 require('./config/routes')(app, passport)
 
+//run notificationsManager
+require('./app/notifications/notificationsManager');
+
 module.exports = app;
 
 // if not in development, log to file

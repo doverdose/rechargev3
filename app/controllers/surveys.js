@@ -97,6 +97,10 @@ module.exports = (function() {
                     if(req.body.isWizardSurvey){
                         isWizardSurvey = true;
                     }
+                    var hasNotifications = false;
+                    if(req.body.hasNotifications){
+                        hasNotifications = true;
+                    }
 
 					var data = {
 						checkinTemplates: req.body.checkinTemplates,
@@ -105,7 +109,8 @@ module.exports = (function() {
                         duration: req.body.duration || "",
                         recurrence: req.body.recurrence || "",
                         isWizardSurvey: isWizardSurvey,
-                        maximumIterations: req.body.maximumIterations || ""
+                        maximumIterations: req.body.maximumIterations || "",
+                        isGenerated:false
 					};
 
 					var survey = new Survey(data);
@@ -143,6 +148,7 @@ module.exports = (function() {
                                                             surveyId: savedSurvey.id,
                                                             isDone:false,
                                                             showDate:null,
+                                                            hasNotifications: hasNotifications,
                                                             __v:0
                                                         });
                                                     }
