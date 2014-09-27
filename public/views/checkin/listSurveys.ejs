@@ -9,7 +9,6 @@
 			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">New check-in</button>
 		</div>
 	</div>
-
 	<% Object.keys(schedules).forEach(function(key) { %>
 		<% if(schedules[key].length) { %>
 			<div class="panel <%= (key==='today') ? 'panel-warning' : 'panel-primary' %>">

@@ -21,6 +21,9 @@
 	<li>
 		<a href="#checkin-surveys" data-toggle="tab">Surveys</a>
 	</li>
+    <li>
+        <a href="#medication-list" data-toggle="tab">Medication List</a>
+    </li>
 </ul>
 
 <div class="tab-content">
@@ -92,8 +95,14 @@
 						</a>
 					</div>
 					<div class="col-xs-7 text-right">
-						<a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
-						<a class="btn btn-danger" href="/user/<%= patients[i].id %>/delete"> Delete </a>
+                        <form action="/user/delete" method="post">
+                            <a class="btn btn-primary" href="/user/<%= patients[i].id %>/edit"> Edit </a>
+                            <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+                            <input type="hidden" name="userId" id="userId" value="<%= patients[i].id %>">
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
 					</div>
 				</div>
 			</div>
@@ -264,6 +273,50 @@
 			<h4 class="text-muted text-center">There are no surveys. </h4>
 		<% } %>
 	</div>
+
+    <div class="tab-pane" id="medication-list">
+
+        <div class="btn-toolbar toolbar-actions" role="toolbar">
+            <a class="btn btn-default" href="/medications/new">
+                <i class="glyphicon glyphicon-plus"></i>
+                New medication
+            </a>
+        </div>
+
+        <div class="list-group large-list">
+            <% if(medication.length) { %>
+            <table class="table">
+                <tr>
+                    <th>Generic Name</th>
+                    <th>Trade Name</th>
+                    <th>Actions</th>
+                </tr>
+
+                <% for(var i = 0; i < medication.length; i++) { %>
+                    <tr>
+                        <td><%= medication[i].genericName %></td>
+                        <td><%= medication[i].tradeName %></td>
+                        <td>
+                            <form action="/medications/delete" method="post">
+                                <a class="btn btn-primary" href="/medications/<%= medication[i].id %>/edit"> Edit </a>
+                                <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+                                <input type="hidden" name="medicationId" value="<%= medication[i].id %>">
+                                <button type="submit" class="btn btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                <% } %>
+            </table>
+            <% } %>
+        </div>
+
+        <% if(!medication.length) { %>
+        <h4 class="text-muted text-center">There are no medications. </h4>
+        <% } %>
+
+    </div>
 
 </div>
 
