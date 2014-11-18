@@ -231,9 +231,11 @@ module.exports = function (grunt) {
 		'uglify',
 		'usemin'
 	]);
-
+  
 	grunt.registerTask('default', [
 		'jshint',
 		'build'
 	]);
+  
+
 };

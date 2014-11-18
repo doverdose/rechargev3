@@ -55,40 +55,44 @@ module.exports = (function() {
 		},function(callback) {
             //get question and answers of the most recent wizard survey (aka medication survey) from the DB
 //            checkinsForInterval(req.user._id, yearStart, yearEnd, 'yearResults', renderVars, callback);
-
+            
             //find a survey that is a wizard survey
             Survey.findOne({isWizardSurvey:true},function(err,survey){
                 if(err){next(err)}
+                if (survey !== null) {
+                  Checkin.find({
+                      user_id: req.user._id,
+                      survey_id: survey._id
+                  }, function(err, checkins) {
+                      if (err) {
+                          return next(err);
+                      }
+                      checkins = checkins.reverse();
+                      checkins.forEach(function(checkin){
+                          var checkin = checkin.toObject();
 
-                Checkin.find({
-                    user_id: req.user._id,
-                    survey_id: survey._id
-                }, function(err, checkins) {
-                    if (err) {
-                        return next(err);
-                    }
-                    checkins = checkins.reverse();
-                    checkins.forEach(function(checkin){
-                        var checkin = checkin.toObject();
+                          var question = checkin.question;
+                          var answer = checkin.answers[0].text;
 
-                        var question = checkin.question;
-                        var answer = checkin.answers[0].text;
+                          if(question in recentCheckins){}
+                          else{
+                              recentCheckins[question] = [];
+                          }
+                          recentCheckins[question].push(answer);
+                      });
 
-                        if(question in recentCheckins){}
-                        else{
-                            recentCheckins[question] = [];
-                        }
-                        recentCheckins[question].push(answer);
-                    });
-
-                    callback();
-                });
+                      callback();
+                  });
+                } else {
+                    callback();               
+                }
             });
 
         }], function(err) {
 			if(err) {
 				next(err);
 			}
+
 			res.render('dashboard/index.ejs', {
 				jsVars: renderVars,
                 recentCheckins:recentCheckins

@@ -296,6 +296,7 @@ module.exports = (function () {
 
     var update = function (req, res, next) {
         var functions = [];
+				console.log(req.body);
         for (var i = 0; i < req.body.data.length; i++) {
             functions.push((function (index, answers) {
                 return function (callback) {
@@ -314,50 +315,51 @@ module.exports = (function () {
 
                         template = template.toObject();
                         var schedulesSave = [];
+												if (answers) {
+														for (var j = 0; j < answers.length; j++) {
+																for (var k = 0; k < template.schedules.length; k++) {
+																		if (answers[j] === template.schedules[k].answer) {
+																				var schedule = {};
+																				schedule.user_id = req.user.id;
+																				schedule.template_id = template._id;
+																				schedule.repeat_interval = template.schedules[k].repeat_interval;
+																				schedule.due_date = template.schedules[k].due_date;
 
-                        for (var j = 0; j < answers.length; j++) {
-                            for (var k = 0; k < template.schedules.length; k++) {
-                                if (answers[j] === template.schedules[k].answer) {
-                                    var schedule = {};
-                                    schedule.user_id = req.user.id;
-                                    schedule.template_id = template._id;
-                                    schedule.repeat_interval = template.schedules[k].repeat_interval;
-                                    schedule.due_date = template.schedules[k].due_date;
+																				var expiryPreset = {
+																						'1m': { months: 1 },
+																						'6m': { months: 6 },
+																						'1y': { years: 1 }
+																				};
 
-                                    var expiryPreset = {
-                                        '1m': { months: 1 },
-                                        '6m': { months: 6 },
-                                        '1y': { years: 1 }
-                                    };
+																				if (template.schedules[k].expires === '0') {
+																						schedule.expires = false;
+																				} else {
+																						schedule.expires = true;
+																						if (template.schedules[k].expires === 'custom') {
+																								schedule.expire_date = template.schedules[k].expire_date;
+																						} else {
+																								schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
+																						}
+																				}
 
-                                    if (template.schedules[k].expires === '0') {
-                                        schedule.expires = false;
-                                    } else {
-                                        schedule.expires = true;
-                                        if (template.schedules[k].expires === 'custom') {
-                                            schedule.expire_date = template.schedules[k].expire_date;
-                                        } else {
-                                            schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
-                                        }
-                                    }
-
-                                    schedulesSave.push(
-                                        (function (schedule) {
-                                            return function (callback) {
-                                                var obj = new Schedule(schedule);
-                                                obj.save(function (err) {
-                                                    if (err) {
-                                                        callback(err);
-                                                        return;
-                                                    }
-                                                    callback();
-                                                });
-                                            };
-                                        })(schedule)
-                                    );
-                                }
-                            }
-                        }
+																				schedulesSave.push(
+																						(function (schedule) {
+																								return function (callback) {
+																										var obj = new Schedule(schedule);
+																										obj.save(function (err) {
+																												if (err) {
+																														callback(err);
+																														return;
+																												}
+																												callback();
+																										});
+																								};
+																						})(schedule)
+																				);
+																		}
+																}
+														}
+												}
 
                         async.parallel(schedulesSave, function (err) {
                             if (err) {
@@ -390,13 +392,14 @@ module.exports = (function () {
                                 //here take the newly submitted survey and set it to "isDone:true" in assignedSurvey collection in DB
                                 var assignedSurveyId = req.body.assignedSurveyId;
                                 AssignedSurvey.update({_id: assignedSurveyId}, {isDone: true}, function (err, num) {
+
                                 });
 
                                 callback();
                             });
                         });
                     });
-                };
+								};
             })(i, req.body.data[i].answers));
         }
         async.series(functions, function (err) {
