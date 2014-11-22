@@ -32,12 +32,6 @@
 
 							<button type="submit" class="btn btn-info">Change</button>
 						</form>
-						<form action="/checkin/remove" method="post" class="text-right col-xs-2">
-							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-							<input type="hidden" name="id" id="id" value="<%= checkin.id %>">
-
-							<button type="submit" class="btn btn-danger">Remove</button>
-						</form>
 					</div>
 				</div>
 			<% }) %>
