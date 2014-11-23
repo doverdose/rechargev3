@@ -9,6 +9,7 @@ module.exports = (function() {
 		User = mongoose.model('User'),
         AssignedSurvey = mongoose.model('AssignedSurvey'),
         CheckinTemplate = mongoose.model('CheckinTemplate'),
+		    Checkin = mongoose.model('Checkin'),
         Survey = mongoose.model('Survey'),
         Medication = mongoose.model('Medication');
 
@@ -258,7 +259,7 @@ module.exports = (function() {
                                 if (!template) {
                                     res.redirect('/dashboard');
                                 }
-
+																
                                 CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
                                     res.render('checkin/checkinEdit.ejs', {
                                         checkin: {},
@@ -490,11 +491,25 @@ module.exports = (function() {
 						}
 					});
 				} else {
-					res.render('users/view.ejs', {
-						title: 'Details',
-            viewer: req.user,
-						profile: user
-					});
+						// Find checkins
+						var userCheckins = {};
+					
+						Checkin.find({'user_id': req.params.id}, function (err, checkins) {
+								if (err || !checkins) {
+										next(err);
+								}
+
+								userCheckins = checkins;
+
+								// TODO: Extract surveys from checkins, and pass to view
+						});
+
+						res.render('users/view.ejs', {
+								title: 'Details',
+								viewer: req.user,
+								profile: user,
+								checkins: userCheckins
+						});
 
 				}
 

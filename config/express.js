@@ -14,7 +14,7 @@ module.exports = function(app, config, passport, env) {
 		app.engine('ejs', engine);
 
 		// set views path, template engine and default layout
-		if(env === 'development' || env ==='nitrous') {
+		if(env === 'development' || env === 'development2' || env ==='nitrous') {
 			app.set('views', config.root + '/app/views');
 		} else {
 			app.set('views', config.root + '/public/views');
