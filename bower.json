@@ -8,7 +8,7 @@
 		"select2": "~3",
 		"html5shiv": "~3",
 		"flot": "0.8.x",
-        "typeahead":"0.10.x"
+        "typeahead.js":"0.10.x"
 	},
 	"devDependencies": {}
 }

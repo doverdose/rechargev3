@@ -6,7 +6,7 @@ var express = require('express'),
 
 var app = express();
 
-var env = process.env.NODE_ENV || 'development2',
+var env = process.env.NODE_ENV || 'nitrous',
 	config = require('./config/config')(app)[env];
 
 // Bootstrap db connection

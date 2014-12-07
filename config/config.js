@@ -37,7 +37,7 @@ module.exports = function() {
 			},
 			app: {}
 		},
-		development2: {
+		nitrous: {
 			db: 'mongodb://komodo:theonlylivingdragon@ds049548.mongolab.com:49548/heroku_app18503207',
 			root: rootPath,
 			mail: {
@@ -66,7 +66,7 @@ module.exports = function() {
 			},
 			app: {}
 		},
-		nitrous: {
+		nitrous_old: {
 			db: 'mongodb://kimodo:kimono@ds051868.mongolab.com:51868/recharge-dev',
 			root: rootPath,
 			mail: {
