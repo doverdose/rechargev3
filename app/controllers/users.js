@@ -5,8 +5,8 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		demo = require('./components/demo'),
-
-		User = mongoose.model('User'),
+    helper = require('./components/helper'),
+    User = mongoose.model('User'),
         AssignedSurvey = mongoose.model('AssignedSurvey'),
         CheckinTemplate = mongoose.model('CheckinTemplate'),
 		    Checkin = mongoose.model('Checkin'),
@@ -412,7 +412,8 @@ module.exports = (function() {
 	var view = function (req, res, next) {
 		var providerPatients = [],
 			allPatients = [],
-			patientIds = [];
+			patientIds = [],
+      userCheckins = [];
 
 		if(req.user.permissions.provider || req.user.permissions.admin) {
 
@@ -492,27 +493,17 @@ module.exports = (function() {
 					});
 				} else {
 						// Find checkins
-						var userCheckins = {};
-					
-						Checkin.find({'user_id': req.params.id}, function (err, checkins) {
-								if (err || !checkins) {
-										next(err);
-								}
-
-								userCheckins = checkins;
-
-								// TODO: Extract surveys from checkins, and pass to view
-						});
-
-						res.render('users/view.ejs', {
-								title: 'Details',
-								viewer: req.user,
-								profile: user,
-								checkins: userCheckins
-						});
-
+            helper.listSurveys(req.user.id, function(templateVars) {
+                res.render('users/view.ejs', {
+                    title: 'Details',
+                    viewer: req.user,
+                    profile: user,
+                    surveys: templateVars.surveyTemplates,
+                    checkins: templateVars.checkinTemplates
+                });
+            }); 
 				}
-
+        
 			});
 
 	};
