@@ -1,6 +1,4 @@
 <% layout('../layouts/default') -%>
-
-
   
 <div class="page-header">
   <% if(viewer && viewer.permissions.admin) { %>
@@ -8,9 +6,19 @@
       <a href="/admin" class="btn btn-default">Back to admin</a>
     </div>
   <% } %>
+Viewer <br>
 <%= viewer %>
+<br>
+Profile <br>
 <%= profile %>
-  <h2>User details</h2>
+<br>
+Checkins <br>
+<%= checkins %>
+<br>
+Surveys <br>
+<%= surveys %>
+<br>
+<h2>User details</h2>
 </div>
 
 <h3>
@@ -37,13 +45,47 @@
 		<strong>Email: </strong>
 		<a class="email" href="mailto:<%= profile.email %>"><%= profile.email %></a>
 	</li>
-	<% if(viewer.patients && (viewer.patients.map(function(e) { return e.id; }).indexOf(profile.id) > -1)) {%>
-	Yay
-	<%= checkins %>
-	<% } else { %>
-	Boo
-	<% } %>
 </ul>
+
+<h3>
+Surveys
+</h3>
+
+<div class="list-group large-list">
+<%if(viewer.patients && (viewer.patients.map(function(e) { return e.id; }).indexOf(profile.id) > -1)) {
+	  for (var i = 0; i < surveys.length; i++) {
+      // Print survey links 
+ %>
+    <div class="list-group-item">
+      <div class="row">
+        <div class="col-xs-8">
+          <a href="/checkin/survey/<%= surveys[i]._id %>">
+            <h3>
+              <%=surveys[i].title%>
+            </h3>
+          </a>
+          <%
+          for (var j = 0; j < surveys[i].checkinTemplates.length; j++) {
+          %>
+            <div>
+              <h4>
+                <%= surveys[i].checkinTemplates[j] %>
+              </h4>
+            </div>
+          <%
+          }  
+          %>
+                                                                 
+        </div>
+      </div>
+    </div>
+ <% }
+                                                                                                          
+  } else { %>
+	  No surveys available
+<%} %>
+  </div>
+
 
 <% if((user.permissions.admin || user.permissions.provider) && profile.permissions.provider) { %>
 
