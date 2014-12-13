@@ -8,6 +8,7 @@ module.exports = (function() {
         Schedule = mongoose.model('Schedule'),
         Checkin = mongoose.model('Checkin'),
         Survey = mongoose.model('Survey'),
+        AssignedSurvey = mongoose.model('AssignedSurvey'),
         CheckinTemplate = mongoose.model('CheckinTemplate');
   
   var listSurveys = function (user_id, next) {
@@ -32,7 +33,7 @@ module.exports = (function() {
         for (var i = 0; i < results.length; i++) {
           surveys.push(results[i].survey_id);
         }
-
+        
         Survey.find({
           _id: {
             $in: surveys
@@ -81,6 +82,15 @@ module.exports = (function() {
                 templateVars.checkinTemplates = checkinTemplates;
                 callback();
               });
+            },
+            function (callback) {
+              AssignedSurvey.find({userId: user_id}, function (err, assignedSurveys) {
+                if (err) {
+                  return next(err);
+                }
+                templateVars.assignedSurveys = assignedSurveys;
+                callback();
+              });
             }
           ], function (err) {
             if (err) {
@@ -91,7 +101,41 @@ module.exports = (function() {
                 tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
                 today = moment().hour(0).minute(0).second(0).toDate();
 
-            // get schedules for checking-in
+            // For every assigned survey, populate object with survey and checkin titles
+            templateVars.surveyData = templateVars.assignedSurveys.map(function(aSurvey){
+              var currSurvey = {
+                _id: aSurvey.surveyId,
+                title: "",
+                checkinTemplates: []
+              };
+              templateVars.surveyTemplates.every(function(surveyTemplate){
+                if (surveyTemplate._id.equals(aSurvey.surveyId)) {
+                  currSurvey.title = surveyTemplate.title;
+                  if(surveyTemplate.checkinTemplates) {
+                    currSurvey.checkinTemplates = surveyTemplate.checkinTemplates.map(function(cTempId){
+                      var currCheckin = {
+                        _id: cTempId,
+                        title: ""
+                      };
+                      templateVars.checkinTemplates.every(function(cTemp){
+                        if (cTemp._id.equals(cTempId)) {
+                          currCheckin.title = cTemp.title;
+                          return false;
+                        }
+                        return true;
+                      });
+                      return currCheckin;
+                    });  
+                  }
+                  return false;
+                }
+                return true;
+              });
+              return currSurvey;
+            });
+            
+            console.log(templateVars.surveyData);
+            // get schedules for checking-in, including checkins that don't or haven't expired, and are repeating or have due dates after today
             Schedule.find({
               user_id: user_id,
               $and: [
@@ -151,6 +195,7 @@ module.exports = (function() {
                   return true;
                 });
 
+                // compareDate is the date object against which the current schedule's due date is compared to identify existing checkins
                 var compareDate = {
                   date: null,
                   object: null
@@ -180,6 +225,7 @@ module.exports = (function() {
                     return true;
                   });
 
+                  // If a checkin hasn't been made, add to schedule object
                   if (!existingCheckin) {
                     templateVars.schedules[compareDate.object].push(schedule);
                   }
@@ -187,7 +233,6 @@ module.exports = (function() {
               });
               
               next(templateVars);
-              //res.render('checkin/listSurveys.ejs', templateVars);
             });
           });
         });

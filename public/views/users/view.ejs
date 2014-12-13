@@ -6,18 +6,6 @@
       <a href="/admin" class="btn btn-default">Back to admin</a>
     </div>
   <% } %>
-Viewer <br>
-<%= viewer %>
-<br>
-Profile <br>
-<%= profile %>
-<br>
-Checkins <br>
-<%= checkins %>
-<br>
-Surveys <br>
-<%= surveys %>
-<br>
 <h2>User details</h2>
 </div>
 
@@ -53,23 +41,23 @@ Surveys
 
 <div class="list-group large-list">
 <%if(viewer.patients && (viewer.patients.map(function(e) { return e.id; }).indexOf(profile.id) > -1)) {
-	  for (var i = 0; i < surveys.length; i++) {
+	  for (var i = 0; i < surveyData.length; i++) {
       // Print survey links 
  %>
     <div class="list-group-item">
       <div class="row">
         <div class="col-xs-8">
-          <a href="/checkin/survey/<%= surveys[i]._id %>">
+          <a href="/checkin/survey/<%= surveyData[i]._id %>">
             <h3>
-              <%=surveys[i].title%>
+              <%= surveyData[i].title %>
             </h3>
           </a>
           <%
-          for (var j = 0; j < surveys[i].checkinTemplates.length; j++) {
+          for (var j = 0; j < surveyData[i].checkinTemplates.length; j++) {
           %>
             <div>
               <h4>
-                <%= surveys[i].checkinTemplates[j] %>
+                <%= surveyData[i].checkinTemplates[j].title %>
               </h4>
             </div>
           <%

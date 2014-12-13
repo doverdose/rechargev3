@@ -493,12 +493,13 @@ module.exports = (function() {
 					});
 				} else {
 						// Find checkins
-            helper.listSurveys(req.user.id, function(templateVars) {
+            helper.listSurveys(req.params.id, function(templateVars) {
                 res.render('users/view.ejs', {
                     title: 'Details',
                     viewer: req.user,
                     profile: user,
                     surveys: templateVars.surveyTemplates,
+                    surveyData: templateVars.surveyData,
                     checkins: templateVars.checkinTemplates
                 });
             }); 
