@@ -71,7 +71,7 @@ module.exports = function(app, passport) {
 	app.post('/checkintemplate/remove', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.remove);
 	app.post('/checkintemplate/link', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.linkToSchedule);
 	app.get('/checkintemplate/new', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.createView);
-	app.get('/checkintemplate/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.view);
+	app.get('/checkintemplate/:id', auth.requiresLogin, checkinTemplate.view);
 	app.get('/checkintemplate/link/:id', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.linkToSchedule);
 	app.get('/checkintemplate/:id/edit', auth.requiresLogin, auth.requiresAdmin, checkinTemplate.updateView);
 
@@ -99,7 +99,7 @@ module.exports = function(app, passport) {
 	app.post('/surveys/remove/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.removeTemplate);
 	app.post('/surveys/add/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.addTemplate);
 	app.get('/surveys/create', auth.requiresLogin, auth.requiresAdmin, surveys.create);
-	app.get('/surveys/:id', auth.requiresLogin, auth.requiresAdmin, surveys.view);
+	app.get('/surveys/:id', auth.requiresLogin, surveys.view);
 
     app.get('/medications/new', auth.requiresLogin, auth.requiresAdmin, medications.createView);
     app.post('/medications/create', auth.requiresLogin, auth.requiresAdmin, medications.create);

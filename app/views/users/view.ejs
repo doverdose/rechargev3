@@ -47,7 +47,7 @@ Surveys
     <div class="list-group-item">
       <div class="row">
         <div class="col-xs-8">
-          <a href="/checkin/survey/<%= surveyData[i]._id %>">
+          <a href="/surveys/<%= surveyData[i]._id %>">
             <h3>
               <%= surveyData[i].title %>
             </h3>
@@ -56,9 +56,11 @@ Surveys
           for (var j = 0; j < surveyData[i].checkinTemplates.length; j++) {
           %>
             <div>
-              <h4>
-                <%= surveyData[i].checkinTemplates[j].title %>
-              </h4>
+              <a href="/checkintemplate/<%= surveyData[i].checkinTemplates[j]._id %>">
+                <h4>
+                  <%= surveyData[i].checkinTemplates[j].title %>  
+                </h4>
+              </a>
             </div>
           <%
           }  
