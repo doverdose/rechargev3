@@ -54,13 +54,20 @@ Surveys
           </a>
           <%
           for (var j = 0; j < surveyData[i].checkinTemplates.length; j++) {
+          // Print checkin links
           %>
+            
             <div>
               <a href="/checkintemplate/<%= surveyData[i].checkinTemplates[j]._id %>">
                 <h4>
                   <%= surveyData[i].checkinTemplates[j].title %>  
                 </h4>
               </a>
+              <p>
+             <% if (surveyData[i].checkinTemplates[j].answers[0]) { %>
+              <%= surveyData[i].checkinTemplates[j].answers[0].text %> 
+             <% } %>
+              </p>
             </div>
           <%
           }  

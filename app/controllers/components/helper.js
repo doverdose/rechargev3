@@ -50,7 +50,6 @@ module.exports = (function() {
                 if (err) {
                   return next(err);
                 }
-
                 templateVars.checkins = checkins.reverse();
                 callback();
               });
@@ -102,7 +101,7 @@ module.exports = (function() {
                 today = moment().hour(0).minute(0).second(0).toDate();
 
             // For every assigned survey, populate object with survey and checkin titles
-            templateVars.surveyData = templateVars.assignedSurveys.map(function(aSurvey){
+            var surveyData = templateVars.assignedSurveys.map(function(aSurvey){
               var currSurvey = {
                 _id: aSurvey.surveyId,
                 title: "",
@@ -115,11 +114,21 @@ module.exports = (function() {
                     currSurvey.checkinTemplates = surveyTemplate.checkinTemplates.map(function(cTempId){
                       var currCheckin = {
                         _id: cTempId,
-                        title: ""
+                        title: "",
+                        answers: []
                       };
                       templateVars.checkinTemplates.every(function(cTemp){
                         if (cTemp._id.equals(cTempId)) {
                           currCheckin.title = cTemp.title;
+                          return false;
+                        }
+                        return true;
+                      });             
+                      templateVars.checkins.every(function(c){
+                        if (cTempId === c.template_id ) {
+                          if (c.answers) {
+                            currCheckin.answers = c.answers;
+                          }
                           return false;
                         }
                         return true;
@@ -131,7 +140,17 @@ module.exports = (function() {
                 }
                 return true;
               });
+              
               return currSurvey;
+         
+            });
+            
+            // Only add surveys with titles to templateVars
+            templateVars.surveyData = [];
+            surveyData.forEach(function(survey){
+              if (survey.title) {
+                templateVars.surveyData.push(survey);
+              }
             });
             
             console.log(templateVars.surveyData);
