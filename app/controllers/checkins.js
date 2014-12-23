@@ -218,15 +218,13 @@ module.exports = (function () {
             function(callback){
                 Survey.findOne({_id:req.params.id},function(err,survey){
                     if(err){next(err)}
+                  
+                    templateVars.survey = survey;
 
                     CheckinTemplate.find({_id: {$in:survey.checkinTemplates}}, function(err, checkinTemplates){
                         if(err){return next(err)}
-
-                        checkinTemplates.forEach(function(checkinTemplate){
-                            if(checkinTemplate.questions.length){
-                                templateVars.questions = checkinTemplate.questions;
-                            }
-                        });
+                      
+                        templateVars.checkinTemplates = checkinTemplates;
                         callback();
                     });
                 });
@@ -235,16 +233,34 @@ module.exports = (function () {
                 Checkin.find({
                     user_id: req.user._id,
                     survey_id: req.params.id
-                }, function (err, checkins) {
+                }).sort({timestamp:-1}).exec(function (err, checkins) {
                     if (err) {
                         return next(err);
                     }
 
-                    templateVars.checkins = checkins.reverse();
+                    templateVars.checkins = checkins;
                     callback();
                 });
             }
         ],function(err){
+            // Cluster checkins by template, sort by most recent first
+            templateVars.checkinsByTemplate = templateVars.checkinTemplates.map( function(checkinTemplate){
+              var cTemp = {
+                _id: checkinTemplate._id,
+                question: checkinTemplate.question,
+                title: checkinTemplate.title,
+                answers: checkinTemplate.answers,
+                checkins: []
+              }; 
+              
+              templateVars.checkins.forEach(function(checkin){
+                if (checkin.template_id === checkinTemplate.id){
+                  cTemp.checkins.push(checkin);
+                }
+              });                
+              return cTemp;
+            });  
+            console.log("roger");
             res.render('checkin/list.ejs', templateVars);
         });
     };
