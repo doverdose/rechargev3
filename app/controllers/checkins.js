@@ -259,8 +259,7 @@ module.exports = (function () {
                 }
               });                
               return cTemp;
-            });  
-            console.log("roger");
+            });
             res.render('checkin/list.ejs', templateVars);
         });
     };

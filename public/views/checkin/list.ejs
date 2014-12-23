@@ -3,21 +3,27 @@
 <div class="js-checkinselector-container">
 	<div class="page-header">
 		<h2>
-			Questions
-		</h2>
+			<%= survey.title %>
+		</h2>  
 	</div>
-	<% if(checkins.length) { %>
+  <div>
+    <h3>
+      Questions
+    </h3>
+  </div>
+	<% if(checkinsByTemplate.length) { %>
 		<div class="list-group large-list">
-			<% checkins.forEach(function(checkin) { %>
+			<% checkinsByTemplate.forEach(function(checkinTemplate) { %>
+        <% if (checkinTemplate.checkins[0]) {%>
 				<div class="list-group-item">
 					<div class="row">
-						<div class="col-xs-8">
-							<a href="/checkin/<%= checkin.id %>">
-								<strong title="<%= checkin.timestamp %>">
-									<%=: checkin.timestamp | fromNow %>
+						<div class="col-xs-8">              
+							<a href="/checkin/<%= checkinTemplate.checkins[0].id %>">
+								<strong title="<%= checkinTemplate.checkins[0].timestamp %>">
+									<%=: checkinTemplate.checkins[0].timestamp | fromNow %>
 								</strong>
-								<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkin.tips || '' %>">
-									<%= checkin.question %>
+								<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkinTemplate.checkins[0].tips || '' %>">
+									<%= checkinTemplate.checkins[0].question %>
                                     <%if(typeof questions != 'undefined'){%>
                                         <% questions.forEach(function(question){%>
                                             <p><%- question.text %></p>
@@ -28,13 +34,21 @@
 						</div>
 						<form action="/checkin/edit" method="post" class="text-right col-xs-2">
 							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-							<input type="hidden" name="id" id="id" value="<%= checkin.id %>">
-
+							<input type="hidden" name="id" id="id" value="<%= checkinTemplate.checkins[0].id %>">
 							<button type="submit" class="btn btn-info">Change</button>
 						</form>
 					</div>
-				</div>
-			<% }) %>
+				</div> 
+       <% } else { %>
+        <div class="list-group-item">
+          <div class="row">
+            <div class="col-xs-8">              
+              <h3> <%= checkinTemplate.question %> </h3>
+            </div>
+          </div>
+        </div>
+       <% } %>
+     <% }) %>
 		</div>
 	<% } else { %>
 		<h4 class="text-center text-muted">You haven't made any check-ins for this survey</h4>
