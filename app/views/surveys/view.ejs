@@ -5,8 +5,10 @@
 </div>
   
 <div class="description">
-  This survey is <%= (survey.isStartingSurvey? '' : 'not') %> shown when a patient logs in, and is <%= (survey.isWizardSurvey? '' : 'not') %> a medication adherence survey type.
-
+  <ul>
+    <li>This survey is <%= (survey.isStartingSurvey? '' : 'not') %> shown when a patient logs in.</li>
+    <li>This is <%= (survey.isWizardSurvey? '' : 'not') %> a medication adherence survey type.</li>
+  </ul>
 </div>
 
 <div class="header-actions">

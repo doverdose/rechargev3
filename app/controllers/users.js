@@ -238,8 +238,7 @@ module.exports = (function() {
 		if(req.user.permissions.provider || req.user.permissions.admin) {
 			res.redirect('/admin');
 		} else {
-
-            //if the person has some assigned surveys in the queue, redirect him to the first one found
+            // if the person has some assigned surveys in the queue, redirect him to the first one found
             // same as if he would navigate to /checkin/new
 
             Medication.find({}, function (err, dropdownItems) {
@@ -265,7 +264,7 @@ module.exports = (function() {
                                         checkin: {},
                                         templates: templates,
                                         survey: template,
-                                        assignedSurvey:assignedSurvey,
+                                        assignedSurvey: assignedSurvey,
                                         dropdownDataSource: dropdownItems
                                     });
                                 });
@@ -498,7 +497,8 @@ module.exports = (function() {
                     title: 'Details',
                     viewer: req.user,
                     profile: user,
-                    surveys: templateVars.surveyTemplates,
+                    surveys: templateVars.surveys,
+                    surveyTemplates: templateVars.surveyTemplates,
                     surveyData: templateVars.surveyData,
                     checkins: templateVars.checkinTemplates
                 });

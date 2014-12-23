@@ -15,6 +15,7 @@ module.exports = (function() {
 	var ScheduleSchema = new Schema({
 		user_id: ObjectId,
 		template_id: ObjectId,
+    survey_id: ObjectId,
 		due_date: Date,
 		repeat_interval: Number,
 		expires: Boolean,

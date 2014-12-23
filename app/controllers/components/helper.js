@@ -14,13 +14,13 @@ module.exports = (function() {
   var listSurveys = function (user_id, next) {
     
     var templateVars = {};
-    Survey.find({isGenerated:false}, function (err, surveyTemplates) {
+    Survey.find({}, function (err, surveyTemplates) {
       //all surveys list
       if (err) {
         return next(err);
       }
       templateVars.surveyTemplates = surveyTemplates;
-
+      
       Checkin.find({
         user_id: user_id
       }, {
@@ -152,8 +152,7 @@ module.exports = (function() {
                 templateVars.surveyData.push(survey);
               }
             });
-            
-            console.log(templateVars.surveyData);
+                      
             // get schedules for checking-in, including checkins that don't or haven't expired, and are repeating or have due dates after today
             Schedule.find({
               user_id: user_id,

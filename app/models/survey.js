@@ -13,12 +13,12 @@ module.exports = (function() {
 	var SurveySchema = new Schema({
 		title: String,
 		checkinTemplates: [],
-        isStartingSurvey: Boolean,
-        duration: String,
-        recurrence: String,
-        isWizardSurvey: Boolean,
-        maximumIterations: String,
-        isGenerated:Boolean
+    isStartingSurvey: Boolean,
+    duration: String,
+    recurrence: String,
+    isWizardSurvey: Boolean,
+    maximumIterations: String,
+    isGenerated:Boolean
 	});
 
 	/**

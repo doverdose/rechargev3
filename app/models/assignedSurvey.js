@@ -15,6 +15,7 @@ module.exports = (function () {
         surveyId: String,
         showDate: Date,
         isDone: {type: Boolean, default: false},
+        isActive: {type: Boolean, default: true},
         hasNotifications: Boolean
     });
 
