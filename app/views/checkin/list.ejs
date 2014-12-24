@@ -4,31 +4,33 @@
 	<div class="page-header">
 		<h2>
 			<%= survey.title %>
-		</h2>  
+		</h2>
 	</div>
   <div>
     <h3>
       Questions
     </h3>
+    
   </div>
 	<% if(checkinsByTemplate.length) { %>
 		<div class="list-group large-list">
 			<% checkinsByTemplate.forEach(function(checkinTemplate) { %>
+        <%= checkinTemplate._id %>
         <% if (checkinTemplate.checkins[0]) {%>
 				<div class="list-group-item">
 					<div class="row">
-						<div class="col-xs-8">              
+						<div class="col-xs-8">                            
 							<a href="/checkin/<%= checkinTemplate.checkins[0].id %>">
 								<strong title="<%= checkinTemplate.checkins[0].timestamp %>">
 									<%=: checkinTemplate.checkins[0].timestamp | fromNow %>
 								</strong>
 								<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkinTemplate.checkins[0].tips || '' %>">
 									<%= checkinTemplate.checkins[0].question %>
-                                    <%if(typeof questions != 'undefined'){%>
-                                        <% questions.forEach(function(question){%>
-                                            <p><%- question.text %></p>
-                                        <%})%>
-                                    <%}%>
+                  <%if(typeof questions != 'undefined'){%>
+                    <% questions.forEach(function(question){%>
+                    <p><%- question.text %></p>
+                    <%})%>
+                  <%}%>
 								</h3>
 							</a>
 						</div>

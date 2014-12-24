@@ -102,38 +102,45 @@ module.exports = (function() {
 
             // For every assigned survey, populate object with survey and checkin titles
             var surveyData = templateVars.assignedSurveys.map(function(aSurvey){
+              
               var currSurvey = {
-                _id: aSurvey.surveyId,
+                id: aSurvey.surveyId,
                 title: "",
-                checkinTemplates: []
+                checkinTemplates: [],
+                isCompleted: false
               };
+              
               templateVars.surveyTemplates.every(function(surveyTemplate){
                 if (surveyTemplate._id.equals(aSurvey.surveyId)) {
+                  
                   currSurvey.title = surveyTemplate.title;
+                  
                   if(surveyTemplate.checkinTemplates) {
                     currSurvey.checkinTemplates = surveyTemplate.checkinTemplates.map(function(cTempId){
-                      var currCheckin = {
+                      var currCheckinTemplate = {
                         _id: cTempId,
                         title: "",
-                        answers: []
+                        answers: [],
+                        checkins: []
                       };
+                      
                       templateVars.checkinTemplates.every(function(cTemp){
                         if (cTemp._id.equals(cTempId)) {
-                          currCheckin.title = cTemp.title;
-                          return false;
-                        }
-                        return true;
-                      });             
-                      templateVars.checkins.every(function(c){
-                        if (cTempId === c.template_id ) {
-                          if (c.answers) {
-                            currCheckin.answers = c.answers;
-                          }
+                          currCheckinTemplate.title = cTemp.title;
+                          currCheckinTemplate.answers = cTemp.answers;
                           return false;
                         }
                         return true;
                       });
-                      return currCheckin;
+                      
+                      templateVars.checkins.forEach(function(c){
+                        if (cTempId === c.template_id) {
+                          currCheckinTemplate.checkins.push(c);
+                          currSurvey.isCompleted = true;                          
+                        }                        
+                      });
+                      
+                      return currCheckinTemplate;
                     });  
                   }
                   return false;

@@ -7,6 +7,7 @@ module.exports = (function () {
     var mongoose = require('mongoose'),
         async = require('async'),
         moment = require('moment'),
+        helper = require('./components/helper'),
         Schedule = mongoose.model('Schedule'),
         Checkin = mongoose.model('Checkin'),
         Survey = mongoose.model('Survey'),
@@ -30,8 +31,12 @@ module.exports = (function () {
     };
 
     var listSurveys = function (req, res, next) {
-        var templateVars = {};
-        Survey.find({isGenerated:false}, function (err, surveyTemplates) {
+        helper.listSurveys(req.user._id, function(templateVars){
+          res.render('checkin/listSurveys.ejs', templateVars);
+        });  
+      /*
+      var templateVars = {};
+        Survey.find({}, function (err, surveyTemplates) {
             //all surveys list
             if (err) {
                 return next(err);
@@ -208,7 +213,9 @@ module.exports = (function () {
                     });
                 });
             });
+            
         });
+        */
     };
 
     var list = function (req, res, next) {
