@@ -66,11 +66,11 @@ Surveys
                 </h4>
               </a>
               <p>
-             <% if (surveyData[i].checkinTemplates[j].answers[0]) { %>
-              <%= surveyData[i].checkinTemplates[j].answers[0].text %> 
+             <% if (surveyData[i].checkinTemplates[j].checkins.length && surveyData[i].checkinTemplates[j].checkins[0].answers[0]) {
+             %>
+                <%= surveyData[i].checkinTemplates[j].checkins[0].answers[0].text %> 
              <% } %>
-              </p>
-            
+              </p>            
             <%
             }  
             %>
