@@ -267,6 +267,7 @@ module.exports = (function () {
               });                
               return cTemp;
             });
+          
             res.render('checkin/list.ejs', templateVars);
         });
     };

@@ -116,6 +116,7 @@ module.exports = (function() {
                   currSurvey.title = surveyTemplate.title;
                   
                   if(surveyTemplate.checkinTemplates) {
+                    
                     currSurvey.checkinTemplates = surveyTemplate.checkinTemplates.map(function(cTempId){
                       var currCheckinTemplate = {
                         _id: cTempId,
@@ -134,7 +135,7 @@ module.exports = (function() {
                       });
                       
                       templateVars.checkins.forEach(function(c){
-                        if (cTempId === c.template_id) {
+                        if (String(cTempId) === String(c.template_id)) {
                           currCheckinTemplate.checkins.push(c);
                           currSurvey.isCompleted = true;                          
                         }                        
