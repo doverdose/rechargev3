@@ -5,7 +5,8 @@ module.exports = (function() {
 	'use strict';
 
 	var mongoose = require('mongoose'),
-		CheckinTemplate = mongoose.model('CheckinTemplate');
+  CheckinTemplate = mongoose.model('CheckinTemplate'),
+  Checkin = mongoose.model('Checkin');
 
 	var remove = function(req, res, next) {
 		CheckinTemplate.findOne({
@@ -111,9 +112,20 @@ module.exports = (function() {
 			if (!c) {
 				return next(new Error('Failed to load Check-in Template' + req.params.id));
 			}
-			res.render('checkinTemplates/checkinTemplateView.ejs', {
-				c: c
-			});
+      
+      var checkins = [];
+      
+      Checkin.find({    
+        template_id: c.id
+      }, function(err, ci) {
+        res.render('checkinTemplates/checkinTemplateView.ejs', {
+          c: c,
+          checkins: ci, 
+          viewer: req.user
+        });     
+      });         
+      
+			
 		});
 	};
 

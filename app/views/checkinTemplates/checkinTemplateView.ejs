@@ -52,3 +52,24 @@
 	</ul>
 <% }%>
 
+<h4 class="text-muted">Prior responses:</h4>
+<% if (viewer && checkins) { 
+  checkins.forEach(function(checkin){
+    if (String(checkin.user_id) === String(viewer.id) && checkin.answers[0]) { %>
+      <div class="list-group large-list">
+        <div class="list-group-item">
+          <div class = "row">
+            <div class = "col-xs-12">              
+              <%= checkin.answers[0].text %>
+              <strong title = "<%= checkin.answers[0].timestamp%>">
+                <%=: checkin.answers[0].timestamp | fromNow %>
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }
+  });  
+} else { %>
+  No prior responses                     
+<% } %>
