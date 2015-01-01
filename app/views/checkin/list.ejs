@@ -20,7 +20,7 @@
 				<div class="list-group-item">
 					<div class="row">
 						<div class="col-xs-8">                            
-							<a href="/checkin/<%= checkinTemplate.checkins[0].id %>">
+							<a href="/checkintemplate/<%= checkinTemplate._id %>">
 								<strong title="<%= checkinTemplate.checkins[0].timestamp %>">
 									<%=: checkinTemplate.checkins[0].timestamp | fromNow %>
 								</strong>
@@ -37,7 +37,7 @@
 						<form action="/checkin/edit" method="post" class="text-right col-xs-2">
 							<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 							<input type="hidden" name="id" id="id" value="<%= checkinTemplate.checkins[0].id %>">
-							<button type="submit" class="btn btn-info">Change</button>
+							<button type="submit" class="btn btn-info">Update response</button>
 						</form>
 					</div>
 				</div> 

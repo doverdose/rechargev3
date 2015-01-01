@@ -238,65 +238,68 @@ module.exports = (function() {
 		if(req.user.permissions.provider || req.user.permissions.admin) {
 			res.redirect('/admin');
 		} else {
-            // if the person has some assigned surveys in the queue, redirect him to the first one found
-            // same as if he would navigate to /checkin/new
+      
+      // if the person has some assigned surveys in the queue, redirect him to the first one found
+      // same as if he would navigate to /checkin/new
 
-            Medication.find({}, function (err, dropdownItems) {
-                if (err) {
-                    next(err);
+      Medication.find({}, function (err, dropdownItems) {
+        if (err) {
+          next(err);
+        }
+
+        if (dropdownItems) {
+          dropdownItems = getStringValuesFromItemsArray(dropdownItems);
+        }
+        
+        AssignedSurvey.findOne({userId:req.user.id, isDone:false, showDate:{$ne:null, $lt:new Date()}},{},function(err,assignedSurvey){
+          if(err){}
+          else{
+            if(assignedSurvey){
+              Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                if (!template) {
+                  res.redirect('/dashboard');
                 }
 
-                if (dropdownItems) {
-                    dropdownItems = getStringValuesFromItemsArray(dropdownItems);
-                }
-
-                AssignedSurvey.findOne({userId:req.user.id, isDone:false, showDate:{$ne:null, $lt:new Date()}},{},function(err,assignedSurvey){
-                    if(err){}
-                    else{
-                        if(assignedSurvey){
-                            Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                                if (!template) {
-                                    res.redirect('/dashboard');
-                                }
-																
-                                CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                                    res.render('checkin/checkinEdit.ejs', {
-                                        checkin: {},
-                                        templates: templates,
-                                        survey: template,
-                                        assignedSurvey: assignedSurvey,
-                                        dropdownDataSource: dropdownItems
-                                    });
-                                });
-                            });
-                        }
-                        else{
-                            // try again for all the assignedSurvey items that have showDate = null
-                            AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
-                                if(assignedSurvey){
-                                    Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                                        if (!template) {
-                                            res.redirect('/dashboard');
-                                        }
-                                        CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                                            res.render('checkin/checkinEdit.ejs', {
-                                                checkin: {},
-                                                templates: templates,
-                                                survey: template,
-                                                assignedSurvey:assignedSurvey,
-                                                dropdownDataSource: dropdownItems
-                                            });
-                                        });
-                                    });
-                                }
-                                else{
-                                    res.redirect('/dashboard');
-                                }
-                            });
-                        }
-                    }
+                CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                  res.render('checkin/checkinEdit.ejs', {
+                    checkin: {},
+                    user: req.user,
+                    templates: templates,
+                    survey: template,
+                    assignedSurvey: assignedSurvey,
+                    dropdownDataSource: dropdownItems
+                  });
                 });
-            });
+              });
+            }
+            else{
+              // try again for all the assignedSurvey items that have showDate = null
+              AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
+                if(assignedSurvey){
+                  Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
+                    if (!template) {
+                      res.redirect('/dashboard');
+                    }
+                    CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                      res.render('checkin/checkinEdit.ejs', {
+                        checkin: {},
+                        user: req.user,
+                        templates: templates,
+                        survey: template,
+                        assignedSurvey:assignedSurvey,
+                        dropdownDataSource: dropdownItems
+                      });
+                    });
+                  });
+                }
+                else{
+                  res.redirect('/dashboard');
+                }
+              });
+            }
+          }
+        });
+      });
 		}
 	};
 
@@ -305,6 +308,7 @@ module.exports = (function() {
 	*/
 
 	var signin = function (req, res) {
+    console.log("redirecting to users/login");
 		res.render('users/login', {
 			title: 'Login',
 			message: req.flash('error')

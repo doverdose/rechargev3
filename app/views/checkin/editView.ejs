@@ -122,15 +122,15 @@
 					<textarea class="form-control"  name="answers[]" required></textarea>
 				</div>
 			<% } %>
-            <% if(template.type === 'dropdownText') { %>
-                <div class="form-group">
-                    <input type="text" class="form-control typeahead"  name="answers[]" required />
-                </div>
-            <% } %>
+      <% if(template.type === 'dropdownText') { %>
+      <div class="form-group">
+        <input type="text" class="form-control typeahead"  name="answers[]" required />
+      </div>
+      <% } %>
 		</div>
 	</div>
 
 	<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
-		Update checkin
+		Respond now
 	</button>
 </form>

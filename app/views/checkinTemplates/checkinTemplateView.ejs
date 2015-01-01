@@ -1,15 +1,15 @@
 <% layout('../layouts/default') -%>
 
 <div class="page-header">
-	<form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
-		<a href="/admin" class="btn btn-default">Back to Admin</a>
-    <a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
-
-		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-		<input type="hidden" name="id" id="id" value="<%= c.id %>">
-
-		<button type="submit" class="btn btn-danger">Remove</button>
-	</form>
+  <% if (viewer && (viewer.permissions.admin || viewer.permissions.provider)) { %>	
+    <form action="/checkintemplate/remove" method="post" class="btn-group pull-right">
+        <a href="/admin" class="btn btn-default">Back to Admin</a>  
+      <a href="/checkintemplate/<%= c.id %>/edit" class="btn btn-default">Edit</a>
+      <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+      <input type="hidden" name="id" id="id" value="<%= c.id %>">
+      <button type="submit" class="btn btn-danger">Remove</button>
+    </form>
+  <% } %>
 	<h3><%= c.title %></h3>
 </div>
 
@@ -22,11 +22,13 @@
     <%})%>
 <%}%>
 
-<h4 class="text-muted">Score:</h4>
-<p><%= c.score %></p>
+<% if (viewer && (viewer.permissions.admin || viewer.permissions.provider)) { %>	
+  <h4 class="text-muted">Score:</h4>
+  <p><%= c.score %></p>
+<% } %>
 
 <h4 class="text-muted">Tips:</h4>
-<p><%= c.tips %></p>
+<p><%= c.tips || 'No tips for this checkin template' %></p>
 
 <% if(c.type.indexOf('choice') !== -1 && c.answers && c.answers.length) { %>
 	<h4 class="text-muted">Possible answers:</h4>
@@ -52,10 +54,12 @@
 	</ul>
 <% }%>
 
-<h4 class="text-muted">Prior responses:</h4>
-<% if (viewer && checkins) { 
-  checkins.forEach(function(checkin){
-    if (String(checkin.user_id) === String(viewer.id) && checkin.answers[0]) { %>
+<% if (viewer && checkins && (!viewer.permissions.admin && !viewer.permissions.provider)) { 
+  var checkinsExist = false; %>
+  <h4 class="text-muted">Response history:</h4>
+  <% checkins.forEach(function(checkin){
+    if (String(checkin.user_id) === String(viewer.id) && checkin.answers[0]) { 
+      checkinsExist = true; %>
       <div class="list-group large-list">
         <div class="list-group-item">
           <div class = "row">
@@ -69,7 +73,8 @@
         </div>
       </div>
     <% }
-  });  
-} else { %>
-  No prior responses                     
-<% } %>
+  });
+  if (!checkinsExist) { %>
+    No checkins have been made.
+  <% } 
+} %>
