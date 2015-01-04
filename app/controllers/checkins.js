@@ -33,189 +33,7 @@ module.exports = (function () {
     var listSurveys = function (req, res, next) {
         helper.listSurveys(req.user._id, function(templateVars){
           res.render('checkin/listSurveys.ejs', templateVars);
-        });  
-      /*
-      var templateVars = {};
-        Survey.find({}, function (err, surveyTemplates) {
-            //all surveys list
-            if (err) {
-                return next(err);
-            }
-            templateVars.surveyTemplates = surveyTemplates;
-
-            Checkin.find({
-                user_id: req.user._id
-            }, {
-                survey_id: true,
-            }, function (err, results) {
-                if (err) {
-                    next(err);
-                }
-                var surveys = [];
-                for (var i = 0; i < results.length; i++) {
-                    surveys.push(results[i].survey_id);
-                }
-
-                Survey.find({
-                    _id: {
-                        $in: surveys
-                    }
-                }, function (err, surveysFound) {
-                    templateVars.surveys = surveysFound;
-
-                    async.parallel([
-                        function (callback) {
-                            // get checkin details
-                            Checkin.find({
-                                user_id: req.user._id
-                            }, function (err, checkins) {
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                templateVars.checkins = checkins.reverse();
-                                callback();
-                            });
-                        },
-                        function (callback) {
-                            // get total score from all checkins
-                            Checkin.find({
-                                user_id: req.user._id
-                            }, function (err, checkins) {
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                // calculate user score
-                                var totalScore = 0;
-                                checkins.forEach(function (checkin) {
-                                    totalScore += checkin.score || 0;
-                                });
-
-                                templateVars.totalScore = totalScore;
-                                callback();
-                            });
-                        },
-                        function (callback) {
-                            CheckinTemplate.find({}, function (err, checkinTemplates) {
-                                if (err) {
-                                    return next(err);
-                                }
-                                templateVars.checkinTemplates = checkinTemplates;
-                                callback();
-                            });
-                        }
-                    ], function (err) {
-                        if (err) {
-                            next(err);
-                        }
-
-                        var nextMonday = moment().day(8).hour(0).minute(0).toDate(),
-                            tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
-                            today = moment().hour(0).minute(0).second(0).toDate();
-
-                        // get schedules for checking-in
-                        Schedule.find({
-                            user_id: req.user._id,
-                            $and: [
-                                {
-                                    $or: [
-                                        {
-                                            expires: false
-                                        },
-                                        {
-                                            expire_date: {
-                                                $gte: today
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    $or: [
-                                        {
-                                            due_date: {
-                                                $gte: today
-                                            }
-                                        },
-                                        {
-                                            repeat_interval: {
-                                                $gt: 0
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }, function (err, schedules) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            templateVars.schedules = {
-                                today: [],
-                                thisWeek: []
-                            };
-
-                            // for recurring dates, set the next
-                            schedules.forEach(function (schedule) {
-                                // if the due_date has passed, but this is a recurring check-in
-                                if (schedule.due_date < new Date() && schedule.repeat_interval) {
-                                    // calculate the number of possible recurring times
-                                    // then add one more to get the 'next' recurring date
-                                    var recurringTimes = parseInt(moment().diff(schedule.due_date, 'days') / schedule.repeat_interval) + 1;
-                                    var nextDueDate = moment(schedule.due_date).add('days', schedule.repeat_interval * recurringTimes).toDate();
-                                    schedule.due_date = nextDueDate;
-                                }
-
-                                templateVars.checkinTemplates.every(function (template) {
-                                    if (schedule.template_id.equals(template._id)) {
-                                        schedule.template = template;
-                                        return false;
-                                    }
-                                    return true;
-                                });
-
-                                var compareDate = {
-                                    date: null,
-                                    object: null
-                                };
-
-                                // check if the user has already checked-in in the last interval
-                                if (schedule.due_date < tomorrow) {
-                                    compareDate.date = tomorrow;
-                                    compareDate.object = 'today';
-                                } else if (schedule.due_date < nextMonday) {
-                                    compareDate.date = nextMonday;
-                                    compareDate.object = 'thisWeek';
-                                }
-
-                                if (compareDate.date) {
-                                    // parse all checkins, to see if we already made the required checkin
-                                    var existingCheckin = false;
-                                    templateVars.checkins.every(function (checkin) {
-                                        // look for a template with the same title made in the last day
-                                        if (checkin.title === schedule.template.title &&
-                                            checkin.timestamp > moment(compareDate.date).subtract(schedule.repeat_interval, 'days').toDate() &&
-                                            checkin.timestamp < compareDate.date) {
-
-                                            existingCheckin = true;
-                                            return false;
-                                        }
-                                        return true;
-                                    });
-
-                                    if (!existingCheckin) {
-                                        templateVars.schedules[compareDate.object].push(schedule);
-                                    }
-                                }
-                            });
-                            res.render('checkin/listSurveys.ejs', templateVars);
-                        });
-                    });
-                });
-            });
-            
-        });
-        */
+        });        
     };
 
     var list = function (req, res, next) {
@@ -318,242 +136,328 @@ module.exports = (function () {
     };
 
     var update = function (req, res, next) {
-        var functions = [];
-				console.log(req.body);
-        for (var i = 0; i < req.body.data.length; i++) {
-            functions.push((function (index, answers) {
-                return function (callback) {
-                    CheckinTemplate.findOne({
-                        _id: req.body.data[index].id
-                    }, function (err, template) {
-                        if (err) {
-                            callback(err);
-                            return;
+      var functions = [];
+
+      // For each checkin template answered, create set of datastore functions and add to function array
+      for (var i = 0; i < req.body.data.length; i++) {
+        functions.push((function (index, answers) {
+          return function (callback) {
+            CheckinTemplate.findOne({
+              _id: req.body.data[index].id
+            }, function (err, template) {
+              if (err) {
+                callback(err);
+                return;
+              }
+
+              if (!template) {
+                callback(new Error('Failed to load Check-in Template' + req.body.data[index].id));
+                return;
+              }
+
+              // For each answer with a linked schedule, create function to save new schedule 
+              template = template.toObject();
+              var schedulesSave = [];
+              if (answers) {
+                for (var j = 0; j < answers.length; j++) {
+                  for (var k = 0; k < template.schedules.length; k++) {
+                    if (answers[j] === template.schedules[k].answer) {
+                      var schedule = {};
+                      schedule.user_id = req.user.id;
+                      schedule.template_id = template._id;
+                      schedule.repeat_interval = template.schedules[k].repeat_interval;
+                      schedule.due_date = template.schedules[k].due_date;
+
+                      var expiryPreset = {
+                        '1m': { months: 1 },
+                        '6m': { months: 6 },
+                        '1y': { years: 1 }
+                      };
+
+                      if (template.schedules[k].expires === '0') {
+                        schedule.expires = false;
+                      } else {
+                        schedule.expires = true;
+                        if (template.schedules[k].expires === 'custom') {
+                          schedule.expire_date = template.schedules[k].expire_date;
+                        } else {
+                          schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
                         }
+                      }
 
-                        if (!template) {
-                            callback(new Error('Failed to load Check-in Template' + req.body.data[index].id));
-                            return;
-                        }
-
-                        template = template.toObject();
-                        var schedulesSave = [];
-												if (answers) {
-														for (var j = 0; j < answers.length; j++) {
-																for (var k = 0; k < template.schedules.length; k++) {
-																		if (answers[j] === template.schedules[k].answer) {
-																				var schedule = {};
-																				schedule.user_id = req.user.id;
-																				schedule.template_id = template._id;
-																				schedule.repeat_interval = template.schedules[k].repeat_interval;
-																				schedule.due_date = template.schedules[k].due_date;
-
-																				var expiryPreset = {
-																						'1m': { months: 1 },
-																						'6m': { months: 6 },
-																						'1y': { years: 1 }
-																				};
-
-																				if (template.schedules[k].expires === '0') {
-																						schedule.expires = false;
-																				} else {
-																						schedule.expires = true;
-																						if (template.schedules[k].expires === 'custom') {
-																								schedule.expire_date = template.schedules[k].expire_date;
-																						} else {
-																								schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
-																						}
-																				}
-
-																				schedulesSave.push(
-																						(function (schedule) {
-																								return function (callback) {
-																										var obj = new Schedule(schedule);
-																										obj.save(function (err) {
-																												if (err) {
-																														callback(err);
-																														return;
-																												}
-																												callback();
-																										});
-																								};
-																						})(schedule)
-																				);
-																		}
-																}
-														}
-												}
-
-                        async.parallel(schedulesSave, function (err) {
-                            if (err) {
-                                next(err);
-                            }
-
-                            var checkinData = {};
-                            checkinData.template_id = template._id;
-                            checkinData.type = template.type;
-                            checkinData.title = template.title;
-                            checkinData.question = template.question;
-                            checkinData.tips = template.tips;
-                            checkinData.score = template.score;
-                            checkinData.title = template.title;
-                            checkinData.answers = answers;
-                            checkinData.survey_id = req.body.surveyID;
-
-                            var formParams = parseForm(checkinData);
-
-                            // create new checkin
-                            var checkin = new Checkin(formParams);
-                            checkin.user_id = req.user.id;
-
-                            checkin.save(function (err) {
-                                if (err) {
-                                    callback(err);
-                                    return;
-                                }
-
-                                //here take the newly submitted survey and set it to "isDone:true" in assignedSurvey collection in DB
-                                var assignedSurveyId = req.body.assignedSurveyId;
-                                AssignedSurvey.update({_id: assignedSurveyId}, {isDone: true}, function (err, num) {
-
-                                });
-
-                                callback();
+                      schedulesSave.push(
+                        (function (schedule) {
+                          return function (callback) {
+                            var obj = new Schedule(schedule);
+                            obj.save(function (err) {
+                              if (err) {
+                                callback(err);
+                                return;
+                              }
+                              callback();
                             });
-                        });
-                    });
-								};
-            })(i, req.body.data[i].answers));
-        }
-        async.series(functions, function (err) {
-            if (err) {
-                next(err);
-            }
-
-            Survey.findOne({_id:req.body.surveyID}, function(err, survey){
-                if(err){next(err)}
-
-                if(survey.isWizardSurvey){
-
-                    // if the survey is a wizard survey (aka medication survey) do the following:
-                    //- generate a checkin template with "how many times did you take x med this week?" question for each med.
-                    //- generate a survey that uses the newly generated checkin template
-                    //- schedule and assign survey to user
-
-                    var medicationNames = [];
-                    var asyncFunctions = [];
-
-                    req.body.data.forEach(function (dataItem) {
-                        // check each dataItem's template and find out if it is a "dropdownText" type, then get its answer and construct
-                        // the questions array
-                        dataItem.id;
-
-                        asyncFunctions.push(
-                            function (callback) {
-                                CheckinTemplate.findOne({_id: dataItem.id}, function (err, template) {
-                                    if (err) {
-                                        next(err)
-                                    }
-                                    if (template.type == "dropdownText") {
-                                        //construct a "questions object"
-                                        medicationNames.push(dataItem.answers[0]);
-                                    }
-                                    callback();
-                                });
-                            }
-                        );
-                    });
-
-                    async.parallel(asyncFunctions, function (err) {
-                        //after all the async functions finish
-                        var questions = [];
-
-                        medicationNames.forEach(function (medicationName) {
-                            questions.push({
-                                text: "How many times did you take '<b>{MEDICATION_NAME}</b>' this week?".replace('{MEDICATION_NAME}', medicationName)
-                            });
-                        });
-
-                        var generatedCheckinTemplate = new CheckinTemplate({
-                            type: "medicationCheckin",
-                            title: "GENERATED_Medication Checkin Template",
-                            score: 0,
-                            tips: "",
-                            question: "",
-                            questions: questions,
-                            schedules: [],
-                            answers: []
-                        });
-
-                        //create a newly generated template
-                        generatedCheckinTemplate.save(function (err, freshTemplate) {
-                            freshTemplate._id;
-
-                            //create a newly generated survey
-                            var survey = new Survey({
-                                title: "GENERATED_Weekly Adherence Survey",
-                                isStartingSurvey: false,
-                                duration: "2months",
-                                recurrence: "1week",
-                                isWizardSurvey: false,
-                                maximumIterations: "0",
-                                checkinTemplates: [freshTemplate._id],
-                                isGenerated:true
-                            });
-
-                            survey.save(function (err, freshSurvey) {
-                                // here we assign a recurring survey to the user:
-
-                                var todayDate = new Date();
-                                //set the time to 0, so when we schedule surveys we schedule them for midnight
-                                todayDate.setUTCHours(0, 0, 0, 0);
-                                var endDate = new Date(todayDate);
-
-                                //set endDate 2 months from now
-                                endDate.setMonth(todayDate.getMonth() + 2);
-
-                                //jump to the next friday
-                                var currentDate = moment().day(5).toDate();
-                                //set the time to 0, so when we schedule surveys we schedule them for midnight
-                                currentDate.setUTCHours(0, 0, 0, 0);
-                                var datesToAssign = [];
-
-                                while (currentDate < endDate) {
-                                    datesToAssign.push(new Date(currentDate));
-                                    currentDate.setDate(currentDate.getDate() + 7);
-                                }
-
-                                // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
-                                // before inserting new items in
-                                AssignedSurvey.find({surveyId: freshSurvey._id}).remove(function (err, num) {
-                                    if (err) {
-                                    }
-                                    else {
-                                        var assignedSurveysToInsert = [];
-                                        datesToAssign.forEach(function (date) {
-                                            assignedSurveysToInsert.push({
-                                                userId: req.user.id,
-                                                surveyId: freshSurvey._id,
-                                                isDone: false,
-                                                showDate: date,
-                                                hasNotifications:true,
-                                                __v: 0
-                                            });
-                                        });
-                                        AssignedSurvey.collection.insert(assignedSurveysToInsert, function (err, items) {});
-                                    }
-                                });
-                            });
-                        });
-                        res.redirect('/checkin/survey/' + req.body.surveyID);
-                    });
+                          };
+                        })(schedule)
+                      );
+                    }
+                  }
                 }
-                else{
-                    res.redirect('/checkin/survey/' + req.body.surveyID);
+              }
+
+              // After saving schedules, save checkin
+              async.parallel(schedulesSave, function (err) {
+                if (err) {
+                  next(err);
                 }
+
+                var checkinData = {};
+                checkinData.template_id = template._id;
+                checkinData.type = template.type;
+                checkinData.title = template.title;
+                checkinData.question = template.question;
+                checkinData.tips = template.tips;
+                checkinData.score = template.score;
+                checkinData.title = template.title;
+                checkinData.answers = answers;
+                checkinData.survey_id = req.body.surveyID;
+
+                var formParams = parseForm(checkinData);
+
+                // create new checkin
+                var checkin = new Checkin(formParams);
+                checkin.user_id = req.user.id;
+
+                checkin.save(function (err) {
+                  if (err) {
+                    callback(err);
+                    return;
+                  }
+
+                  //here take the newly submitted response and set it to "isDone:true" in assignedSurvey collection in DB
+                  var assignedSurveyId = req.body.assignedSurveyId;
+                  AssignedSurvey.update({_id: assignedSurveyId}, {isDone: true}, function (err, num) {
+
+                  });
+
+                  callback();
+                });
+              });
             });
-        });
-    };
+          };
+        })(i, req.body.data[i].answers));
+      }
+
+      // Execute checkin and schedule datastore transactions, and then create Adherence Survey if survey is Wizard Survey type
+      async.series(functions, function (err) {
+        if (err) {
+          next(err);
+        }
+
+        Survey.findOne({_id:req.body.surveyID}, function(err, survey){
+          if(err) next(err);
+
+          if(survey.isWizardSurvey){
+
+            // if the survey is a wizard survey (aka medication survey) do the following:
+            //- generate a survey that contains checkin templates for each medication
+            //- generate a checkin templates as necessary for new medications
+            //- schedule and assign survey to user
+
+            var medicationNames = [];
+            var asyncFunctions = [];
+
+            req.body.data.forEach(function (dataItem) {
+              // for each template that is a "dropdownText" type, add its answer to the medicationNames array
+              dataItem.id;
+
+              asyncFunctions.push(
+                function (callback) {
+                  CheckinTemplate.findOne({_id: dataItem.id}, function (err, template) {
+                    if (err) {
+                      next(err)
+                    }
+                    if (template.type == "dropdownText") {
+                      //construct a "questions object"
+                      medicationNames.push(dataItem.answers[0]);
+                    }
+                    callback();
+                  });
+                }
+              );
+            });
+
+
+            async.parallel(asyncFunctions, function (err) {
+              // Medication names are used to generate a Survey with associated Adherence Checkin Templates
+
+              // Check if adherence survey is already assigned
+              AssignedSurvey.find({userId: req.user.id}, function(err, assigned) {
+                if (err) next(err);
+
+                // Find:
+                // - assigned surveys that are generated
+                // - Adherence Checkin Templates associated with medications
+                var generatedSurveys = [];
+                var adherenceTemplates = [];
+                var missingTemplateGenerators = [];
+
+                async.parallel([
+                  function(callback) {
+                    Survey.find({_id: {$in: assigned}, isGenerated: true}, function(err, surveys){
+                      if (err) next(err);
+
+                      if (surveys) {
+                        generatedSurveys = surveys; 
+                      }
+                    });
+                    callback();
+                  },
+                  function(callback) {
+                    medicationNames.forEach(function(medName){
+                      CheckinTemplate.findOne({title: "{MED_NAME} adherence template".replace("{MED_NAME}",med)}, function(err, template){
+                        if (err) next(err);
+                        if (template) {
+                          // Template matched, push to array 
+                          adherenceTemplates.push(template);
+                        } else {
+                          // Template missing, create function for new CheckinTemplate and push to array
+                          var templateGenerator = function (med, callback) {
+                            return function (callback) {
+                              var newCheckinTemplate = new CheckinTemplate({
+                                type: "medicationCheckin",
+                                title: "{MED_NAME} adherence template".replace("{MED_NAME}",med),
+                                score: 1,
+                                tips: "",
+                                question: "ADHERENCE: How many times did you take '<b>{MED_NAME}</b>' this week?".replace('{MED_NAME}', med),                                        
+                                schedules: [],
+                                answers: []
+                              });
+
+                              newCheckinTemplate.save(function(err, newTemplate){
+                                if(err) next(err);
+                                adherenceTemplates.push(newTemplate);
+                              });
+                              callback();
+                            };
+
+                          };
+                          missingTemplateGenerators.push(templateGenerator);
+                        }
+                      });                              
+                    });
+                    callback();
+                  }
+                ], function(err){
+                  // Create missing templates, and add Adherence Checkin Templates (new and existing) as an Assigned Survey,
+                  // replacing existing survey as needed
+                  async.series(missingTemplateGenerators, function(err){
+                    if (err) next(err);
+
+                    var adherenceSurvey = {};
+                    
+                    // Get adherence template IDs
+                    var adherenceTemplateIds = adherenceTemplates.forEach(function (adTemp){
+                      return adTemp.id;
+                    });
+                    
+                    if (generatedSurveys) {
+                      // Generated surveys have been assigned, find the one with the most adherence checkin templates assigned to it
+                      adherenceSurvey = generatedSurveys[0];
+                      if (adherenceTemplates) {
+                        var matches = 0;
+                        generatedSurveys.forEach(function(genSurvey){
+                          var currMatches = 0;
+                          adherenceTemplates.forEach(function(adTemp){
+                            if (genSurvey.checkinTemplates.indexOf(adTemp.id) !== -1) {
+                              currMatches++;
+                            }
+                          });
+                          if (currMatches > matches) {
+                            adherenceSurvey = genSurvey;
+                            matches = currMatches;
+                          }
+                        });                              
+                      }
+                      
+                      // Update survey with new Adherence Templates
+                      adherenceTemplateIds.forEach( function (templateId){
+                        if (adherenceSurvey.checkinTemplates.indexOf(templateId) === -1) {
+                          // add missing survey to checkinTemplates
+                          adherenceSurvey.checkinTemplates.push(templateId);
+                        }
+                      });                      
+
+                    } else {
+                      // No existing generated surveys, create one and assign it
+                      adherenceSurvey = new Survey({
+                        title: "GENERATED_Weekly Adherence Survey",
+                        isStartingSurvey: false,
+                        duration: "2months",
+                        recurrence: "1week",
+                        isWizardSurvey: false,
+                        maximumIterations: "0",
+                        checkinTemplates: adherenceTemplates.map(function(adTemp) { return adTemp.id }),
+                        isGenerated:true
+                      });
+                    } // end if-else statement
+
+                    adherenceSurvey.save(function(err, freshSurvey){
+                      if(err) next(err);
+                      // here we assign weekly adherence surveys to the user:
+
+                      var todayDate = new Date();
+                      //set the time to 0, so when we schedule surveys we schedule them for midnight
+                      todayDate.setUTCHours(0, 0, 0, 0);
+                      var endDate = new Date(todayDate);
+
+                      //set endDate 2 months from now
+                      endDate.setMonth(todayDate.getMonth() + 2);
+
+                      //jump to the next friday
+                      var currentDate = moment().day(5).toDate();
+                      //set the time to 0, so when we schedule surveys we schedule them for midnight
+                      currentDate.setUTCHours(0, 0, 0, 0);
+                      var datesToAssign = [];
+
+                      while (currentDate < endDate) {
+                        datesToAssign.push(new Date(currentDate));
+                        currentDate.setDate(currentDate.getDate() + 7);
+                      }
+
+                      // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
+                      // before inserting new items in
+                      AssignedSurvey.find({surveyId: freshSurvey._id}).remove(function (err, num) {
+                        if (err) {
+                        }
+                        else {
+                          var assignedSurveysToInsert = [];
+                          datesToAssign.forEach(function (date) {
+                            assignedSurveysToInsert.push({
+                              userId: req.user.id,
+                              surveyId: freshSurvey._id,
+                              isDone: false,
+                              showDate: date,
+                              hasNotifications:true,
+                              __v: 0
+                            });
+                          });
+                          AssignedSurvey.collection.insert(assignedSurveysToInsert, function (err, items) {});
+                        }
+                      }); // end AssignedSurvey mongoose call
+                    }); // end Survey save mongoose call                     
+                  }); // end async.series                         
+                }); // end async.parallel                        
+              }); // end AssignedSurvey mongoose call                       
+            }); // end async.parallel
+
+            res.redirect('/checkin/survey/' + req.body.surveyID);
+
+          } else {
+            res.redirect('/checkin/survey/' + req.body.surveyID);
+          }
+        }); // end Survey mongoose call
+      }); // end async.series call
+    }; // end update function
 
     var updateView = function (req, res, next) {
         Checkin.findOne({
@@ -596,9 +500,9 @@ module.exports = (function () {
     var createView = function (req, res, next) {
         Survey.findOne({
             _id: req.body.id
-        }, function (err, template) {
-            if (!template) {
-                return next(new Error('Failed to load Check-in Template ' + req.body.id));
+        }, function (err, survey) {
+            if (!survey) {
+                return next(new Error('Failed to load Survey ' + req.body.id));
             }
 
             Medication.find({}, function (err, dropdownItems) {
@@ -611,12 +515,12 @@ module.exports = (function () {
                 }
 
                 CheckinTemplate.find({
-                    _id: { $in: template.checkinTemplates}
+                    _id: { $in: survey.checkinTemplates}
                 }, function (err, templates) {
                     res.render('checkin/checkinEdit.ejs', {
                         checkin: {},
                         templates: templates,
-                        survey: template,
+                        survey: survey,
                         dropdownDataSource: dropdownItems
                     });
                 });
