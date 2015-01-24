@@ -23,11 +23,9 @@
 	<% } %>
 </head>
 <body>
-
 	<!--[if lt IE 9]>
 	<script src="/bower_components/html5shiv/dist/html5shiv.js"></script>
 	<![endif]-->
-
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 
 		<div class="navbar-header">
@@ -63,17 +61,17 @@
 
 					<% if(!user.permissions.provider && !user.permissions.admin) { %>
 						<li>
-							<a href="/checkin">Check-ins</a>
+							<a href="/checkin">Surveys</a>
 						</li>
 					<% } %>
 					<li>
 						<a href="/settings/profile">Settings</a>
 					</li>
 				</ul>
-			<p class="navbar-text signed-in-text">
-				Signed in as <strong><%= user.email %></strong>
-			</p>
-			 <a href="/logout" class="btn btn-default navbar-btn navbar-right">Sign out</a>
+        <p class="navbar-text signed-in-text">
+          Signed in as <strong><%= user.email %></strong>
+        </p>
+			  <a href="/logout" class="btn btn-default navbar-btn navbar-right">Sign out</a>
 
 			<% } else {%>
 				<ul class="nav navbar-nav">
@@ -85,7 +83,7 @@
 			<% } %>
 		</div>
 	</nav>
-
+  
 	<%- body -%>
 
 	<footer class="site-footer">
@@ -97,7 +95,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<p class="text-center myf">&copy 2014 ReCharge Health. All Rights Reserved. </p>
+					<p class="text-center myf">&copy 2015 ReCharge Health. All Rights Reserved. </p>
 				</div>
 			</div>
 		</div>

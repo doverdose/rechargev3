@@ -5,8 +5,8 @@
 		<h2>
 			Surveys
 		</h2>
-		<div class="header-actions">
-			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template">Check-in now</button>
+  	<div class="header-actions">
+			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey</button>
 		</div>
 	</div>
 	<% Object.keys(schedules).forEach(function(key) { %>
@@ -52,7 +52,7 @@
 	<% }) %>
 
 
-	<% if(surveys.length) { %>
+	<% if(surveyData.length) { %>
 		<h4>Past surveys</h4>
 		<%
 			var scoreClass = 'warning';
@@ -81,15 +81,18 @@
 		</div>
 
 		<div class="list-group large-list">
-			<% surveys.forEach(function(survey) { %>
+			<% surveyData.forEach(function(survey) { %>
 				<div class="list-group-item">
 					<div class="row">
 						<div class="col-xs-8">
-							<a href="/checkin/survey/<%= survey._id %>">
+							<a href="/checkin/survey/<%= survey.id %>">
 								<h3 data-toggle="tooltip" data-placement="bottom">
 									<%= survey.title %>
 								</h3>
-							</a>
+              </a>
+              <p>
+                <%= survey.isCompleted ? "" : " (Not yet completed)" %>
+              </p>
 						</div>
 					</div>
 				</div>
@@ -104,7 +107,7 @@
 			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 
 			<div class="form-group">
-				<label for="templateId">Select checkin type</label>
+				<label for="templateId">Select survey</label>
 				<select class="js-select2" id="id" name="id">
 					<% for(var i = 0; i < surveyTemplates.length; i++) { %>
 						<option value="<%= surveyTemplates[i].id %>">
@@ -115,7 +118,7 @@
 			</div>
 
 			<button type="submit" class="btn btn-primary btn-block">
-				Check-in
+				Go
 			</button>
 		</form>
 	</div>

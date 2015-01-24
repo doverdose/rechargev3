@@ -46,17 +46,17 @@
 
     var addAnswers = function(){
 
-        if(nrOfIterations <survey.maximumIterations){
+        if(nrOfIterations < survey.maximumIterations){
 
             var newIteration = $(firstIterationDivClone).clone();
             var templates = $(newIteration).find(".template");
 
-            // foreach teplate, change data[i] to a new index
+            // foreach template, change data[i] to a new index
             for(var i = 0; i < nrOfTemplates; i ++){
 
                 $(templates[i]).find("[name]").each(function(index){
-                    var newVal = this.name.replace(i, currentIndex);
-                    this.name = newVal;
+                  var newVal = this.name.replace(i, currentIndex);
+                  this.name = newVal;
                 });
 
                 currentIndex++;
@@ -117,86 +117,92 @@
 		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 		<input type="hidden" name="id" value="<%= checkin.id || '' %>">
 		<input type="hidden" name="surveyID" value="<%= survey._id || '' %>">
-        <% if(typeof assignedSurvey !== 'undefined') { %>
-        <input type="hidden" name="assignedSurveyId" value="<%= assignedSurvey._id || '' %>">
-        <% } %>
+    <% if(typeof assignedSurvey !== 'undefined') { %>
+    <input type="hidden" name="assignedSurveyId" value="<%= assignedSurvey._id || '' %>">
+    <% } %>
 
-        <div id="iteration-0" class="iteration">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                <% for(var i = 0; i < templates.length; i++) { %>
+    <div id="iteration-0" class="iteration">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <% for(var i = 0; i < templates.length; i++) { %>
 
-                    <div id="template-<%=i%>" class="template">
-                        <h4><%= templates[i].question %></h4>
+          <div id="template-<%=i%>" class="template">
+            <h4><%= templates[i].question %></h4>
 
-                        <input type="hidden" name="data[<%= i %>][id]" value="<%= templates[i].id %>">
-                        <label for="answer" class="text-muted">
-                            Answer(s)
-                        </label>
+            <input type="hidden" name="data[<%= i %>][id]" value="<%= templates[i].id %>">
+            <label for="answer" class="text-muted">
+              Answer(s)
+            </label>
 
-                        <div class="row">
-                            <div class="col-sm-5 col-sm-push-7">
-                                <% if(templates[i].tips) { %>
-                                <div class="alert alert-info">
-                                    <h4 class="small-title">
-                                        <i class="glyphicon glyphicon-question-sign"></i> Tips:
-                                    </h4>
+            <div class="row">
+              <div class="col-sm-5 col-sm-push-7">
+                <% if(templates[i].tips) { %>
+                <div class="alert alert-info">
+                  <h4 class="small-title">
+                    <i class="glyphicon glyphicon-question-sign"></i> Tips:
+                  </h4>
 
-                                    <p>
-                                        <%= templates[i].tips %>
-                                    </p>
-                                </div>
-                                <% } %>
-                            </div>
-                            <div class="col-sm-7 col-sm-pull-5">
-                                <% if(templates[i].type.indexOf('choice') !== -1) { %>
-                                    <% if(templates[i].answers && templates[i].answers.length) { %>
-                                        <% for(var j = 0; j < templates[i].answers.length; j++) { %>
-                                <div class="form-group">
-                                    <div class="<%= (templates[i].type === 'multiplechoice') ? 'checkbox' : '' %><%= (templates[i].type === 'singlechoice') ? 'radio' : '' %>">
-                                        <label>
-                                            <input type="<%= (templates[i].type === 'multiplechoice') ? 'checkbox' : '' %><%= (templates[i].type === 'singlechoice') ? 'radio' : '' %>" name="data[<%= i %>][answers][]" value="<%= templates[i].answers[j].text %>">
-                                            <%= templates[i].answers[j].text %>
-                                        </label>
-                                    </div>
-                                </div>
-                                        <% } %>
-                                    <% }%>
-                                <% }%>
-                                <% if(templates[i].type === 'text') { %>
-                                <div class="form-group">
-                                    <textarea class="form-control"  name="data[<%= i %>][answers][]" required></textarea>
-                                </div>
-                                <% } %>
-
-                                <% if(templates[i].type === 'dropdownText') { %>
-                                <div class="form-group">
-                                    <input type="text" class="form-control typeahead"  name="data[<%= i %>][answers][]" required />
-                                </div>
-                                <% } %>
-
-                                <% if(templates[i].type === 'medicationCheckin') { %>
-                                    <%templates[i].questions.forEach(function(question, index){%>
-                                    <%-question.text%>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control"  name="data[<%= i %>][answers][]" required />
-                                    </div>
-                                    <% }) %>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-                <% } %>
+                  <p>
+                    <%= templates[i].tips %>
+                  </p>
                 </div>
+                <% } %>
+              </div>
+              <div class="col-sm-7 col-sm-pull-5 answer">
+                <% if(templates[i].type.indexOf('choice') !== -1) { %>
+                  <% if(templates[i].answers && templates[i].answers.length) { %>
+                    <% for(var j = 0; j < templates[i].answers.length; j++) { %>
+                      <div class="form-group">
+                        <div class="<%= (templates[i].type === 'multiplechoice') ? 'checkbox' : '' %><%= (templates[i].type === 'singlechoice') ? 'radio' : '' %>">
+                          <label>
+                            <input type="<%= (templates[i].type === 'multiplechoice') ? 'checkbox' : '' %><%= (templates[i].type === 'singlechoice') ? 'radio' : '' %>" name="data[<%= i %>][answers][]" value="<%= templates[i].answers[j].text %>">
+                            <%= templates[i].answers[j].text %>
+                          </label>
+                        </div>
+                      </div>
+                    <% }%>
+                  <% }%>
+                <% }%>
+                
+                <% if(templates[i].type === 'text') { %>
+                  <div class="form-group">
+                    <textarea class="form-control"  name="data[<%= i %>][answers][]" required></textarea>
+                  </div>
+                <% } %>
+
+                <% if(templates[i].type === 'dropdownText') { %>
+                  <div class="form-group">
+                    <input type="text" class="form-control typeahead"  name="data[<%= i %>][answers][]" required />
+                  </div>
+                <% } %>
+
+                <% if(templates[i].type === 'medicationCheckin') { %>
+                  <%templates[i].questions.forEach(function(question, index){%>
+                    <%-question.text%>
+                    <div class="form-group">
+                      <input type="text" class="form-control"  name="data[<%= i %>][answers][]" required />
+                    </div>
+                  <% }) %>
+                <% } %>
+                
+              </div>
             </div>
-
+          </div>
+          <% } %>
         </div>
+      </div>
 
-        <% if(survey.isWizardSurvey){%>
-        <p><button type="button" id="addAnswersBtn" onclick="addAnswers()" class="btn btn-default btn-lg"> <i class="glyphicon glyphicon-plus"></i>Add another set of answers</button></p>
-        <%}%>
+    </div>
 
-        <button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+    <% if(survey.isWizardSurvey){%>
+      <p>
+        <button type="button" id="addAnswersBtn" onclick="addAnswers()" class="btn btn-default btn-lg"> 
+          <i class="glyphicon glyphicon-plus"></i>Add another medication
+        </button>
+      </p>
+    <%}%>
+
+    <button type="submit" class="btn btn-primary btn-lg js-btn-submit">
 			<% if(checkin.id) { %>
 				Update checkin
 			<% } else { %>

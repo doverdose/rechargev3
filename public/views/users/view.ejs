@@ -46,33 +46,35 @@ Surveys
  %>
     <div class="list-group-item">
       <div class="row">
-        <div class="col-xs-8">
-          <a href="/surveys/<%= surveyData[i]._id %>">
+        <div class="col-xs-12">
+          <a href="/surveys/<%= surveyData[i].id %>">
             <h3>
               <%= surveyData[i].title %>
             </h3>
-          </a>
-          <%
-          for (var j = 0; j < surveyData[i].checkinTemplates.length; j++) {
-          // Print checkin links
-          %>
-            
-            <div>
+            <p>
+              <%= surveyData[i].isCompleted ? "" : "(Not yet completed)" %>
+            </p>
+          </a>         
+          <div>
+            <%
+            for (var j = 0; j < surveyData[i].checkinTemplates.length; j++) {
+            // Print checkin links
+            %>
               <a href="/checkintemplate/<%= surveyData[i].checkinTemplates[j]._id %>">
                 <h4>
                   <%= surveyData[i].checkinTemplates[j].title %>  
                 </h4>
               </a>
               <p>
-             <% if (surveyData[i].checkinTemplates[j].answers[0]) { %>
-              <%= surveyData[i].checkinTemplates[j].answers[0].text %> 
+             <% if (surveyData[i].checkinTemplates[j].checkins.length && surveyData[i].checkinTemplates[j].checkins[0].answers[0]) {
+             %>
+                <%= surveyData[i].checkinTemplates[j].checkins[0].answers[0].text %> 
              <% } %>
-              </p>
-            </div>
-          <%
-          }  
-          %>
-                                                                 
+              </p>            
+            <%
+            }  
+            %>
+          </div>                                                       
         </div>
       </div>
     </div>
