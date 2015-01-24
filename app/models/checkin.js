@@ -37,7 +37,8 @@ module.exports = (function() {
 		timestamp: {
 			type: Date,
 			default: Date.now
-		}
+		},
+    surveyVersion: Number
 	});
 
 	/**

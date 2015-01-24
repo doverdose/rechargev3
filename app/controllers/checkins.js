@@ -220,27 +220,35 @@ module.exports = (function () {
                 checkinData.title = template.title;
                 checkinData.answers = answers;
                 checkinData.survey_id = req.body.surveyID;
-
-                var formParams = parseForm(checkinData);
-
-                // create new checkin
-                var checkin = new Checkin(formParams);
-                checkin.user_id = req.user.id;
-
-                checkin.save(function (err) {
-                  if (err) {
-                    callback(err);
-                    return;
+                
+                Survey.findOne({_id: checkinData.survey_id}, '__v',function (err, survey){
+                  if (err) {                    
+                  } else {
+                    checkinData.surveyVersion = survey.__v;
                   }
+                  
+                  var formParams = parseForm(checkinData);
 
-                  //here take the newly submitted response and set it to "isDone:true" in assignedSurvey collection in DB
-                  var assignedSurveyId = req.body.assignedSurveyId;
-                  AssignedSurvey.update({_id: assignedSurveyId}, {isDone: true}, function (err, num) {
+                  // create new checkin
+                  var checkin = new Checkin(formParams);
+                  checkin.user_id = req.user.id;
 
+                  checkin.save(function (err) {
+                    if (err) {
+                      callback(err);
+                      return;
+                    }
+
+                    //here take the newly submitted response and set it to "isDone:true" in assignedSurvey collection in DB
+                    var assignedSurveyId = req.body.assignedSurveyId;
+                    AssignedSurvey.update({_id: assignedSurveyId}, {isDone: true}, function (err, num) {
+
+                    });
+
+                    callback();
                   });
-
-                  callback();
-                });
+                  
+                });                
               });
             });
           };
