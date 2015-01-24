@@ -44,19 +44,21 @@ module.exports = (function() {
 			yearEnd = moment(date).isoWeekday(1).endOf('year').hour(23).minute(59).second(59);
 
 		var renderVars = {},
-            recentCheckins = {};
+      recentCheckins = {},
+      checkinTimes = {};
 
-		async.parallel([function(callback) {
-			checkinsForInterval(req.user._id, weekStart, weekEnd, 'weekResults', renderVars, callback);
-		}, function(callback) {
+		async.parallel([
+      function(callback) {
+        checkinsForInterval(req.user._id, weekStart, weekEnd, 'weekResults', renderVars, callback);
+      }, 
+      function(callback) {
 			checkinsForInterval(req.user._id, monthStart, monthEnd, 'monthResults', renderVars, callback);
-		}, function(callback) {
-			checkinsForInterval(req.user._id, yearStart, yearEnd, 'yearResults', renderVars, callback);
-		},function(callback) {
-            //get question and answers of the most recent wizard survey (aka medication survey) from the DB
-//            checkinsForInterval(req.user._id, yearStart, yearEnd, 'yearResults', renderVars, callback);
-            
-            //find a survey that is a wizard survey
+		  }, 
+      function(callback) {
+			  checkinsForInterval(req.user._id, yearStart, yearEnd, 'yearResults', renderVars, callback);
+		  },
+      function(callback) {
+            //get question and answers of the most recent wizard survey (aka medication survey) from the DB                        
             Survey.findOne({isWizardSurvey:true},function(err,survey){
                 if(err){next(err)}
                 if (survey !== null) {
@@ -70,15 +72,29 @@ module.exports = (function() {
                       checkins = checkins.reverse();
                       checkins.forEach(function(checkin){
                           var checkin = checkin.toObject();
-
                           var question = checkin.question;
-                          var answer = checkin.answers[0].text;
-
-                          if(question in recentCheckins){}
-                          else{
+                          var timestamp = checkin.timestamp;
+                          
+                          // Map most recent answers to question
+                          if((question in recentCheckins)){
+                            if (timestamp > checkinTimes[question]) {
+                              if (checkin.answers) {
+                                checkin.answers.forEach(function(answer){
+                                  recentCheckins[question].push(answer.text);  
+                                });
+                              }
+                              checkinTimes[question] = timestamp;
+                            }                                
+                          } else {
                               recentCheckins[question] = [];
+                              if (checkin.answers) {
+                                checkin.answers.forEach(function(answer){
+                                  recentCheckins[question].push(answer.text);
+                                });                                
+                                checkinTimes[question] = timestamp;                                
+                              }                              
                           }
-                          recentCheckins[question].push(answer);
+                          
                       });
 
                       callback();
@@ -95,7 +111,8 @@ module.exports = (function() {
 
 			res.render('dashboard/index.ejs', {
 				jsVars: renderVars,
-                recentCheckins:recentCheckins
+        recentCheckins: recentCheckins,
+        checkinTimes: checkinTimes
 			});
 		});
 	};

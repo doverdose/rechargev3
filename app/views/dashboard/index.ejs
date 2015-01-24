@@ -30,7 +30,6 @@
 
 		<div class='clear'></div>
 	</div>
-
     <%if(Object.keys(recentCheckins).length > 0){%>
     <div>
         <h3>Most recent medication:</h3>
@@ -46,7 +45,8 @@
             <%for(var i = 0; i < answerCount; i++){%>
             <tr>
                 <%for(attr in recentCheckins){%>
-                <td><%=recentCheckins[attr][i]%></td>
+                <td><%=recentCheckins[attr][i]%> reported at <%=checkinTimes[attr]%></td>
+                
                 <%}%>
             </tr>
             <%}%>
