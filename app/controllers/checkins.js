@@ -137,14 +137,16 @@ module.exports = (function () {
 
     var update = function (req, res, next) {
       var functions = [];
+      
       /*
       // Group the checkins by id
       
       var dataMap = {};
       
-      for (var i = 0; i < req.body.data.length; i++) {
-        var dataItem = req.body.data[i];
-        
+      for (dataItem in req.body.data) {       
+        if (dataItem.id in dataMap) {
+          
+        }
       }
       */
       

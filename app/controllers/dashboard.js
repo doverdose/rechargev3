@@ -76,7 +76,7 @@ module.exports = (function() {
                           var timestamp = checkin.timestamp;
                           
                           // Map most recent answers to question
-                          if((question in recentCheckins)){
+                          if(question in recentCheckins){
                             if (timestamp > checkinTimes[question]) {
                               if (checkin.answers) {
                                 checkin.answers.forEach(function(answer){
