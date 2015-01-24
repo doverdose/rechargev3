@@ -55,8 +55,8 @@
             for(var i = 0; i < nrOfTemplates; i ++){
 
                 $(templates[i]).find("[name]").each(function(index){
-                    var newVal = this.name.replace(i, currentIndex);
-                    this.name = newVal;
+                  var newVal = this.name.replace(i, currentIndex);
+                  this.name = newVal;
                 });
 
                 currentIndex++;
@@ -148,7 +148,7 @@
                 </div>
                 <% } %>
               </div>
-              <div class="col-sm-7 col-sm-pull-5">
+              <div class="col-sm-7 col-sm-pull-5 answer">
                 <% if(templates[i].type.indexOf('choice') !== -1) { %>
                   <% if(templates[i].answers && templates[i].answers.length) { %>
                     <% for(var j = 0; j < templates[i].answers.length; j++) { %>
@@ -197,7 +197,7 @@
     <% if(survey.isWizardSurvey){%>
       <p>
         <button type="button" id="addAnswersBtn" onclick="addAnswers()" class="btn btn-default btn-lg"> 
-          <i class="glyphicon glyphicon-plus"></i>Add another set of answers
+          <i class="glyphicon glyphicon-plus"></i>Add another medication
         </button>
       </p>
     <%}%>

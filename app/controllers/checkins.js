@@ -137,7 +137,17 @@ module.exports = (function () {
 
     var update = function (req, res, next) {
       var functions = [];
-
+      /*
+      // Group the checkins by id
+      
+      var dataMap = {};
+      
+      for (var i = 0; i < req.body.data.length; i++) {
+        var dataItem = req.body.data[i];
+        
+      }
+      */
+      
       // For each checkin template answered, create set of datastore functions and add to function array
       for (var i = 0; i < req.body.data.length; i++) {
         functions.push((function (index, answers) {
@@ -205,11 +215,7 @@ module.exports = (function () {
               }
 
               // After saving schedules, save checkin
-              async.parallel(schedulesSave, function (err) {
-                if (err) {
-                  next(err);
-                }
-
+              async.parallel(schedulesSave, function (err) {                
                 var checkinData = {};
                 checkinData.template_id = template._id;
                 checkinData.type = template.type;

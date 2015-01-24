@@ -3,8 +3,30 @@
 	<div class="page-header">
 		<h2>Dashboard</h2>
 	</div>
+  <%if(Object.keys(recentCheckins).length > 0){%>
+    <div>
+      <h3>Most recent medication:</h3>
+      <table class="table">
+        <tr>
+          <%var answerCount%>
+          <%for(attr in recentCheckins){%>
+          <%if(!answerCount){answerCount = recentCheckins[attr].length}%>
+          <th><%=attr%></th>
+          <%}%>
+        </tr>
 
-	<div class='plots'>
+        <%for(var i = 0; i < answerCount; i++){%>
+        <tr>
+          <%for(attr in recentCheckins){%>
+          <td><%=recentCheckins[attr][i]%> reported <%=: checkinTimes[attr] | fromNow %></td>
+
+          <%}%>
+        </tr>
+        <%}%>
+      </table>
+    </div>
+  <%}%>
+  <div class='plots'>
 		<div class='week'>
 			<div class='legend'>Checkin scores this week</div>
 			<div id='week-results'>
@@ -30,28 +52,5 @@
 
 		<div class='clear'></div>
 	</div>
-    <%if(Object.keys(recentCheckins).length > 0){%>
-    <div>
-        <h3>Most recent medication:</h3>
-        <table class="table">
-            <tr>
-                <%var answerCount%>
-                <%for(attr in recentCheckins){%>
-                <%if(!answerCount){answerCount = recentCheckins[attr].length}%>
-                <th><%=attr%></th>
-                <%}%>
-            </tr>
-
-            <%for(var i = 0; i < answerCount; i++){%>
-            <tr>
-                <%for(attr in recentCheckins){%>
-                <td><%=recentCheckins[attr][i]%> reported at <%=checkinTimes[attr]%></td>
-                
-                <%}%>
-            </tr>
-            <%}%>
-        </table>
-    </div>
-    <%}%>
 	<div class='notice'></div>
 </div>
