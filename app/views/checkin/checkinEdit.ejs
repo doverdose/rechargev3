@@ -46,12 +46,12 @@
 
     var addAnswers = function(){
 
-        if(nrOfIterations <survey.maximumIterations){
+        if(nrOfIterations < survey.maximumIterations){
 
             var newIteration = $(firstIterationDivClone).clone();
             var templates = $(newIteration).find(".template");
 
-            // foreach teplate, change data[i] to a new index
+            // foreach template, change data[i] to a new index
             for(var i = 0; i < nrOfTemplates; i ++){
 
                 $(templates[i]).find("[name]").each(function(index){

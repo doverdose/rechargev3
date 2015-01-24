@@ -264,32 +264,30 @@ module.exports = (function () {
             //- schedule and assign survey to user
 
             var medicationNames = [];
-            var asyncFunctions = [];
+            var medicationNameFinders = [];
 
             req.body.data.forEach(function (dataItem) {
               // for each template that is a "dropdownText" type, add its answer to the medicationNames array
               dataItem.id;
 
-              asyncFunctions.push(
+              medicationNameFinders.push(
                 function (callback) {
                   CheckinTemplate.findOne({_id: dataItem.id}, function (err, template) {
                     if (err) {
-                      next(err)
+                      callback();
                     }
                     if (template.type == "dropdownText") {
                       //construct a "questions object"
                       medicationNames.push(dataItem.answers[0]);
-                    }
-                    callback();
+                      callback();
+                    }              
                   });
                 }
               );
             });
-
-
-            async.parallel(asyncFunctions, function (err) {
+                      
+            async.parallel(medicationNameFinders, function (err) {
               // Medication names are used to generate a Survey with associated Adherence Checkin Templates
-
               // Check if adherence survey is already assigned
               AssignedSurvey.find({userId: req.user.id}, function(err, assigned) {
                 if (err) next(err);
@@ -297,155 +295,137 @@ module.exports = (function () {
                 // Find:
                 // - assigned surveys that are generated
                 // - Adherence Checkin Templates associated with medications
-                var generatedSurveys = [];
+                var generatedSurvey = [];          
                 var adherenceTemplates = [];
-                var missingTemplateGenerators = [];
-
-                async.parallel([
-                  function(callback) {
-                    Survey.find({_id: {$in: assigned}, isGenerated: true}, function(err, surveys){
-                      if (err) next(err);
-
-                      if (surveys) {
-                        generatedSurveys = surveys; 
-                      }
-                    });
-                    callback();
-                  },
-                  function(callback) {
-                    medicationNames.forEach(function(medName){
-                      CheckinTemplate.findOne({title: "{MED_NAME} adherence template".replace("{MED_NAME}",med)}, function(err, template){
-                        if (err) next(err);
-                        if (template) {
-                          // Template matched, push to array 
-                          adherenceTemplates.push(template);
-                        } else {
-                          // Template missing, create function for new CheckinTemplate and push to array
-                          var templateGenerator = function (med, callback) {
-                            return function (callback) {
-                              var newCheckinTemplate = new CheckinTemplate({
-                                type: "medicationCheckin",
-                                title: "{MED_NAME} adherence template".replace("{MED_NAME}",med),
-                                score: 1,
-                                tips: "",
-                                question: "ADHERENCE: How many times did you take '<b>{MED_NAME}</b>' this week?".replace('{MED_NAME}', med),                                        
-                                schedules: [],
-                                answers: []
-                              });
-
-                              newCheckinTemplate.save(function(err, newTemplate){
-                                if(err) next(err);
-                                adherenceTemplates.push(newTemplate);
-                              });
-                              callback();
-                            };
-
-                          };
-                          missingTemplateGenerators.push(templateGenerator);
-                        }
-                      });                              
-                    });
-                    callback();
-                  }
-                ], function(err){
-                  // Create missing templates, and add Adherence Checkin Templates (new and existing) as an Assigned Survey,
-                  // replacing existing survey as needed
-                  async.series(missingTemplateGenerators, function(err){
+                var adherenceSurveyPrepper = [];
+                         
+                // Add generatedSurveyFinder and templateGenerators to async function array
+                var generatedSurveyFinder = function(callback) {
+                  Survey.findOne({_id: {$in: assigned}, isGenerated: true}, function(err, survey){
                     if (err) next(err);
-
-                    var adherenceSurvey = {};
-                    
-                    // Get adherence template IDs
-                    var adherenceTemplateIds = adherenceTemplates.forEach(function (adTemp){
-                      return adTemp.id;
-                    });
-                    
-                    if (generatedSurveys) {
-                      // Generated surveys have been assigned, find the one with the most adherence checkin templates assigned to it
-                      adherenceSurvey = generatedSurveys[0];
-                      if (adherenceTemplates) {
-                        var matches = 0;
-                        generatedSurveys.forEach(function(genSurvey){
-                          var currMatches = 0;
-                          adherenceTemplates.forEach(function(adTemp){
-                            if (genSurvey.checkinTemplates.indexOf(adTemp.id) !== -1) {
-                              currMatches++;
-                            }
-                          });
-                          if (currMatches > matches) {
-                            adherenceSurvey = genSurvey;
-                            matches = currMatches;
-                          }
-                        });                              
+                    if (survey) {
+                      generatedSurvey = survey; 
+                    }
+                  });
+                  callback();  
+                }
+                              
+                medicationNames.forEach(function(medName){
+                  adherenceSurveyPrepper.push(function(callback){
+                    CheckinTemplate.findOne({title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName)}, function(err, template){
+                      if (err) next(err);
+                      if (template) {
+                        // Template matched, push to array                       
+                        adherenceTemplates.push(template);
+                        callback();
+                      } else {
+                        // Template missing, create new CheckinTemplate
+                        var newCheckinTemplate = new CheckinTemplate({
+                          type: "medicationCheckin",
+                          title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName),
+                          score: 1,
+                          tips: "",
+                          question: "ADHERENCE: How many times did you take '<b>{MED_NAME}</b>' this week?".replace('{MED_NAME}', medName),                                        
+                          schedules: [],
+                          answers: []
+                        });
+                        newCheckinTemplate.save(function(err, newTemplate){                          
+                          adherenceTemplates.push(newTemplate);
+                          callback();
+                        });                                                                    
                       }
-                      
-                      // Update survey with new Adherence Templates
+                    });  
+                  });
+                                                                  
+                });
+                             
+                adherenceSurveyPrepper.push(generatedSurveyFinder);
+                  
+                // Create missing templates, and add Adherence Checkin Templates to current or new AssignedSurvey  
+                async.series(adherenceSurveyPrepper, function(err){
+                  if (err) {
+                    next(err);
+                  }
+                  var adherenceSurvey = {};
+                  // Get adherence template IDs
+                  var adherenceTemplateIds = [];
+                  adherenceTemplateIds = adherenceTemplates.forEach(function (adTemp){
+                    return adTemp.id;
+                  });                 
+                                    
+                  if (generatedSurvey && generatedSurvey.checkinTemplates) {
+                    // Generated surveys have been assigned, find the one with the most adherence checkin templates assigned to it
+                    adherenceSurvey = generatedSurvey;
+                    
+                    // Update survey with new Adherence Templates
+                    if (adherenceTemplateIds) {
                       adherenceTemplateIds.forEach( function (templateId){
                         if (adherenceSurvey.checkinTemplates.indexOf(templateId) === -1) {
                           // add missing survey to checkinTemplates
                           adherenceSurvey.checkinTemplates.push(templateId);
                         }
                       });                      
+                    }
 
-                    } else {
-                      // No existing generated surveys, create one and assign it
-                      adherenceSurvey = new Survey({
-                        title: "GENERATED_Weekly Adherence Survey",
-                        isStartingSurvey: false,
-                        duration: "2months",
-                        recurrence: "1week",
-                        isWizardSurvey: false,
-                        maximumIterations: "0",
-                        checkinTemplates: adherenceTemplates.map(function(adTemp) { return adTemp.id }),
-                        isGenerated:true
-                      });
-                    } // end if-else statement
+                  } else {
+                    // No existing generated surveys, create one and assign it
+                    adherenceSurvey = new Survey({
+                      title: "GENERATED_Weekly Adherence Survey",
+                      isStartingSurvey: false,
+                      duration: "2months",
+                      recurrence: "1week",
+                      isWizardSurvey: false,
+                      maximumIterations: "0",
+                      checkinTemplates: adherenceTemplates.map(function(adTemp) { return adTemp.id }),
+                      isGenerated: true
+                    });
+                  } // end if-else statement
+                                  
+                  adherenceSurvey.save(function(err, freshSurvey){
+                    if(err) next(err);
+                    // here we assign weekly adherence surveys for the next two months to the user:
 
-                    adherenceSurvey.save(function(err, freshSurvey){
-                      if(err) next(err);
-                      // here we assign weekly adherence surveys to the user:
+                    var todayDate = new Date();
+                    //set the time to 0, so when we schedule surveys we schedule them for midnight
+                    todayDate.setUTCHours(0, 0, 0, 0);
+                    var endDate = new Date(todayDate);
 
-                      var todayDate = new Date();
-                      //set the time to 0, so when we schedule surveys we schedule them for midnight
-                      todayDate.setUTCHours(0, 0, 0, 0);
-                      var endDate = new Date(todayDate);
+                    //set endDate 2 months from now
+                    endDate.setMonth(todayDate.getMonth() + 2);
 
-                      //set endDate 2 months from now
-                      endDate.setMonth(todayDate.getMonth() + 2);
+                    //jump to the next friday
+                    var currentDate = moment().day(5).toDate();
+                    //set the time to 0, so when we schedule surveys we schedule them for midnight
+                    currentDate.setUTCHours(0, 0, 0, 0);
+                    
+                    var datesToAssign = [];
+                    while (currentDate < endDate) {
+                      datesToAssign.push(new Date(currentDate));
+                      currentDate.setDate(currentDate.getDate() + 7);
+                    }
 
-                      //jump to the next friday
-                      var currentDate = moment().day(5).toDate();
-                      //set the time to 0, so when we schedule surveys we schedule them for midnight
-                      currentDate.setUTCHours(0, 0, 0, 0);
-                      var datesToAssign = [];
-
-                      while (currentDate < endDate) {
-                        datesToAssign.push(new Date(currentDate));
-                        currentDate.setDate(currentDate.getDate() + 7);
+                    // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
+                    // before inserting new items in
+                    AssignedSurvey.find({surveyId: freshSurvey._id}).remove(function (err, num) {
+                      if (err) {
                       }
-
-                      // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
-                      // before inserting new items in
-                      AssignedSurvey.find({surveyId: freshSurvey._id}).remove(function (err, num) {
-                        if (err) {
-                        }
-                        else {
-                          var assignedSurveysToInsert = [];
-                          datesToAssign.forEach(function (date) {
-                            assignedSurveysToInsert.push({
-                              userId: req.user.id,
-                              surveyId: freshSurvey._id,
-                              isDone: false,
-                              showDate: date,
-                              hasNotifications:true,
-                              __v: 0
-                            });
+                      else {
+                        var assignedSurveysToInsert = [];
+                        datesToAssign.forEach(function (date) {
+                          assignedSurveysToInsert.push({
+                            userId: req.user.id,
+                            surveyId: freshSurvey._id,
+                            isDone: false,
+                            showDate: date,
+                            hasNotifications:true,
+                            __v: 0
                           });
-                          AssignedSurvey.collection.insert(assignedSurveysToInsert, function (err, items) {});
-                        }
-                      }); // end AssignedSurvey mongoose call
-                    }); // end Survey save mongoose call                     
-                  }); // end async.series                         
+                        });
+                        AssignedSurvey.collection.insert(assignedSurveysToInsert, function (err, items) {});
+                      }
+                    }); // end AssignedSurvey mongoose call
+                  }); // end Survey save mongoose call
+                  
                 }); // end async.parallel                        
               }); // end AssignedSurvey mongoose call                       
             }); // end async.parallel
@@ -454,7 +434,7 @@ module.exports = (function () {
 
           } else {
             res.redirect('/checkin/survey/' + req.body.surveyID);
-          }
+          } // end isWizardSurvey if-else statement
         }); // end Survey mongoose call
       }); // end async.series call
     }; // end update function
@@ -498,34 +478,34 @@ module.exports = (function () {
     }
 
     var createView = function (req, res, next) {
-        Survey.findOne({
-            _id: req.body.id
-        }, function (err, survey) {
-            if (!survey) {
-                return next(new Error('Failed to load Survey ' + req.body.id));
-            }
+      Survey.findOne({
+        _id: req.body.id
+      }, function (err, survey) {
+        if (!survey) {
+          return next(new Error('Failed to load Survey ' + req.body.id));
+        }
 
-            Medication.find({}, function (err, dropdownItems) {
-                if (err) {
-                    next(err);
-                }
+        Medication.find({}, function (err, dropdownItems) {
+          if (err) {
+            next(err);
+          }
 
-                if (dropdownItems) {
-                    dropdownItems = getStringValuesFromItemsArray(dropdownItems);
-                }
+          if (dropdownItems) {
+            dropdownItems = getStringValuesFromItemsArray(dropdownItems);
+          }
 
-                CheckinTemplate.find({
-                    _id: { $in: survey.checkinTemplates}
-                }, function (err, templates) {
-                    res.render('checkin/checkinEdit.ejs', {
-                        checkin: {},
-                        templates: templates,
-                        survey: survey,
-                        dropdownDataSource: dropdownItems
-                    });
-                });
+          CheckinTemplate.find({
+            _id: { $in: survey.checkinTemplates}
+          }, function (err, templates) {                  
+            res.render('checkin/checkinEdit.ejs', {
+              checkin: {},
+              templates: templates,
+              survey: survey,
+              dropdownDataSource: dropdownItems                    
             });
+          });
         });
+      });
     };
 
     var remove = function (req, res, next) {
