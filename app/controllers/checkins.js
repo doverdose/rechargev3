@@ -92,6 +92,7 @@ module.exports = (function () {
 
     var parseForm = function (form) {
         var newAnswers = [];
+      
         if (form.answers && form.answers.length) {
             form.answers.forEach(function (answer) {
                 // don't add if just whitespace
@@ -137,18 +138,36 @@ module.exports = (function () {
 
     var update = function (req, res, next) {
       var functions = [];
-      
-      /*
-      // Group the checkins by id
-      
+           
+      // Group checkins by id      
       var dataMap = {};
-      
-      for (dataItem in req.body.data) {       
-        if (dataItem.id in dataMap) {
-          
+      for (var i = 0; i < req.body.data.length; i++) {
+        var dataPt = req.body.data[i];        
+        if (dataPt.id in dataMap) {         
+        } else {
+          dataMap[dataPt.id] = [];
+        }
+        if (dataPt.answers) {
+          dataPt.answers.forEach(function(answer){
+            dataMap[dataPt.id].push(answer);
+          });
+        } else if (dataPt.answer) {
+          dataMap[dataPt.id].push(answer);
         }
       }
-      */
+      
+      // Reformat object as data array
+      var groupedData = [];
+      Object.keys(dataMap).forEach(function(id) {
+        var groupedCheckin = {
+          id: id,
+          answers: dataMap[id]
+        };
+        groupedData.push(groupedCheckin);
+      });
+      
+      // Assign to request data array
+      req.body.data = groupedData;
       
       // For each checkin template answered, create set of datastore functions and add to function array
       for (var i = 0; i < req.body.data.length; i++) {

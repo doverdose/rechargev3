@@ -127,7 +127,7 @@
           <% for(var i = 0; i < templates.length; i++) { %>
 
           <div id="template-<%=i%>" class="template">
-            <h4><%= templates[i].question %></h4>
+            <h4 class="question"><%= templates[i].question %></h4>
 
             <input type="hidden" name="data[<%= i %>][id]" value="<%= templates[i].id %>">
             <label for="answer" class="text-muted">

@@ -14,11 +14,11 @@
 </div>
 
 <h4 class="text-muted">Question:</h4>
-<p><%= c.question %></p>
+<div class="question"><%= c.question %></div>
 
 <%if(c.questions){%>
     <% c.questions.forEach(function(question){%>
-    <p><%- question.text %></p>
+      <p><%- question.text %></p>
     <%})%>
 <%}%>
 
