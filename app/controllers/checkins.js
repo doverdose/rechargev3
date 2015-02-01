@@ -333,16 +333,19 @@ module.exports = (function () {
                 var generatedSurvey = [];          
                 var adherenceTemplates = [];
                 var adherenceSurveyPrepper = [];
+                var assignedIds = assigned.map(function(a) {return a.surveyId;});
+             
                          
                 // Add generatedSurveyFinder and templateGenerators to async function array
                 var generatedSurveyFinder = function(callback) {
-                  Survey.findOne({_id: {$in: assigned}, isGenerated: true}, function(err, survey){
+                  Survey.findOne({_id: {$in: assignedIds}, isGenerated: true}, function(err, survey){
                     if (err) next(err);
                     if (survey) {
-                      generatedSurvey = survey; 
+                      generatedSurvey = survey;                      
                     }
+                    callback();
                   });
-                  callback();  
+                    
                 }
                               
                 medicationNames.forEach(function(medName){
@@ -384,22 +387,16 @@ module.exports = (function () {
                   var adherenceSurvey = {};
                   // Get adherence template IDs
                   var adherenceTemplateIds = [];
-                  adherenceTemplateIds = adherenceTemplates.forEach(function (adTemp){
+                  adherenceTemplateIds = adherenceTemplates.map(function (adTemp){
                     return adTemp.id;
-                  });                 
-                                    
+                  });                
+                                                      
                   if (generatedSurvey && generatedSurvey.checkinTemplates) {
-                    // Generated surveys have been assigned, find the one with the most adherence checkin templates assigned to it
                     adherenceSurvey = generatedSurvey;
                     
                     // Update survey with new Adherence Templates
                     if (adherenceTemplateIds) {
-                      adherenceTemplateIds.forEach( function (templateId){
-                        if (adherenceSurvey.checkinTemplates.indexOf(templateId) === -1) {
-                          // add missing survey to checkinTemplates
-                          adherenceSurvey.checkinTemplates.push(templateId);
-                        }
-                      });                      
+                      adherenceSurvey.checkinTemplates = adherenceTemplateIds;                      
                     }
 
                   } else {
@@ -441,6 +438,9 @@ module.exports = (function () {
 
                     // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
                     // before inserting new items in
+                    
+                    debugger;
+                    
                     AssignedSurvey.find({surveyId: freshSurvey._id}).remove(function (err, num) {
                       if (err) {
                       }

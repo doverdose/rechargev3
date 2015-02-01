@@ -100,9 +100,9 @@ module.exports = (function() {
                 tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
                 today = moment().hour(0).minute(0).second(0).toDate();
 
+            
             // For every assigned survey, populate object with survey and checkin titles
-            var surveyData = templateVars.assignedSurveys.map(function(aSurvey){
-              
+            var surveyData = templateVars.assignedSurveys.map(function(aSurvey){              
               var currSurvey = {
                 id: aSurvey.surveyId,
                 title: "",
@@ -151,7 +151,7 @@ module.exports = (function() {
               
               return currSurvey;
          
-            });
+            });            
             
             // Only add surveys with titles to templateVars
             templateVars.surveyData = [];

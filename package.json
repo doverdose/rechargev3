@@ -55,6 +55,8 @@
 		"build": "npm install && bower install && grunt",
 		"test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec test/test-*.js",
 		"production-test": "npm run-script build && npm test && NODE_ENV=production node web.js",
-		"start": "node web.js"
+		"start": "node web.js",
+    "nidebug": "node-inspector --web-port 8888",
+    "debug": "node debug web.js"
 	}
 }
