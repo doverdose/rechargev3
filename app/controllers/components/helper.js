@@ -13,9 +13,10 @@ module.exports = (function() {
   
   var listSurveys = function (user_id, next) {
     
-    var templateVars = {};
+    var templateVars = {};   
+    
     Survey.find({}, function (err, surveyTemplates) {
-      //all surveys list
+      //Find all surveys
       if (err) {
         return next(err);
       }
@@ -39,41 +40,29 @@ module.exports = (function() {
             $in: surveys
           }
         }, function (err, surveysFound) {
-          templateVars.surveys = surveysFound;
-
+          
           async.parallel([
             function (callback) {
-              // get checkin details
+              // get checkin details and calculate checkin score
               Checkin.find({
                 user_id: user_id
               }, function (err, checkins) {
                 if (err) {
                   return next(err);
                 }
+                
+                var totalScore = 0;
+                checkins.forEach(function(c){
+                  totalScore += c.score || 0;
+                });
+                
+                templateVars.totalScore = totalScore;
                 templateVars.checkins = checkins.reverse();
                 callback();
               });
-            },
+            },            
             function (callback) {
-              // get total score from all checkins
-              Checkin.find({
-                user_id: user_id
-              }, function (err, checkins) {
-                if (err) {
-                  return next(err);
-                }
-
-                // calculate user score
-                var totalScore = 0;
-                checkins.forEach(function (checkin) {
-                  totalScore += checkin.score || 0;
-                });
-
-                templateVars.totalScore = totalScore;
-                callback();
-              });
-            },
-            function (callback) {
+              // Find all checkin templates
               CheckinTemplate.find({}, function (err, checkinTemplates) {
                 if (err) {
                   return next(err);
@@ -83,6 +72,7 @@ module.exports = (function() {
               });
             },
             function (callback) {
+              // Find assignedsurveys associated with user
               AssignedSurvey.find({userId: user_id}, function (err, assignedSurveys) {
                 if (err) {
                   return next(err);
@@ -117,6 +107,7 @@ module.exports = (function() {
                   
                   if(surveyTemplate.checkinTemplates) {
                     
+                    // Map checkintemplate Ids and populate fields
                     currSurvey.checkinTemplates = surveyTemplate.checkinTemplates.map(function(cTempId){
                       var currCheckinTemplate = {
                         _id: cTempId,

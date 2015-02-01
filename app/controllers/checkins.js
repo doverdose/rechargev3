@@ -363,7 +363,7 @@ module.exports = (function () {
                           title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName),
                           score: 1,
                           tips: "",
-                          question: "ADHERENCE: How many times did you take '<b>{MED_NAME}</b>' this week?".replace('{MED_NAME}', medName),                                        
+                          question: "How many times did you take '{MED_NAME}' this week?".replace('{MED_NAME}', medName),                                        
                           schedules: [],
                           answers: []
                         });
@@ -412,18 +412,20 @@ module.exports = (function () {
                       isGenerated: true
                     });
                   } // end if-else statement
-                                  
+                  
+                  console.log(adherenceSurvey);            
+                  
                   adherenceSurvey.save(function(err, freshSurvey){
                     if(err) next(err);
-                    // here we assign weekly adherence surveys for the next two months to the user:
+                    // here we assign weekly adherence surveys for the next two months to the user:                                       
 
                     var todayDate = new Date();
                     //set the time to 0, so when we schedule surveys we schedule them for midnight
                     todayDate.setUTCHours(0, 0, 0, 0);
                     var endDate = new Date(todayDate);
 
-                    //set endDate 2 months from now
-                    endDate.setMonth(todayDate.getMonth() + 2);
+                    //set endDate 1 month from now
+                    endDate.setMonth(todayDate.getMonth() + 1);
 
                     //jump to the next friday
                     var currentDate = moment().day(5).toDate();
@@ -437,11 +439,11 @@ module.exports = (function () {
                     }
 
                     // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
-                    // before inserting new items in
+                    // before inserting new items in                  
                     
-                    debugger;
-                    
-                    AssignedSurvey.find({surveyId: freshSurvey._id}).remove(function (err, num) {
+                    AssignedSurvey.find({surveyId: freshSurvey.id}).remove(function (err, num) {
+                      debugger;
+                      
                       if (err) {
                       }
                       else {
@@ -449,7 +451,7 @@ module.exports = (function () {
                         datesToAssign.forEach(function (date) {
                           assignedSurveysToInsert.push({
                             userId: req.user.id,
-                            surveyId: freshSurvey._id,
+                            surveyId: freshSurvey.id,
                             isDone: false,
                             showDate: date,
                             hasNotifications:true,

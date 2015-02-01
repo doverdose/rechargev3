@@ -6,7 +6,7 @@
 			Surveys
 		</h2>
   	<div class="header-actions">
-			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey</button>
+			<button type="button" class="btn btn-primary js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey</button>
 		</div>
 	</div>
 	<% Object.keys(schedules).forEach(function(key) { %>
@@ -100,7 +100,7 @@
 			<% }) %>
 		</div>
 	<% } else { %>
-		<h4 class="text-center text-muted">You haven't completed any surveys yet</h4>
+		<h4 class="text-center text-muted">You don't have any currently assigned surveys</h4>
 	<% } %>
 
 	<div class="js-template js-checkinselector-template">
