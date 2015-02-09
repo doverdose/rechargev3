@@ -441,8 +441,7 @@ module.exports = (function () {
                     // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
                     // before inserting new items in                  
                     
-                    AssignedSurvey.find({surveyId: freshSurvey.id}).remove(function (err, num) {
-                      debugger;
+                    AssignedSurvey.find({surveyId: freshSurvey.id}).remove(function (err, num) {                      
                       
                       if (err) {
                       }
@@ -473,7 +472,7 @@ module.exports = (function () {
             res.redirect('/checkin/survey/' + req.body.surveyID);
           } // end isWizardSurvey if-else statement
         }); // end Survey mongoose call
-      }); // end async.series call
+      }); // end async.series callc
     }; // end update function
 
     var updateView = function (req, res, next) {

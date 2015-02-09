@@ -97,7 +97,8 @@ module.exports = (function() {
                 id: aSurvey.surveyId,
                 title: "",
                 checkinTemplates: [],
-                isCompleted: false
+                isCompleted: false,
+                isAssigned: true               
               };
               
               templateVars.surveyTemplates.every(function(surveyTemplate){
@@ -138,17 +139,79 @@ module.exports = (function() {
                   return false;
                 }
                 return true;
-              });
-              
-              return currSurvey;
-         
+              });              
+              return currSurvey;         
             });            
             
-            // Only add surveys with titles to templateVars
+            // Only add surveys with titles to templateVars, with the following structure for survey data
+            /*
+              surveyData = {
+                id: String
+                title: String
+                checkinTemplates: [{
+                  _id: String                
+                  title: String
+                  answers: [{
+                    text: String
+                    id: ObjectId
+                  }]
+                  checkins: [{
+                    _id: ObjectId
+                    user_id: ObjectId
+                    template_id: String
+                    type: String
+                    title: String
+                    question: String
+                    tips: String
+                    score: Number
+                    survey_id: String
+                    surveyVersion: Number
+                    timestamp: ISODate
+                    pastAnswers: [{
+                      text: String
+                      _id: ObjectId
+                      timestamp: ISODate
+                    }]
+                    answer: [{
+                      text: String
+                      _id: ObjectId
+                      timestamp: ISODate
+                    }]
+                    _v: Number
+                  }]
+                }]
+                isCompleted: Boolean
+                isAssigned: Boolean
+              }
+            */
+            
+            
             templateVars.surveyData = [];
             surveyData.forEach(function(survey){
               if (survey.title) {
                 templateVars.surveyData.push(survey);
+              }
+            });
+                        
+            var pastSurveys = {};
+            templateVars.checkins.forEach(function(c){
+              if (c.survey_id) {
+                if (pastSurveys[c.survey_id]) {
+                  // Survey exists in pastSurveys object, add checkin
+                  
+                } else {
+                  // Survey does not yet exist in pastSurveys object, create Survey object
+                  pastSurveys[c.survey_id] = {
+                    id: c.survey_id,
+                    title: "",
+                    checkinTemplates: [],
+                    isCompleted: true,
+                    isAssigned: false
+                  };
+                  
+                  // Populate checkinTemplates array
+                  
+                }
               }
             });
                       
