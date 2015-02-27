@@ -411,9 +411,7 @@ module.exports = (function () {
                       checkinTemplates: adherenceTemplates.map(function(adTemp) { return adTemp.id }),
                       isGenerated: true
                     });
-                  } // end if-else statement
-                  
-                  console.log(adherenceSurvey);            
+                  } // end if-else statement                  
                   
                   adherenceSurvey.save(function(err, freshSurvey){
                     if(err) next(err);

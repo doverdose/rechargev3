@@ -20,6 +20,7 @@ module.exports = (function() {
       if (err) {
         return next(err);
       }
+      
       templateVars.surveyTemplates = surveyTemplates;
       
       Checkin.find({
@@ -41,7 +42,23 @@ module.exports = (function() {
           }
         }, function (err, surveysFound) {
           
-          async.parallel([
+          templateVars.surveysFound = surveysFound;
+          
+          async.series([                        
+            function (callback) {
+              // Find all checkin templates
+              CheckinTemplate.find({}, function (err, checkinTemplates) {
+                if (err) {
+                  return next(err);
+                }                
+                templateVars.checkinTemplates = {};               
+                checkinTemplates.forEach(function(cT){
+                  cT.checkins = [];
+                  templateVars.checkinTemplates[cT.id] = cT;                  
+                });                              
+                callback();
+              });
+            },
             function (callback) {
               // get checkin details and calculate checkin score
               Checkin.find({
@@ -55,19 +72,15 @@ module.exports = (function() {
                 checkins.forEach(function(c){
                   totalScore += c.score || 0;
                 });
-                
+                                
                 templateVars.totalScore = totalScore;
                 templateVars.checkins = checkins.reverse();
-                callback();
-              });
-            },            
-            function (callback) {
-              // Find all checkin templates
-              CheckinTemplate.find({}, function (err, checkinTemplates) {
-                if (err) {
-                  return next(err);
-                }
-                templateVars.checkinTemplates = checkinTemplates;
+                                
+                templateVars.checkins.forEach(function(c){
+                  if (templateVars.checkinTemplates[c.template_id]){
+                    templateVars.checkinTemplates[c.template_id].checkins.push(c);
+                  }
+                });  
                 callback();
               });
             },
@@ -77,6 +90,27 @@ module.exports = (function() {
                 if (err) {
                   return next(err);
                 }
+                
+                templateVars.rationalized = {};
+                                
+                assignedSurveys.forEach(function(aSurvey) {
+                  if (templateVars.rationalized[aSurvey.surveyId]) {
+                    templateVars.rationalized[aSurvey.surveyId].assignments.push({
+                      showDate: aSurvey.showDate,
+                      isDone: aSurvey.isDone
+                    });
+                  } else {
+                    templateVars.rationalized[aSurvey.surveyId] = {
+                      userId: aSurvey.userId,
+                      surveyId: aSurvey.surveyId,
+                      assignments: [{
+                        showDate: aSurvey.showDate,
+                        isDone: aSurvey.isDone
+                      }]
+                    }
+                  }
+                });
+               
                 templateVars.assignedSurveys = assignedSurveys;
                 callback();
               });
@@ -89,20 +123,20 @@ module.exports = (function() {
             var nextMonday = moment().day(8).hour(0).minute(0).toDate(),
                 tomorrow = moment().add('days', 1).hour(0).minute(0).toDate(),
                 today = moment().hour(0).minute(0).second(0).toDate();
-
             
             // For every assigned survey, populate object with survey and checkin titles
-            var surveyData = templateVars.assignedSurveys.map(function(aSurvey){              
+            var surveyData = Object.keys(templateVars.rationalized).map(function(aSurveyId, index){              
               var currSurvey = {
-                id: aSurvey.surveyId,
+                id: aSurveyId,
                 title: "",
                 checkinTemplates: [],
                 isCompleted: false,
-                isAssigned: true               
+                isAssigned: true,
+                assignments: templateVars.rationalized[aSurveyId].assignments               
               };
               
               templateVars.surveyTemplates.every(function(surveyTemplate){
-                if (surveyTemplate._id.equals(aSurvey.surveyId)) {
+                if (surveyTemplate._id.equals(aSurveyId)) {
                   
                   currSurvey.title = surveyTemplate.title;
                   
@@ -110,30 +144,7 @@ module.exports = (function() {
                     
                     // Map checkintemplate Ids and populate fields
                     currSurvey.checkinTemplates = surveyTemplate.checkinTemplates.map(function(cTempId){
-                      var currCheckinTemplate = {
-                        _id: cTempId,
-                        title: "",
-                        answers: [],
-                        checkins: []
-                      };
-                      
-                      templateVars.checkinTemplates.every(function(cTemp){
-                        if (cTemp._id.equals(cTempId)) {
-                          currCheckinTemplate.title = cTemp.title;
-                          currCheckinTemplate.answers = cTemp.answers;
-                          return false;
-                        }
-                        return true;
-                      });
-                      
-                      templateVars.checkins.forEach(function(c){
-                        if (String(cTempId) === String(c.template_id)) {
-                          currCheckinTemplate.checkins.push(c);
-                          currSurvey.isCompleted = true;                          
-                        }                        
-                      });
-                      
-                      return currCheckinTemplate;
+                      return templateVars.checkinTemplates[cTempId];
                     });  
                   }
                   return false;
@@ -182,39 +193,40 @@ module.exports = (function() {
                 }]
                 isCompleted: Boolean
                 isAssigned: Boolean
+                assignments: {
+                  showDate: ISODate
+                  isDone: Boolean
+                }
               }
-            */
-            
+            */            
             
             templateVars.surveyData = [];
+            templateVars.surveyIds = [];
             surveyData.forEach(function(survey){
               if (survey.title) {
                 templateVars.surveyData.push(survey);
+                templateVars.surveyIds.push(survey.id);
               }
-            });
-                        
-            var pastSurveys = {};
-            templateVars.checkins.forEach(function(c){
-              if (c.survey_id) {
-                if (pastSurveys[c.survey_id]) {
-                  // Survey exists in pastSurveys object, add checkin
-                  
-                } else {
-                  // Survey does not yet exist in pastSurveys object, create Survey object
-                  pastSurveys[c.survey_id] = {
-                    id: c.survey_id,
-                    title: "",
-                    checkinTemplates: [],
-                    isCompleted: true,
-                    isAssigned: false
-                  };
-                  
-                  // Populate checkinTemplates array
-                  
-                }
-              }
-            });
-                      
+            });                     
+            
+            templateVars.surveysFound.forEach(function(survey){
+              if (templateVars.surveyIds.indexOf(survey.id) < 0) {                                     
+                // Survey does not yet exist in surveyData array, push Survey object
+                var checkinTemplates = survey.checkinTemplates.map(function(cTempId){
+                  return templateVars.checkinTemplates[cTempId];
+                });
+                templateVars.surveyData.push({
+                  id: survey.id,
+                  title: survey.title,
+                  checkinTemplates: checkinTemplates,
+                  isCompleted: true,
+                  isAssigned: false,
+                  assignments: []
+                });
+                templateVars.surveyIds.push(survey.id);
+              }              
+            });           
+            
             // get schedules for checking-in, including checkins that don't or haven't expired, and are repeating or have due dates after today
             Schedule.find({
               user_id: user_id,
@@ -267,13 +279,13 @@ module.exports = (function() {
                   schedule.due_date = nextDueDate;
                 }
 
-                templateVars.checkinTemplates.every(function (template) {
-                  if (schedule.template_id.equals(template._id)) {
-                    schedule.template = template;
+                for (var template in templateVars.checkinTemplates) {
+                  if (schedule.template_id === template) {
+                    schedule.template = templateVars.checkinTemplates[template];
                     return false;
                   }
                   return true;
-                });
+                }
 
                 // compareDate is the date object against which the current schedule's due date is compared to identify existing checkins
                 var compareDate = {
