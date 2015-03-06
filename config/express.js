@@ -32,7 +32,7 @@ module.exports = function(app, config, passport, env) {
 
 		if(env === 'development') {
 			app.use(require('connect-livereload')({
-				port: 35729
+				port: 4002
 			}));
 		}
 

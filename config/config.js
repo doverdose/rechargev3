@@ -9,7 +9,7 @@ module.exports = function() {
 
 	return {
 		development: {
-			db: 'mongodb://localhost/recharge-development',
+			db: 'mongodb://komodo:theonlylivingdragon@ds049548.mongolab.com:49548/heroku_app18503207',
 			root: rootPath,
 			mail: {
 				from: 'ReCharge Health <recharge@gmail.com>',

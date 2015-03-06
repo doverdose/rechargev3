@@ -1,5 +1,5 @@
 'use strict';
-var LIVERELOAD_PORT = 35729;
+var LIVERELOAD_PORT = 4002;
 
 // # Globbing
 // for performance reasons we're only matching one level down:
@@ -35,8 +35,8 @@ module.exports = function (grunt) {
 				],
 				tasks: [ 'express:dev' ],
 				options: {
-					spawn: false
-					//livereload: LIVERELOAD_PORT
+					spawn: false,
+					livereload: LIVERELOAD_PORT
 				}
 			},
 			livereload: {

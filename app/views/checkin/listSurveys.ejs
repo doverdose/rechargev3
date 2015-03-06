@@ -1,5 +1,5 @@
 <% layout('../layouts/default') -%>
-
+  
 <div class="js-checkinselector-container">
 	<div class="page-header">
 		<h2>
@@ -82,8 +82,7 @@
 		</div>    
 
 		<div class="list-group large-list">
-			<% surveyData.forEach(function(survey) { %>
-        <% console.log(survey) %>
+			<% surveyData.forEach(function(survey) { %>        
 				<div class="list-group-item">
 					<div class="row">
 						<div class="col-xs-8">
@@ -96,6 +95,13 @@
                 <%= survey.isCompleted ? "" : " (Not yet completed)" %>
               </p>
 						</div>
+            <div class="col-xs-4">
+              <% console.log(survey.title) %>
+              <% console.log(survey.checkinTemplates) %>
+              <% if (survey.isAssigned) { %>
+                Assigned
+             <% } %>
+            </div>
 					</div>
 				</div>
 			<% }) %>
