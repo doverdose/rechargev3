@@ -61,5 +61,8 @@
 		"start": "node web.js",
     "nidebug": "node-inspector --web-port 8888",
     "debug": "node debug web.js"
-	}
+	},
+  "engines": {
+    "node" : "0.10"
+  }
 }
