@@ -15,7 +15,6 @@
 	<% if(checkinsByTemplate.length) { %>
 		<div class="list-group large-list">
 			<% checkinsByTemplate.forEach(function(checkinTemplate) { %>
-        <%= checkinTemplate._id %>
         <% if (checkinTemplate.checkins[0]) {%>
 				<div class="list-group-item">
 					<div class="row">
@@ -24,14 +23,14 @@
 								<strong title="<%= checkinTemplate.checkins[0].timestamp %>">
 									<%=: checkinTemplate.checkins[0].timestamp | fromNow %>
 								</strong>
-								<h3 data-toggle="tooltip" data-placement="bottom" title="<%= checkinTemplate.checkins[0].tips || '' %>">
+								<h3 class="question" data-toggle="tooltip" data-placement="bottom" title="<%= checkinTemplate.checkins[0].tips || '' %>">
 									<%= checkinTemplate.checkins[0].question %>
                   <%if(typeof questions != 'undefined'){%>
                     <% questions.forEach(function(question){%>
                     <p><%- question.text %></p>
                     <%})%>
                   <%}%>
-								</h3>
+                </h3>
 							</a>
 						</div>
 						<form action="/checkin/edit" method="post" class="text-right col-xs-2">
@@ -45,7 +44,7 @@
         <div class="list-group-item">
           <div class="row">
             <div class="col-xs-8">              
-              <h3> <%= checkinTemplate.question %> </h3>
+              <h3 class="question"> <%= checkinTemplate.question %> </h3>
             </div>
           </div>
         </div>

@@ -1,12 +1,12 @@
 <% layout('../layouts/default') -%>
-
+  
 <div class="js-checkinselector-container">
 	<div class="page-header">
 		<h2>
 			Surveys
 		</h2>
   	<div class="header-actions">
-			<button type="button" class="btn btn-default js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey</button>
+			<button type="button" class="btn btn-primary js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey</button>
 		</div>
 	</div>
 	<% Object.keys(schedules).forEach(function(key) { %>
@@ -24,6 +24,7 @@
 					</strong>
 				</div>
 
+       
 				<div class="panel-body checkins-upcoming">
 					<ul class="row list-unstyled">
 					<% schedules[key].forEach(function(schedule) { %>
@@ -78,10 +79,10 @@
 			<% if(scoreClass === 'success') { %>
 				Great work!
 			<% } %>
-		</div>
+		</div>    
 
 		<div class="list-group large-list">
-			<% surveyData.forEach(function(survey) { %>
+			<% surveyData.forEach(function(survey) { %>        
 				<div class="list-group-item">
 					<div class="row">
 						<div class="col-xs-8">
@@ -94,12 +95,19 @@
                 <%= survey.isCompleted ? "" : " (Not yet completed)" %>
               </p>
 						</div>
+            <div class="col-xs-4">
+              <% console.log(survey.title) %>
+              <% console.log(survey.checkinTemplates) %>
+              <% if (survey.isAssigned) { %>
+                Assigned
+             <% } %>
+            </div>
 					</div>
 				</div>
 			<% }) %>
 		</div>
 	<% } else { %>
-		<h4 class="text-center text-muted">You haven't completed any surveys yet</h4>
+		<h4 class="text-center text-muted">You don't have any currently assigned surveys</h4>
 	<% } %>
 
 	<div class="js-template js-checkinselector-template">
