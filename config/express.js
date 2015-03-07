@@ -19,14 +19,15 @@ module.exports = function(app, config, passport, env) {
 		} else {
 			app.set('views', config.root + '/public/views');
 		}
-		app.set('view engine', 'ejs');
-
+		
 		var ejs = require('ejs'),
 			moment = require('moment');
 
 		ejs.filters.fromNow = function(date){
 			return moment(date).fromNow();
 		};
+    
+    app.set('view engine', 'ejs');    
 
 		app.use(express.logger('dev'));
 

@@ -256,9 +256,10 @@ module.exports = (function() {
           else{
             if(assignedSurvey){
               Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                if (!template) {
+                //if (!template) {
+                  // for now, redirect to dashboard always upon login
                   res.redirect('/dashboard');
-                }
+                //}
 
                 CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
                   res.render('checkin/checkinEdit.ejs', {
@@ -277,9 +278,10 @@ module.exports = (function() {
               AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
                 if(assignedSurvey){
                   Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                    if (!template) {
+                    //if (!template) {
+                      // for now, redirect to dashboard always upon login
                       res.redirect('/dashboard');
-                    }
+                    //}
                     CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
                       res.render('checkin/checkinEdit.ejs', {
                         checkin: {},
