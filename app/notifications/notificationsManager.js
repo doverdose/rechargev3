@@ -1,6 +1,7 @@
 module.exports = (function() {
     var schedule = require('node-schedule'),
         nodemailer = require('nodemailer'),
+        mg = require('nodemailer-mailgun-transport'),
         moment = require('moment'),
         async = require('async'),
         mongoose = require('mongoose'),
@@ -9,17 +10,16 @@ module.exports = (function() {
         Survey = mongoose.model('Survey');
 
     // create reusable transporter object using SMTP transport
-    var transporter = nodemailer.createTransport({
-        service: 'Gmail',
+    var transporter = nodemailer.createTransport(mg({        
         auth: {
-            user: 'rechargeapp@gmail.com',
-            pass: 'Feb1Exit'
+            api_key: 'key-b9d84dced8e534a48cce02ad43a09335',
+            domain: 'mg.rechargedialysis.com'
         }
-    });
+    }));
 
     var sendNotificationEmail = function(to,subject,html){
         transporter.sendMail({
-            from: 'Recharge Notification Robot <baranditest1@gmail.com>', // sender address
+            from: 'Recharge Notification Robot', // sender address
             to: to,
             subject: subject,
             html: html

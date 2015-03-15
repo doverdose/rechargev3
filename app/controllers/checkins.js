@@ -103,7 +103,9 @@ module.exports = (function () {
                 }
             });
         }
+      
         form.answers = newAnswers;
+      
         return form;
 
     };
@@ -138,7 +140,7 @@ module.exports = (function () {
 
     var update = function (req, res, next) {
       var functions = [];
-           
+      
       // Group checkins by id      
       var dataMap = {};
       for (var i = 0; i < req.body.data.length; i++) {
@@ -243,12 +245,12 @@ module.exports = (function () {
                 checkinData.title = template.title;
                 checkinData.question = template.question;
                 checkinData.tips = template.tips;
-                checkinData.score = template.score;
-                checkinData.title = template.title;
+                checkinData.score = template.score;                
                 checkinData.answers = answers;
                 checkinData.survey_id = req.body.surveyID;
                 
                 Survey.findOne({_id: checkinData.survey_id}, '__v',function (err, survey){
+                  
                   if (err) {                    
                   } else {
                     checkinData.surveyVersion = survey.__v;
