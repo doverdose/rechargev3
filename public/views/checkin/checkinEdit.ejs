@@ -57,7 +57,14 @@
                 $(templates[i]).find("[name]").each(function(index){
                   var newVal = this.name.replace(i, currentIndex);
                   this.name = newVal;
+                  
+                  // update group with iteration index
+                  if(this.name.indexOf("[group]") >= 0) {
+                    this.value = nrOfIterations;
+                  }
                 });
+              
+                
 
                 currentIndex++;
             }
@@ -130,6 +137,7 @@
             <h4 class="question"><%= templates[i].question %></h4>
 
             <input type="hidden" name="data[<%= i %>][id]" value="<%= templates[i].id %>">
+            <input type="hidden" name="data[<%= i %>][group]" value=0>
             <label for="answer" class="text-muted">
               Answer(s)
             </label>
