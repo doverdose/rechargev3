@@ -137,11 +137,11 @@ body .select2-container {
 .carousel {
 	.item {
 		overflow: hidden;
-		height: 380px;
+		height: 500px;
 		width: 100%;
 
 		@include breakpoint(baby-bear) {
-			height: 320px;
+			height: 500px;
 		}
 	}
 
@@ -344,7 +344,7 @@ body .select2-container {
 
 .site-footer {
 	display: block;
-	margin-top: emCalc(80);
+	margin-top: emCalc(40);
 	background: $color1;
 	padding: emCalc(0);
 
