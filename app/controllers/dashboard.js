@@ -72,7 +72,7 @@ module.exports = (function() {
                       checkins = checkins.reverse();
                       checkins.forEach(function(checkin){
                           var checkin = checkin.toObject();
-                          var question = checkin.question;
+                          var question = checkin.title;
                           var timestamp = checkin.timestamp;
                           
                           // Map most recent answers to question
@@ -107,7 +107,7 @@ module.exports = (function() {
         }], function(err) {
 			if(err) {
 				next(err);
-			}
+			}      
 
 			res.render('dashboard/index.ejs', {
 				jsVars: renderVars,

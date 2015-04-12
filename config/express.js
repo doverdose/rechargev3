@@ -31,7 +31,7 @@ module.exports = function(app, config, passport, env) {
 
 		app.use(express.logger('dev'));
 
-		if(env === 'development') {
+		if(env === 'development' || env === 'nitrous') {
 			app.use(require('connect-livereload')({
 				port: 4002
 			}));

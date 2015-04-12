@@ -106,6 +106,10 @@ module.exports = (function () {
       
         form.answers = newAnswers;
       
+        var answer = form.answer;
+        if (answer) {
+          form.answer
+        }      
         return form;
 
     };
@@ -144,8 +148,9 @@ module.exports = (function () {
       // Group checkins by id      
       var dataMap = {};
       for (var i = 0; i < req.body.data.length; i++) {
-        var dataPt = req.body.data[i];        
-        if (dataPt.id in dataMap) {         
+        var dataPt = req.body.data[i];
+        if (dataPt.id in dataMap) {
+          // checkinTemplate id is already in dataMap object
         } else {
           dataMap[dataPt.id] = [];
         }
@@ -167,9 +172,9 @@ module.exports = (function () {
         };
         groupedData.push(groupedCheckin);
       });
-      
+            
       // Assign to request data array
-      req.body.data = groupedData;
+      req.body.data = groupedData;            
       
       // For each checkin template answered, create set of datastore functions and add to function array
       for (var i = 0; i < req.body.data.length; i++) {
@@ -238,49 +243,53 @@ module.exports = (function () {
               }
 
               // After saving schedules, save checkin
-              async.parallel(schedulesSave, function (err) {                
-                var checkinData = {};
-                checkinData.template_id = template._id;
-                checkinData.type = template.type;
-                checkinData.title = template.title;
-                checkinData.question = template.question;
-                checkinData.tips = template.tips;
-                checkinData.score = template.score;                
-                checkinData.answers = answers;
-                checkinData.survey_id = req.body.surveyID;
-                
-                Survey.findOne({_id: checkinData.survey_id}, '__v',function (err, survey){
-                  
-                  if (err) {                    
+              async.parallel(schedulesSave, function (err) {
+                var surveyId = req.body.surveyID;
+                Survey.findOne({_id: surveyId}, '__v', function(err,survey){
+                  var surveyVersion;
+                  if (err){                    
                   } else {
-                    checkinData.surveyVersion = survey.__v;
+                    surveyVersion = survey.__v;                    
                   }
                   
-                  var formParams = parseForm(checkinData);
-
-                  // create new checkin
-                  var checkin = new Checkin(formParams);
-                  checkin.user_id = req.user.id;
-
-                  checkin.save(function (err) {
-                    if (err) {
-                      callback(err);
-                      return;
-                    }
-
-                    //here take the newly submitted response and set it to "isDone:true" in assignedSurvey collection in DB
-                    var assignedSurveyId = req.body.assignedSurveyId;
-                    AssignedSurvey.update({_id: assignedSurveyId}, {isDone: true}, function (err, num) {
-
+                  var saveFunctions = [];
+                  for (var k = 0; k < answers.length; k++) {
+                    var answer = answers[k];
+                    var checkinData = {};
+                    checkinData.template_id = template._id;
+                    checkinData.type = template.type;
+                    checkinData.title = template.title;
+                    checkinData.question = template.question;
+                    checkinData.tips = template.tips;
+                    checkinData.score = template.score;                
+                    checkinData.answers = [answer];
+                    checkinData.survey_id = surveyId;
+                    checkinData.surveyVersion = surveyVersion;
+                  
+                    var formParams = parseForm(checkinData);;
+                    var checkin = new Checkin(formParams);
+                    checkin.user_id = req.user.id;
+                    console.log(checkin);
+                    saveFunctions.push(function(callback){
+                      checkin.save(function(err){
+                        if (err) {
+                          callback(err);
+                          return;
+                        }                        
+                        var assignedSurveyId = req.body.assignedSurveyId;
+                        AssignedSurvey.update({id:assignedSurveyId}, {isDone:true}, function(err, num){});
+                        callback();
+                      });
                     });
-
+                  }
+                  
+                  async.parallel(saveFunctions, function(err){
                     callback();
                   });
-                  
-                });                
-              });
-            });
-          };
+                }); // end find Survey
+              }); // end async 
+            }); // end find Checkin
+          }
         })(i, req.body.data[i].answers));
       }
 
