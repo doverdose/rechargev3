@@ -7,6 +7,7 @@ module.exports = (function () {
     var mongoose = require('mongoose'),
         async = require('async'),
         moment = require('moment'),
+        sha1 = require('sha1'),
         helper = require('./components/helper'),
         Schedule = mongoose.model('Schedule'),
         Checkin = mongoose.model('Checkin'),
@@ -145,8 +146,8 @@ module.exports = (function () {
     var update = function (req, res, next) {
       var functions = [];
       
-      // Group checkins by id      
-      var dataMap = {};
+      // Group checkins by checkin template id      
+      var dataMap = {};   
       for (var i = 0; i < req.body.data.length; i++) {
         var dataPt = req.body.data[i];
         if (dataPt.id in dataMap) {
@@ -163,6 +164,13 @@ module.exports = (function () {
         }
       }
       
+      // Count number of answer groups
+      var numGroups = 0;
+      Object.keys(dataMap).forEach(function(id){
+        var numAnswers = dataMap[id].length;
+        numGroups = numAnswers > numGroups ? numAnswers : numGroups;
+      });
+                  
       // Reformat object as data array
       var groupedData = [];
       Object.keys(dataMap).forEach(function(id) {
@@ -172,9 +180,12 @@ module.exports = (function () {
         };
         groupedData.push(groupedCheckin);
       });
-            
+      
       // Assign to request data array
       req.body.data = groupedData;            
+      
+      // Store timestamp for group_id hash creation
+      var currTime = moment();
       
       // For each checkin template answered, create set of datastore functions and add to function array
       for (var i = 0; i < req.body.data.length; i++) {
@@ -254,33 +265,34 @@ module.exports = (function () {
                   
                   var saveFunctions = [];
                   for (var k = 0; k < answers.length; k++) {
-                    var answer = answers[k];
-                    var checkinData = {};
-                    checkinData.template_id = template._id;
-                    checkinData.type = template.type;
-                    checkinData.title = template.title;
-                    checkinData.question = template.question;
-                    checkinData.tips = template.tips;
-                    checkinData.score = template.score;                
-                    checkinData.answers = [answer];
-                    checkinData.survey_id = surveyId;
-                    checkinData.surveyVersion = surveyVersion;
-                  
-                    var formParams = parseForm(checkinData);;
-                    var checkin = new Checkin(formParams);
-                    checkin.user_id = req.user.id;
-                    console.log(checkin);
-                    saveFunctions.push(function(callback){
-                      checkin.save(function(err){
-                        if (err) {
-                          callback(err);
-                          return;
-                        }                        
-                        var assignedSurveyId = req.body.assignedSurveyId;
-                        AssignedSurvey.update({id:assignedSurveyId}, {isDone:true}, function(err, num){});
-                        callback();
-                      });
-                    });
+                    var groupID = sha1(surveyId+currTime+k);
+                    saveFunctions.push((function(answer, group_id) {
+                      return function(callback) {
+                        var checkinData = {};
+                        checkinData.template_id = template._id;
+                        checkinData.type = template.type;
+                        checkinData.title = template.title;
+                        checkinData.question = template.question;
+                        checkinData.tips = template.tips;
+                        checkinData.score = template.score;                
+                        checkinData.answers = [answer];
+                        checkinData.survey_id = surveyId;
+                        checkinData.surveyVersion = surveyVersion;
+                        checkinData.group_id = group_id;
+                        var formParams = parseForm(checkinData);;
+                        var checkin = new Checkin(formParams);
+                        checkin.user_id = req.user.id;
+                        checkin.save(function(err){
+                          if (err) {
+                            callback(err);
+                            return;
+                          }                        
+                          var assignedSurveyId = req.body.assignedSurveyId;
+                          AssignedSurvey.update({id:assignedSurveyId}, {isDone:true}, function(err, num){});
+                          callback();
+                        });                   
+                      }
+                    })(answers[k], groupID));
                   }
                   
                   async.parallel(saveFunctions, function(err){

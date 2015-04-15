@@ -38,7 +38,8 @@ module.exports = (function() {
 			type: Date,
 			default: Date.now
 		},
-    surveyVersion: Number
+    surveyVersion: Number,
+    group_id: String
 	});
 
 	/**
