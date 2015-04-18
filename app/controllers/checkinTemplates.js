@@ -7,6 +7,7 @@ module.exports = (function() {
 	var mongoose = require('mongoose'),
   CheckinTemplate = mongoose.model('CheckinTemplate'),
   Checkin = mongoose.model('Checkin');
+  var Survey = mongoose.model('Survey');
 
 	var remove = function(req, res, next) {
 		CheckinTemplate.findOne({
@@ -60,9 +61,19 @@ module.exports = (function() {
 				// parse the array of answers, and turn it into an array of objects
 				if(req.body.answers && req.body.answers.length) {
 					c.answers = parseForm(req.body).answers;
-				}
+				}        
 
 				c.save(function() {
+          // Increment version of surveys containing this checkinTemplate
+          Survey.find({checkinTemplates: {$in: [c.id]}}, function(err, surveys){
+            surveys.forEach(function(s){
+              s.increment();
+              s.save(function(){
+                
+              });
+            });                      
+          });    
+          
 					res.redirect('/checkintemplate/' + c.id);
 				});
 			});
