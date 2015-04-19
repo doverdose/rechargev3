@@ -6,7 +6,7 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		Checkin = mongoose.model('Checkin'),
-        Survey = mongoose.model('Survey'),
+    Survey = mongoose.model('Survey'),
 		moment = require('moment'),
 		async = require('async');
 
@@ -113,8 +113,12 @@ module.exports = (function() {
 
                     });
                     
-                    console.log(recentCheckins);
-
+                    // Assign question order if it exists
+                    var questionOrder = [];
+                    if (survey) {
+                      
+                    }
+    
                     callback();
                   });
                 } else {
