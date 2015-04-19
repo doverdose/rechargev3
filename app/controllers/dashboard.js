@@ -6,6 +6,7 @@ module.exports = (function() {
 
 	var mongoose = require('mongoose'),
 		Checkin = mongoose.model('Checkin'),
+    CheckinTemplate = mongoose.model('CheckinTemplate'),
     Survey = mongoose.model('Survey'),
 		moment = require('moment'),
 		async = require('async');
@@ -62,65 +63,80 @@ module.exports = (function() {
             Survey.findOne({isWizardSurvey:true},function(err,survey){
                 if(err){next(err)}
                 if (survey !== null) {
-                  Checkin.find({
-                      user_id: req.user._id,
-                      survey_id: survey._id
-                  })
-                  .exec(function(err, checkins) {
-                    if (err) {
-                      return next(err);
-                    }
+                  
+                  CheckinTemplate.find({_id: {$in: survey.checkinTemplates}}).select('title').exec(function(err, checkinTemplates){
+                    if (err) {next(err)}
                     
-                    // Track survey versions, displaying only responses for most recent version
-                    var surveyVersion = 0;
-                    for (var i = 0; i < checkins.length; i++) {
-                      var currVersion = checkins[i].surveyVersion;
-                      surveyVersion = currVersion > surveyVersion ? currVersion : surveyVersion;
+                    // Reorder keys in recentCheckin object to match survey.checkinTemplates ordering
+                    for (var i=0; i < survey.checkinTemplates.length; i++) {
+                      for (var j = 0; j < checkinTemplates.length; j++) {
+                        if (checkinTemplates[j].id === survey.checkinTemplates[i]) {
+                          recentCheckins[checkinTemplates[j].title] = [];
+                          break;
+                        }
+                      } 
                     }                    
-
-                    checkins = checkins.reverse();
-
-                    checkins.forEach(function(checkin){
-                      
-                      // Exit function if not most recent version
-                      if (surveyVersion !== checkin.surveyVersion) {
-                        return;
+                    
+                    Checkin.find({
+                        user_id: req.user._id,
+                        survey_id: survey._id
+                    })
+                    .exec(function(err, checkins) {
+                      if (err) {
+                        return next(err);
                       }
-                                                                  
-                      var checkin = checkin.toObject();
-                      var question = checkin.title;
-                      var timestamp = checkin.timestamp;
 
-                      // Map most recent answers to question
-                      if(question in recentCheckins){
-                        if (timestamp > checkinTimes[question]) {
+                      // Track survey versions, displaying only responses for most recent version
+                      var surveyVersion = 0;
+                      for (var i = 0; i < checkins.length; i++) {
+                        var currVersion = checkins[i].surveyVersion;
+                        surveyVersion = currVersion > surveyVersion ? currVersion : surveyVersion;
+                      }         
+                      
+                      console.log(surveyVersion);
+
+                      checkins = checkins.reverse();
+
+                      checkins.forEach(function(checkin){
+
+                        // Exit function if not most recent version
+                        if (surveyVersion !== checkin.surveyVersion) {
+                          return;
+                        }
+
+                        var checkin = checkin.toObject();
+                        var question = checkin.title;
+                        var timestamp = checkin.timestamp;                      
+
+                        // Map most recent answers to question
+                        if(question in recentCheckins){                         
+                          if (!checkinTimes[question] || timestamp > checkinTimes[question]) {
+                            if (checkin.answers) {
+                              checkin.answers.forEach(function(answer){
+                                recentCheckins[question].push(answer.text);  
+                              });
+                            }
+                            checkinTimes[question] = timestamp;
+                          }                                
+                        } else {
+                          recentCheckins[question] = [];
                           if (checkin.answers) {
                             checkin.answers.forEach(function(answer){
-                              recentCheckins[question].push(answer.text);  
-                            });
-                          }
-                          checkinTimes[question] = timestamp;
-                        }                                
-                      } else {
-                        recentCheckins[question] = [];
-                        if (checkin.answers) {
-                          checkin.answers.forEach(function(answer){
-                            recentCheckins[question].push(answer.text);
-                          });                                
-                          checkinTimes[question] = timestamp;                                
-                        }                              
-                      }
+                              recentCheckins[question].push(answer.text);
+                            });                                
+                            checkinTimes[question] = timestamp;                                
+                          }                              
+                        }
 
-                    });
-                    
-                    // Assign question order if it exists
-                    var questionOrder = [];
-                    if (survey) {
+                      });
                       
-                    }
-    
-                    callback();
+                      callback();
+                    });
+                  
+                  
+                  
                   });
+                  
                 } else {
                     callback();               
                 }
