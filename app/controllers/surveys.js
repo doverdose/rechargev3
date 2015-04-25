@@ -36,6 +36,10 @@ module.exports = (function() {
 			});
 		});
 	};
+  
+  var assignKeyTemplate = function(req, res, next) {
+    // Assign the template as a key
+  }
 
 	var remove = function(req, res, next) {
         //when removing the survey, also remove the assignedSurvey items that reference that survey
