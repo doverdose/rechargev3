@@ -39,6 +39,17 @@ module.exports = (function() {
   
   var assignKeyTemplate = function(req, res, next) {
     // Assign the template as a key
+    Survey.findOne({
+      id: req.body.surveyID
+    }, function(err, survey) {
+      survey.keyTemplate = req.body.id;
+      survey.save(function(err) {
+        if(err) {
+          next(err);
+        }
+        res.redirect('/surveys/' + req.body.surveyID);
+      });
+    });
   }
 
 	var remove = function(req, res, next) {
