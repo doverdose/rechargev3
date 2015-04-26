@@ -2,6 +2,13 @@
 
 <div class="page-header">
 	<h2>Survey details</h2>
+  <span class="btn-group pull-right">
+  <a href= "/admin">
+    <button type="button" class="btn btn-default">
+      Return to Admin
+    </button>
+  </a>
+      </span>
 </div>
   
 <div class="description">
@@ -24,17 +31,28 @@
 						<%= templates[i].title %>
 					</a>
 				</div>
-        <div class="col-xs-1">
-          <form action="/surveys/assignKey" method="post">
-						<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-						<input type="hidden" name="id" value="<%= templates[i].id %>">
-						<input type="hidden" name="surveyID" value="<%= survey.id %>">
-						<button type="submit" class="btn btn-primary">
-							Make Key
-						</button>
-					</form>
+        <div class="col-xs-3 text-right">
+          <% if (survey.keyTemplate && survey.keyTemplate === templates[i].id) { %>				
+            <form action="/surveys/removeKey" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+              <input type="hidden" name="id" value="<%= templates[i].id %>">
+              <input type="hidden" name="surveyID" value="<%= survey.id %>">
+              <button type="submit" class="btn btn-danger">
+                  Remove Key
+              </button>
+            </form>
+          <% } else { %>
+            <form action="/surveys/assignKey" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+              <input type="hidden" name="id" value="<%= templates[i].id %>">
+              <input type="hidden" name="surveyID" value="<%= survey.id %>">
+              <button type="submit" class="btn btn-primary">
+                Make Key					
+              </button>					         
+            </form>
+          <% } %>
         </div>
-				<div class="col-xs-4 text-right">
+				<div class="col-xs-2 text-right">
           
 					<form action="/surveys/remove/checkin" method="post">
 						<input type="hidden" name="_csrf" value="<%= csrf_token %>">

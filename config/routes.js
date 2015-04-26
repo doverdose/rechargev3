@@ -98,7 +98,9 @@ module.exports = function(app, passport) {
 	app.post('/surveys/delete', auth.requiresLogin, auth.requiresAdmin, surveys.remove);
 	app.post('/surveys/remove/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.removeTemplate);
 	app.post('/surveys/add/checkin', auth.requiresLogin, auth.requiresAdmin, surveys.addTemplate);
-	app.get('/surveys/create', auth.requiresLogin, auth.requiresAdmin, surveys.create);
+	app.post('/surveys/assignKey', auth.requiresLogin, auth.requiresAdmin, surveys.assignKey);
+  app.post('/surveys/removeKey', auth.requiresLogin, auth.requiresAdmin, surveys.removeKey);
+  app.get('/surveys/create', auth.requiresLogin, auth.requiresAdmin, surveys.create);
 	app.get('/surveys/:id', auth.requiresLogin, surveys.view);
 
     app.get('/medications/new', auth.requiresLogin, auth.requiresAdmin, medications.createView);

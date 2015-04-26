@@ -18,7 +18,8 @@ module.exports = (function() {
     recurrence: String,
     isWizardSurvey: Boolean,
     maximumIterations: String,
-    isGenerated:Boolean
+    isGenerated:Boolean,
+    keyTemplate: String
 	});
 
 	/**

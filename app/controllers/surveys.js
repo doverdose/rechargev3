@@ -40,9 +40,24 @@ module.exports = (function() {
   var assignKeyTemplate = function(req, res, next) {
     // Assign the template as a key
     Survey.findOne({
-      id: req.body.surveyID
+      _id: req.body.surveyID
     }, function(err, survey) {
       survey.keyTemplate = req.body.id;
+      survey.save(function(err) {
+        if(err) {
+          next(err);
+        }
+        res.redirect('/surveys/' + req.body.surveyID);
+      });
+    });
+  }
+  
+  var removeKeyTemplate = function(req, res, next) {
+    // Remove the template as a key
+    Survey.findOne({
+      _id: req.body.surveyID
+    }, function(err, survey) {
+      survey.keyTemplate = "";
       survey.save(function(err) {
         if(err) {
           next(err);
@@ -221,6 +236,8 @@ module.exports = (function() {
 		create: create,
 		view: view,
 		remove: remove,
+    assignKey: assignKeyTemplate,
+    removeKey: removeKeyTemplate,
 		removeTemplate: removeTemplate,
 		addTemplate: addTemplate
 	};
