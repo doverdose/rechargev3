@@ -142,167 +142,158 @@ module.exports = (function () {
             }
         }
     };
-
-    var update = function (req, res, next) {
-      var functions = [];
-      
-      // Group checkins by checkin template id      
-      var dataMap = {};   
-      for (var i = 0; i < req.body.data.length; i++) {
-        var dataPt = req.body.data[i];
-        if (dataPt.id in dataMap) {
-          // checkinTemplate id is already in dataMap object
-        } else {
-          dataMap[dataPt.id] = [];
-        }
-        if (dataPt.answers) {
-          dataPt.answers.forEach(function(answer){
-            dataMap[dataPt.id].push(answer);
-          });
-        } else if (dataPt.answer) {
-          dataMap[dataPt.id].push(answer);
-        }
+    // formatAnswers: accepts posted data and groups checkins by survey iteration
+    var formatAnswers = function (req) {
+      var data = req.body.data;      
+      var dataMap = {};
+      var currTime = moment();
+      var ids = {
+        survey: req.body.surveyID
+      };      
+      var surveyVersion;
+      var findSurveyVersion = function(callback) {        
+        Survey.findOne({id:ids.survey}, function(err, survey){
+          if (err) {
+            callback();
+          }                   
+          if (survey.__v) {
+            surveyVersion = survey.__v;
+          }
+          callback();
+        });        
       }
       
-      // Count number of answer groups
-      var numGroups = 0;
-      Object.keys(dataMap).forEach(function(id){
-        var numAnswers = dataMap[id].length;
-        numGroups = numAnswers > numGroups ? numAnswers : numGroups;
+      async.series(findSurveyVersion, function(err){
+        for(var i = 0; i++; i < data.length) {
+          var currData = data[i];
+          var currGroup = currData.group;
+          var groupID = sha1(ids.survey+currTime+currGroup);
+
+          // Format answer as array
+          var currAnswer = "";        
+          if (currData.answers) {
+            currAnswer = currData.answers;
+          } else if (currData.answer) {
+            currAnswer = [currData.answer];
+          }        
+
+          // Add answer to dataMap[currGroup]
+          if (!(currGroup in dataMap)) {
+            dataMap[currGroup] = [];          
+          }
+          currAnswer.forEach(function(answer){
+            var answerObj = {
+              text: answer,
+              template_id: currData.id,
+              question: "",
+              score: 0,
+              title: "",
+              type: "",
+              group_id: groupID,
+              surveyVersion: surveyVersion
+            };            
+            dataMap[currGroup].push(answerObj);                    
+          });
+          return dataMap;
+        }
       });
-                  
-      // Reformat object as data array
-      var groupedData = [];
-      Object.keys(dataMap).forEach(function(id) {
-        var groupedCheckin = {
-          id: id,
-          answers: dataMap[id]
-        };
-        groupedData.push(groupedCheckin);
-      });
-      
-      // Assign to request data array
-      req.body.data = groupedData;            
-      
-      // Store timestamp for group_id hash creation
-      var currTime = moment();
-      
-      // For each checkin template answered, create set of datastore functions and add to function array
-      for (var i = 0; i < req.body.data.length; i++) {
-        functions.push((function (index, answers) {
-          return function (callback) {
-            CheckinTemplate.findOne({
-              _id: req.body.data[index].id
-            }, function (err, template) {
-              if (err) {
-                callback(err);
-                return;
-              }
+    } // end formatAnswers
+     
+    var createSchedules = function(template, answers, userId) {
+      var schedulesSave = [];
+      if (answers) {
+        for (var j = 0; j < answers.length; j++) {
+          for (var k = 0; k < template.schedules.length; k++) {
+            if (answers[j] === template.schedules[k].answer) {
+              var schedule = {};
+              schedule.user_id = userId;
+              schedule.template_id = template._id;
+              schedule.repeat_interval = template.schedules[k].repeat_interval;
+              schedule.due_date = template.schedules[k].due_date;
 
-              if (!template) {
-                callback(new Error('Failed to load Check-in Template' + req.body.data[index].id));
-                return;
-              }
+              var expiryPreset = {
+                '1m': { months: 1 },
+                '6m': { months: 6 },
+                '1y': { years: 1 }
+              };
 
-              // For each answer with a linked schedule, create function to save new schedule 
-              template = template.toObject();
-              var schedulesSave = [];
-              if (answers) {
-                for (var j = 0; j < answers.length; j++) {
-                  for (var k = 0; k < template.schedules.length; k++) {
-                    if (answers[j] === template.schedules[k].answer) {
-                      var schedule = {};
-                      schedule.user_id = req.user.id;
-                      schedule.template_id = template._id;
-                      schedule.repeat_interval = template.schedules[k].repeat_interval;
-                      schedule.due_date = template.schedules[k].due_date;
-
-                      var expiryPreset = {
-                        '1m': { months: 1 },
-                        '6m': { months: 6 },
-                        '1y': { years: 1 }
-                      };
-
-                      if (template.schedules[k].expires === '0') {
-                        schedule.expires = false;
-                      } else {
-                        schedule.expires = true;
-                        if (template.schedules[k].expires === 'custom') {
-                          schedule.expire_date = template.schedules[k].expire_date;
-                        } else {
-                          schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
-                        }
-                      }
-
-                      schedulesSave.push(
-                        (function (schedule) {
-                          return function (callback) {
-                            var obj = new Schedule(schedule);
-                            obj.save(function (err) {
-                              if (err) {
-                                callback(err);
-                                return;
-                              }
-                              callback();
-                            });
-                          };
-                        })(schedule)
-                      );
-                    }
-                  }
+              if (template.schedules[k].expires === '0') {
+                schedule.expires = false;
+              } else {
+                schedule.expires = true;
+                if (template.schedules[k].expires === 'custom') {
+                  schedule.expire_date = template.schedules[k].expire_date;
+                } else {
+                  schedule.expire_date = moment.utc(template.schedules[k].due_date).add(expiryPreset[template.schedules[k].expires]).toDate();
                 }
               }
 
-              // After saving schedules, save checkin
-              async.parallel(schedulesSave, function (err) {
-                var surveyId = req.body.surveyID;
-                Survey.findOne({_id: surveyId}, '__v', function(err,survey){
-                  var surveyVersion;
-                  if (err){                    
-                  } else {
-                    surveyVersion = survey.__v;                    
-                  }
-                  
-                  var saveFunctions = [];
-                  for (var k = 0; k < answers.length; k++) {
-                    var groupID = sha1(surveyId+currTime+k);
-                    saveFunctions.push((function(answer, group_id) {
-                      return function(callback) {
-                        var checkinData = {};
-                        checkinData.template_id = template._id;
-                        checkinData.type = template.type;
-                        checkinData.title = template.title;
-                        checkinData.question = template.question;
-                        checkinData.tips = template.tips;
-                        checkinData.score = template.score;                
-                        checkinData.answers = [answer];
-                        checkinData.survey_id = surveyId;
-                        checkinData.surveyVersion = surveyVersion;
-                        checkinData.group_id = group_id;
-                        var formParams = parseForm(checkinData);;
-                        var checkin = new Checkin(formParams);
-                        checkin.user_id = req.user.id;
-                        checkin.save(function(err){
-                          if (err) {
-                            callback(err);
-                            return;
-                          }                        
-                          var assignedSurveyId = req.body.assignedSurveyId;
-                          AssignedSurvey.update({id:assignedSurveyId}, {isDone:true}, function(err, num){});
-                          callback();
-                        });                   
+              schedulesSave.push(
+                (function (schedule) {
+                  return function (callback) {
+                    var obj = new Schedule(schedule);
+                    obj.save(function (err) {
+                      if (err) {
+                        callback(err);
+                        return;
                       }
-                    })(answers[k], groupID));
-                  }
-                  
-                  async.parallel(saveFunctions, function(err){
-                    callback();
-                  });
-                }); // end find Survey
-              }); // end async 
-            }); // end find Checkin
+                      callback();
+                    });
+                  };
+                })(schedule)
+              );
+            }
           }
-        })(i, req.body.data[i].answers));
+        }
+      }
+      return schedulesSave;
+    }
+    
+    var createCheckins = function(ids, answers) {     
+      var saveFunctions = [];            
+      saveFunctions.push((function(answer) {
+        return function(callback) {
+          var checkinData = {};                          
+          checkinData.survey_id = ids.survey;
+          checkinData.answers = answers;
+          var checkin = new Checkin(checkinData);
+          checkin.user_id = ids.user;
+          checkin.save(function(err){
+            if (err) {
+              callback(err);
+              return;
+            }                                      
+            AssignedSurvey.update({id: ids.assignedSurvey}, {isDone:true}, function(err, num){});
+            callback();
+          });                                                              
+        }
+      })(answers));
+      return saveFunctions;    
+    } // end createCheckins
+    
+    var update = function (req, res, next) {
+      var functions = [];
+                                       
+      // Format id object
+      var ids = {
+        survey: req.body.surveyID,
+        user: req.user._id,
+        assignedSurvey: req.body.assignedSurveyId
+      };
+
+      // Assign to request data arra     
+      var groupedResponses = formatAnswers(req);            
+                                                                    
+      // For each survey iteration answered, create set of datastore functions and add to function array
+      for (var group in groupedResponses) {
+        functions.push((function (objKey, answers) {
+          return function (callback) {                                                                 
+            var saveFunctions = createCheckins(ids, answers);
+            async.parallel(saveFunctions, function(err){
+              callback();
+            });                           
+          }
+        })(group, groupedResponses[group]));
       }
 
       // Execute checkin and schedule datastore transactions, and then create Adherence Survey if survey is Wizard Survey type
@@ -311,7 +302,7 @@ module.exports = (function () {
           next(err);
         }
 
-        Survey.findOne({_id:req.body.surveyID}, function(err, survey){
+        Survey.findOne({_id:ids.survey}, function(err, survey){
           if(err) next(err);
 
           if(survey.isWizardSurvey){

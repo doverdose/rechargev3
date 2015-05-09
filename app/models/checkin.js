@@ -14,15 +14,16 @@ module.exports = (function() {
 	*/
 	var CheckinSchema = new Schema({
 		user_id: ObjectId,
-		survey_id: String,
-		template_id: String,
-		type: String,
-		question: String,
-		tips: String,
-		score: Number,
-		title: String,
+		survey_id: String,		
 		answers: [{
 			text: String,
+      template_id: String,
+      question: String,
+      score: String,
+      title: String,
+      type: String,
+      group_id: String,
+      surveyVersion: Number,
 			timestamp: {
 				type: Date,
 				default: Date.now
@@ -30,6 +31,13 @@ module.exports = (function() {
 		}],
 		pastAnswers: [{
 			text: String,
+      template_id: String,
+      question: String,
+      score: String,
+      title: String,
+      type: String,
+      group_id: String,
+      surveyVersion: Number,
 			timestamp: {
 				type: Date
 			}
@@ -38,9 +46,7 @@ module.exports = (function() {
 			type: Date,
 			default: Date.now
 		},
-    surveyVersion: Number,
-    group_id: String
-	});
+  });
 
 	/**
 	* Virtuals
