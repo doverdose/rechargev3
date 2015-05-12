@@ -142,6 +142,7 @@ module.exports = (function () {
             }
         }
     };
+  
     // formatAnswers: accepts posted data and groups checkins by survey iteration
     var formatAnswers = function (req) {
       var data = req.body.data;      
@@ -152,7 +153,7 @@ module.exports = (function () {
       };      
       var surveyVersion;
       var findSurveyVersion = function(callback) {        
-        Survey.findOne({id:ids.survey}, function(err, survey){
+        Survey.findOne({_id:ids.survey}, function(err, survey){          
           if (err) {
             callback();
           }                   
@@ -161,16 +162,16 @@ module.exports = (function () {
           }
           callback();
         });        
-      }
+      }      
       
       async.series(findSurveyVersion, function(err){
-        for(var i = 0; i++; i < data.length) {
+        for(var i = 0; i < data.length; i++) {
           var currData = data[i];
           var currGroup = currData.group;
-          var groupID = sha1(ids.survey+currTime+currGroup);
-
+          var groupID = sha1(ids.survey+currTime+currGroup);          
+          
           // Format answer as array
-          var currAnswer = "";        
+          var currAnswer = [];        
           if (currData.answers) {
             currAnswer = currData.answers;
           } else if (currData.answer) {
@@ -178,9 +179,11 @@ module.exports = (function () {
           }        
 
           // Add answer to dataMap[currGroup]
-          if (!(currGroup in dataMap)) {
+          if (currGroup in dataMap) {
+          } else {
             dataMap[currGroup] = [];          
           }
+                    
           currAnswer.forEach(function(answer){
             var answerObj = {
               text: answer,
@@ -191,11 +194,11 @@ module.exports = (function () {
               type: "",
               group_id: groupID,
               surveyVersion: surveyVersion
-            };            
-            dataMap[currGroup].push(answerObj);                    
-          });
-          return dataMap;
+            };
+            dataMap[currGroup].push(answerObj);                                           
+          });          
         }
+        return dataMap;
       });
     } // end formatAnswers
      
@@ -251,11 +254,11 @@ module.exports = (function () {
     
     var createCheckins = function(ids, answers) {     
       var saveFunctions = [];            
-      saveFunctions.push((function(answer) {
+      saveFunctions.push((function(currAnswers) {
         return function(callback) {
           var checkinData = {};                          
           checkinData.survey_id = ids.survey;
-          checkinData.answers = answers;
+          checkinData.answers = currAnswers;
           var checkin = new Checkin(checkinData);
           checkin.user_id = ids.user;
           checkin.save(function(err){
@@ -282,8 +285,8 @@ module.exports = (function () {
       };
 
       // Assign to request data arra     
-      var groupedResponses = formatAnswers(req);            
-                                                                    
+      var groupedResponses = formatAnswers(req);                       
+      
       // For each survey iteration answered, create set of datastore functions and add to function array
       for (var group in groupedResponses) {
         functions.push((function (objKey, answers) {
@@ -295,7 +298,7 @@ module.exports = (function () {
           }
         })(group, groupedResponses[group]));
       }
-
+      
       // Execute checkin and schedule datastore transactions, and then create Adherence Survey if survey is Wizard Survey type
       async.series(functions, function (err) {
         if (err) {
@@ -315,25 +318,26 @@ module.exports = (function () {
             var medicationNames = [];
             var medicationNameFinders = [];
 
-            req.body.data.forEach(function (dataItem) {
-              // for each template that is a "dropdownText" type, add its answer to the medicationNames array
-              dataItem.id;
-
-              medicationNameFinders.push(
-                function (callback) {
-                  CheckinTemplate.findOne({_id: dataItem.id}, function (err, template) {
-                    if (err) {
-                      callback();
+            for (var group in groupedResponses) {
+              var groupAnswers = groupedResponses[group];
+              groupAnswers.forEach(function(answer){
+                if (answer.template_id) {
+                  medicationNameFinders.push(
+                    function (callback) {
+                      CheckinTemplate.findOne({_id: answer.template_id}, function (err, template){
+                        if (err) {
+                          callback();
+                        }            
+                        if (template.type == "dropdownText") {
+                          medicationNames.push(answer.text);
+                          callback();
+                        }
+                      });
                     }
-                    if (template.type == "dropdownText") {
-                      //construct a "questions object"
-                      medicationNames.push(dataItem.answers[0]);
-                      callback();
-                    }              
-                  });
+                  );
                 }
-              );
-            });
+              });
+            }            
                       
             async.parallel(medicationNameFinders, function (err) {
               // Medication names are used to generate a Survey with associated Adherence Checkin Templates
