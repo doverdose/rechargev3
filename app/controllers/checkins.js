@@ -144,32 +144,58 @@ module.exports = (function () {
     };
   
     // formatAnswers: accepts posted data and groups checkins by survey iteration
-    var formatAnswers = function (req) {
+    var formatAnswers = function (req, cb) {
       var data = req.body.data;      
       var dataMap = {};
       var currTime = moment();
       var ids = {
         survey: req.body.surveyID
-      };      
-      var surveyVersion;
-      var findSurveyVersion = function(callback) {        
-        Survey.findOne({_id:ids.survey}, function(err, survey){          
-          if (err) {
-            callback();
-          }                   
-          if (survey.__v) {
-            surveyVersion = survey.__v;
-          }
-          callback();
-        });        
-      }      
+      };
       
-      async.series(findSurveyVersion, function(err){
+      async.series([function(callback) {                  
+        var surveyData = {
+          version: null,
+          templates: {}
+        };
+        
+        Survey.findOne({_id:ids.survey}, function(err, survey){
+          if (err) {
+            callback(err);
+          }
+          
+          if (survey.__v) {
+            surveyData.version = survey.__v;
+          }
+          
+          if (survey.checkinTemplates) {
+            CheckinTemplate.find({_id:{$in: survey.checkinTemplates}}, function(err, templates) {
+              var templateFunctions = [];
+              templates.forEach(function(template){
+                templateFunctions.push(function(cb2){
+                  var templateObj = {
+                    question: template.question,
+                    title: template.title,
+                    type: template.type
+                  };
+                  surveyData.templates[template.id] = templateObj;
+                  cb2();
+                });
+              });
+              
+              async.series(templateFunctions, function(err){
+                callback(null, surveyData);
+              });
+            });
+          } else {
+            callback(null, surveyData);
+          }          
+        });          
+      }], function(err, results){        
         for(var i = 0; i < data.length; i++) {
           var currData = data[i];
           var currGroup = currData.group;
           var groupID = sha1(ids.survey+currTime+currGroup);          
-          
+
           // Format answer as array
           var currAnswer = [];        
           if (currData.answers) {
@@ -183,22 +209,28 @@ module.exports = (function () {
           } else {
             dataMap[currGroup] = [];          
           }
-                    
+
           currAnswer.forEach(function(answer){
+            var currQuestion, currTitle, currType;
+            if (results[0].templates[currData.id]) {
+              currQuestion = results[0].templates[currData.id].question;
+              currTitle = results[0].templates[currData.id].title;
+              currType = results[0].templates[currData.id].type;
+            }
             var answerObj = {
               text: answer,
               template_id: currData.id,
-              question: "",
+              question: currQuestion,
               score: 0,
-              title: "",
-              type: "",
+              title: currTitle,
+              type: currType,
               group_id: groupID,
-              surveyVersion: surveyVersion
+              surveyVersion: results[0].version
             };
             dataMap[currGroup].push(answerObj);                                           
           });          
         }
-        return dataMap;
+        cb(dataMap);
       });
     } // end formatAnswers
      
@@ -284,211 +316,210 @@ module.exports = (function () {
         assignedSurvey: req.body.assignedSurveyId
       };
 
-      // Assign to request data arra     
-      var groupedResponses = formatAnswers(req);                       
-      
-      // For each survey iteration answered, create set of datastore functions and add to function array
-      for (var group in groupedResponses) {
-        functions.push((function (objKey, answers) {
-          return function (callback) {                                                                 
-            var saveFunctions = createCheckins(ids, answers);
-            async.parallel(saveFunctions, function(err){
-              callback();
-            });                           
-          }
-        })(group, groupedResponses[group]));
-      }
-      
-      // Execute checkin and schedule datastore transactions, and then create Adherence Survey if survey is Wizard Survey type
-      async.series(functions, function (err) {
-        if (err) {
-          next(err);
+      formatAnswers(req, function(groupedResponses){
+        // For each survey iteration answered, create set of datastore functions and add to function array
+        for (var group in groupedResponses) {
+          functions.push((function (objKey, answers) {
+            return function (callback) {                                                                 
+              var saveFunctions = createCheckins(ids, answers);
+              async.parallel(saveFunctions, function(err){
+                callback();
+              });                           
+            }
+          })(group, groupedResponses[group]));
         }
 
-        Survey.findOne({_id:ids.survey}, function(err, survey){
-          if(err) next(err);
+        // Execute checkin and schedule datastore transactions, and then create Adherence Survey if survey is Wizard Survey type
+        async.series(functions, function (err) {
+          if (err) {
+            next(err);
+          }
 
-          if(survey.isWizardSurvey){
+          Survey.findOne({_id:ids.survey}, function(err, survey){
+            if(err) next(err);
 
-            // if the survey is a wizard survey (aka medication survey) do the following:
-            //- generate a survey that contains checkin templates for each medication
-            //- generate a checkin templates as necessary for new medications
-            //- schedule and assign survey to user
+            if(survey.isWizardSurvey){
 
-            var medicationNames = [];
-            var medicationNameFinders = [];
+              // if the survey is a wizard survey (aka medication survey) do the following:
+              //- generate a survey that contains checkin templates for each medication
+              //- generate a checkin templates as necessary for new medications
+              //- schedule and assign survey to user
 
-            for (var group in groupedResponses) {
-              var groupAnswers = groupedResponses[group];
-              groupAnswers.forEach(function(answer){
-                if (answer.template_id) {
-                  medicationNameFinders.push(
-                    function (callback) {
-                      CheckinTemplate.findOne({_id: answer.template_id}, function (err, template){
-                        if (err) {
-                          callback();
-                        }            
-                        if (template.type == "dropdownText") {
-                          medicationNames.push(answer.text);
-                          callback();
-                        }
-                      });
-                    }
-                  );
-                }
-              });
-            }            
-                      
-            async.parallel(medicationNameFinders, function (err) {
-              // Medication names are used to generate a Survey with associated Adherence Checkin Templates
-              // Check if adherence survey is already assigned
-              AssignedSurvey.find({userId: req.user.id}, function(err, assigned) {
-                if (err) next(err);
+              var medicationNames = [];
+              var medicationNameFinders = [];
 
-                // Find:
-                // - assigned surveys that are generated
-                // - Adherence Checkin Templates associated with medications
-                var generatedSurvey = [];          
-                var adherenceTemplates = [];
-                var adherenceSurveyPrepper = [];
-                var assignedIds = assigned.map(function(a) {return a.surveyId;});
-             
-                         
-                // Add generatedSurveyFinder and templateGenerators to async function array
-                var generatedSurveyFinder = function(callback) {
-                  Survey.findOne({_id: {$in: assignedIds}, isGenerated: true}, function(err, survey){
-                    if (err) next(err);
-                    if (survey) {
-                      generatedSurvey = survey;                      
-                    }
-                    callback();
-                  });
-                    
-                }
-                              
-                medicationNames.forEach(function(medName){
-                  adherenceSurveyPrepper.push(function(callback){
-                    CheckinTemplate.findOne({title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName)}, function(err, template){
-                      if (err) next(err);
-                      if (template) {
-                        // Template matched, push to array                       
-                        adherenceTemplates.push(template);
-                        callback();
-                      } else {
-                        // Template missing, create new CheckinTemplate
-                        var newCheckinTemplate = new CheckinTemplate({
-                          type: "medicationCheckin",
-                          title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName),
-                          score: 1,
-                          tips: "",
-                          question: "How many times did you take '{MED_NAME}' this week?".replace('{MED_NAME}', medName),                                        
-                          schedules: [],
-                          answers: []
+              for (var group in groupedResponses) {
+                var groupAnswers = groupedResponses[group];
+                groupAnswers.forEach(function(answer){
+                  if (answer.template_id) {
+                    medicationNameFinders.push(
+                      function (callback) {
+                        CheckinTemplate.findOne({_id: answer.template_id}, function (err, template){
+                          if (err) {
+                            callback();
+                          }            
+                          if (template.type == "dropdownText") {
+                            medicationNames.push(answer.text);
+                            callback();
+                          }
                         });
-                        newCheckinTemplate.save(function(err, newTemplate){                          
-                          adherenceTemplates.push(newTemplate);
-                          callback();
-                        });                                                                    
                       }
-                    });  
-                  });
-                                                                  
-                });
-                             
-                adherenceSurveyPrepper.push(generatedSurveyFinder);
-                  
-                // Create missing templates, and add Adherence Checkin Templates to current or new AssignedSurvey  
-                async.series(adherenceSurveyPrepper, function(err){
-                  if (err) {
-                    next(err);
+                    );
                   }
-                  var adherenceSurvey = {};
-                  // Get adherence template IDs
-                  var adherenceTemplateIds = [];
-                  adherenceTemplateIds = adherenceTemplates.map(function (adTemp){
-                    return adTemp.id;
-                  });                
-                                                      
-                  if (generatedSurvey && generatedSurvey.checkinTemplates) {
-                    adherenceSurvey = generatedSurvey;
-                    
-                    // Update survey with new Adherence Templates
-                    if (adherenceTemplateIds) {
-                      adherenceSurvey.checkinTemplates = adherenceTemplateIds;                      
-                    }
+                });
+              }            
 
-                  } else {
-                    // No existing generated surveys, create one and assign it
-                    adherenceSurvey = new Survey({
-                      title: "GENERATED_Weekly Adherence Survey",
-                      isStartingSurvey: false,
-                      duration: "2months",
-                      recurrence: "1week",
-                      isWizardSurvey: false,
-                      maximumIterations: "0",
-                      checkinTemplates: adherenceTemplates.map(function(adTemp) { return adTemp.id }),
-                      isGenerated: true
+              async.parallel(medicationNameFinders, function (err) {
+                // Medication names are used to generate a Survey with associated Adherence Checkin Templates
+                // Check if adherence survey is already assigned
+                AssignedSurvey.find({userId: req.user.id}, function(err, assigned) {
+                  if (err) next(err);
+
+                  // Find:
+                  // - assigned surveys that are generated
+                  // - Adherence Checkin Templates associated with medications
+                  var generatedSurvey = [];          
+                  var adherenceTemplates = [];
+                  var adherenceSurveyPrepper = [];
+                  var assignedIds = assigned.map(function(a) {return a.surveyId;});
+
+
+                  // Add generatedSurveyFinder and templateGenerators to async function array
+                  var generatedSurveyFinder = function(callback) {
+                    Survey.findOne({_id: {$in: assignedIds}, isGenerated: true}, function(err, survey){
+                      if (err) next(err);
+                      if (survey) {
+                        generatedSurvey = survey;                      
+                      }
+                      callback();
                     });
-                  } // end if-else statement                  
-                  
-                  adherenceSurvey.save(function(err, freshSurvey){
-                    if(err) next(err);
-                    // here we assign weekly adherence surveys for the next two months to the user:                                       
 
-                    var todayDate = new Date();
-                    //set the time to 0, so when we schedule surveys we schedule them for midnight
-                    todayDate.setUTCHours(0, 0, 0, 0);
-                    var endDate = new Date(todayDate);
+                  }
 
-                    //set endDate 1 month from now
-                    endDate.setMonth(todayDate.getMonth() + 1);
-
-                    //jump to the next friday
-                    var currentDate = moment().day(5).toDate();
-                    //set the time to 0, so when we schedule surveys we schedule them for midnight
-                    currentDate.setUTCHours(0, 0, 0, 0);
-                    
-                    var datesToAssign = [];
-                    while (currentDate < endDate) {
-                      datesToAssign.push(new Date(currentDate));
-                      currentDate.setDate(currentDate.getDate() + 7);
-                    }
-
-                    // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
-                    // before inserting new items in                  
-                    
-                    AssignedSurvey.find({surveyId: freshSurvey.id}).remove(function (err, num) {                      
-                      
-                      if (err) {
-                      }
-                      else {
-                        var assignedSurveysToInsert = [];
-                        datesToAssign.forEach(function (date) {
-                          assignedSurveysToInsert.push({
-                            userId: req.user.id,
-                            surveyId: freshSurvey.id,
-                            isDone: false,
-                            showDate: date,
-                            hasNotifications:true,
-                            __v: 0
+                  medicationNames.forEach(function(medName){
+                    adherenceSurveyPrepper.push(function(callback){
+                      CheckinTemplate.findOne({title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName)}, function(err, template){
+                        if (err) next(err);
+                        if (template) {
+                          // Template matched, push to array                       
+                          adherenceTemplates.push(template);
+                          callback();
+                        } else {
+                          // Template missing, create new CheckinTemplate
+                          var newCheckinTemplate = new CheckinTemplate({
+                            type: "medicationCheckin",
+                            title: "{MED_NAME} adherence template".replace("{MED_NAME}", medName),
+                            score: 1,
+                            tips: "",
+                            question: "How many times did you take '{MED_NAME}' this week?".replace('{MED_NAME}', medName),                                        
+                            schedules: [],
+                            answers: []
                           });
-                        });
-                        AssignedSurvey.collection.insert(assignedSurveysToInsert, function (err, items) {});
+                          newCheckinTemplate.save(function(err, newTemplate){                          
+                            adherenceTemplates.push(newTemplate);
+                            callback();
+                          });                                                                    
+                        }
+                      });  
+                    });
+
+                  });
+
+                  adherenceSurveyPrepper.push(generatedSurveyFinder);
+
+                  // Create missing templates, and add Adherence Checkin Templates to current or new AssignedSurvey  
+                  async.series(adherenceSurveyPrepper, function(err){
+                    if (err) {
+                      next(err);
+                    }
+                    var adherenceSurvey = {};
+                    // Get adherence template IDs
+                    var adherenceTemplateIds = [];
+                    adherenceTemplateIds = adherenceTemplates.map(function (adTemp){
+                      return adTemp.id;
+                    });                
+
+                    if (generatedSurvey && generatedSurvey.checkinTemplates) {
+                      adherenceSurvey = generatedSurvey;
+
+                      // Update survey with new Adherence Templates
+                      if (adherenceTemplateIds) {
+                        adherenceSurvey.checkinTemplates = adherenceTemplateIds;                      
                       }
-                    }); // end AssignedSurvey mongoose call
-                  }); // end Survey save mongoose call
-                  
-                }); // end async.parallel                        
-              }); // end AssignedSurvey mongoose call                       
-            }); // end async.parallel
 
-            res.redirect('/checkin/survey/' + req.body.surveyID);
+                    } else {
+                      // No existing generated surveys, create one and assign it
+                      adherenceSurvey = new Survey({
+                        title: "GENERATED_Weekly Adherence Survey",
+                        isStartingSurvey: false,
+                        duration: "2months",
+                        recurrence: "1week",
+                        isWizardSurvey: false,
+                        maximumIterations: "0",
+                        checkinTemplates: adherenceTemplates.map(function(adTemp) { return adTemp.id }),
+                        isGenerated: true
+                      });
+                    } // end if-else statement                  
 
-          } else {
-            res.redirect('/checkin/survey/' + req.body.surveyID);
-          } // end isWizardSurvey if-else statement
-        }); // end Survey mongoose call
-      }); // end async.series callc
+                    adherenceSurvey.save(function(err, freshSurvey){
+                      if(err) next(err);
+                      // here we assign weekly adherence surveys for the next two months to the user:                                       
+
+                      var todayDate = new Date();
+                      //set the time to 0, so when we schedule surveys we schedule them for midnight
+                      todayDate.setUTCHours(0, 0, 0, 0);
+                      var endDate = new Date(todayDate);
+
+                      //set endDate 1 month from now
+                      endDate.setMonth(todayDate.getMonth() + 1);
+
+                      //jump to the next friday
+                      var currentDate = moment().day(5).toDate();
+                      //set the time to 0, so when we schedule surveys we schedule them for midnight
+                      currentDate.setUTCHours(0, 0, 0, 0);
+
+                      var datesToAssign = [];
+                      while (currentDate < endDate) {
+                        datesToAssign.push(new Date(currentDate));
+                        currentDate.setDate(currentDate.getDate() + 7);
+                      }
+
+                      // delete all the queue (assignedSurvey) items that reference the currently saved survey's id
+                      // before inserting new items in                  
+
+                      AssignedSurvey.find({surveyId: freshSurvey.id}).remove(function (err, num) {                      
+
+                        if (err) {
+                        }
+                        else {
+                          var assignedSurveysToInsert = [];
+                          datesToAssign.forEach(function (date) {
+                            assignedSurveysToInsert.push({
+                              userId: req.user.id,
+                              surveyId: freshSurvey.id,
+                              isDone: false,
+                              showDate: date,
+                              hasNotifications:true,
+                              __v: 0
+                            });
+                          });
+                          AssignedSurvey.collection.insert(assignedSurveysToInsert, function (err, items) {});
+                        }
+                      }); // end AssignedSurvey mongoose call
+                    }); // end Survey save mongoose call
+
+                  }); // end async.parallel                        
+                }); // end AssignedSurvey mongoose call                       
+              }); // end async.parallel
+
+              res.redirect('/checkin/survey/' + req.body.surveyID);
+
+            } else {
+              res.redirect('/checkin/survey/' + req.body.surveyID);
+            } // end isWizardSurvey if-else statement
+          }); // end Survey mongoose call
+        }); // end async.series
+      }); // end formatAnswers
     }; // end update function
 
     var updateView = function (req, res, next) {
