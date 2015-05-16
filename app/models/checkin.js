@@ -21,7 +21,7 @@ module.exports = (function() {
       question: String,
       score: String,
       title: String,
-      type: String,
+      type: {type: String},
       group_id: String,
       surveyVersion: Number,
 			timestamp: {
@@ -35,7 +35,7 @@ module.exports = (function() {
       question: String,
       score: String,
       title: String,
-      type: String,
+      type: {type: String},
       group_id: String,
       surveyVersion: Number,
 			timestamp: {

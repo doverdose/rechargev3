@@ -165,7 +165,7 @@ module.exports = (function () {
           
           if (survey.__v) {
             surveyData.version = survey.__v;
-          }
+          }          
           
           if (survey.checkinTemplates) {
             CheckinTemplate.find({_id:{$in: survey.checkinTemplates}}, function(err, templates) {
@@ -288,19 +288,44 @@ module.exports = (function () {
       var saveFunctions = [];            
       saveFunctions.push((function(currAnswers) {
         return function(callback) {
-          var checkinData = {};                          
-          checkinData.survey_id = ids.survey;
-          checkinData.answers = currAnswers;
-          var checkin = new Checkin(checkinData);
-          checkin.user_id = ids.user;
-          checkin.save(function(err){
+          var keyText;
+          
+          currAnswers.forEach(function(answer){
+            if (answer.template_id === ids.keyTemplate) {
+              keyText = answer.text;
+            }
+          });
+          
+          Checkin.findOne({answers: {$elemMatch: {template_id: ids.keyTemplate, text: keyText}}}, function(err, checkin){
+            // Update existing checkin if key template text matches            
+            var currCheckin;
             if (err) {
-              callback(err);
               return;
-            }                                      
-            AssignedSurvey.update({id: ids.assignedSurvey}, {isDone:true}, function(err, num){});
-            callback();
-          });                                                              
+            }
+            
+            if (checkin) {              
+              currCheckin = checkin;             
+              checkin.answers.forEach(function(pastAnswer){
+                currCheckin.pastAnswers.push(pastAnswer);
+              });
+              currCheckin.answers = currAnswers;
+            } else {
+              currCheckin = new Checkin({
+                survey_id: ids.survey,
+                answers: currAnswers
+              });
+              currCheckin.user_id = ids.user;             
+            }
+            
+            currCheckin.save(function(err){
+              if (err) {
+                callback(err);
+                return;
+              }                                      
+              AssignedSurvey.update({id: ids.assignedSurvey}, {isDone:true}, function(err, num){});
+              callback();
+            });  
+          });                                                                
         }
       })(answers));
       return saveFunctions;    
@@ -313,7 +338,8 @@ module.exports = (function () {
       var ids = {
         survey: req.body.surveyID,
         user: req.user._id,
-        assignedSurvey: req.body.assignedSurveyId
+        assignedSurvey: req.body.assignedSurveyId,
+        keyTemplate: req.body.keyTemplate     
       };
 
       formatAnswers(req, function(groupedResponses){

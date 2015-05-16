@@ -120,6 +120,7 @@
 		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 		<input type="hidden" name="id" value="<%= checkin.id || '' %>">
 		<input type="hidden" name="surveyID" value="<%= survey._id || '' %>">
+    <input type="hidden" name="keyTemplate" value="<%= survey.keyTemplate || '' %>">    
     <% if(typeof assignedSurvey !== 'undefined') { %>
     <input type="hidden" name="assignedSurveyId" value="<%= assignedSurvey._id || '' %>">
     <% } %>
