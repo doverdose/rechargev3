@@ -43,7 +43,7 @@ module.exports = (function () {
         async.parallel([
             function(callback){
                 Survey.findOne({_id:req.params.id},function(err,survey){
-                    if(err){next(err)}
+                    if(err){return next(err)}
                   
                     templateVars.survey = survey;
 

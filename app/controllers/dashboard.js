@@ -59,99 +59,66 @@ module.exports = (function() {
 			  checkinsForInterval(req.user._id, yearStart, yearEnd, 'yearResults', renderVars, callback);
 		  },
       function(callback) {
-            //get question and answers of the most recent wizard survey (aka medication survey) from the DB                        
-            Survey.findOne({isWizardSurvey:true},function(err,survey){
-                if(err){next(err)}
-                if (survey !== null) {
-                  
-                  CheckinTemplate.find({_id: {$in: survey.checkinTemplates}}).select('title').exec(function(err, checkinTemplates){
-                    if (err) {next(err)}
-                    
-                    // Reorder keys in recentCheckin object to match survey.checkinTemplates ordering
-                    for (var i=0; i < survey.checkinTemplates.length; i++) {
-                      for (var j = 0; j < checkinTemplates.length; j++) {
-                        if (checkinTemplates[j].id === survey.checkinTemplates[i]) {
-                          recentCheckins[checkinTemplates[j].title] = [];
-                          break;
-                        }
-                      } 
-                    }                    
-                    
-                    Checkin.find({
-                        user_id: req.user._id,
-                        survey_id: survey._id
-                    })
-                    .exec(function(err, checkins) {
-                      if (err) {
-                        return next(err);
-                      }
+        //get question and answers of the most recent wizard survey (aka medication survey) from the DB                        
+        Survey.findOne({isWizardSurvey:true},function(err,survey){
+          if(err){return next(err)}
+          if (survey !== null) {
 
-                      // Track survey versions, displaying only responses for most recent version
-                      var surveyVersion = 0;
-                      for (var i = 0; i < checkins.length; i++) {
-                        var currVersion = checkins[i].surveyVersion;
-                        surveyVersion = currVersion > surveyVersion ? currVersion : surveyVersion;
-                      }         
-                      
-                      console.log(surveyVersion);
+            CheckinTemplate.find({_id: {$in: survey.checkinTemplates}}).select('title').exec(function(err, checkinTemplates){
+              if (err) {next(err)}
 
-                      checkins = checkins.reverse();
+              // Reorder keys in recentCheckin object to match survey.checkinTemplates ordering
+              for (var i=0; i < survey.checkinTemplates.length; i++) {
+                for (var j = 0; j < checkinTemplates.length; j++) {
+                  if (checkinTemplates[j].id === survey.checkinTemplates[i]) {
+                    recentCheckins[checkinTemplates[j].title] = [];
+                    break;
+                  }
+                } 
+              }                    
 
-                      checkins.forEach(function(checkin){
+              Checkin.find({
+                user_id: req.user._id,
+                survey_id: survey._id
+              })
+                .exec(function(err, checkins) {
+                if (err) {
+                  return next(err);
+                }                      
 
-                        // Exit function if not most recent version
-                        if (surveyVersion !== checkin.surveyVersion) {
-                          return;
-                        }
+                checkins = checkins.reverse();
 
-                        var checkin = checkin.toObject();
-                        var question = checkin.title;
-                        var timestamp = checkin.timestamp;                      
+                checkins.forEach(function(checkin){                                                                        
+                  if (checkin.answers[0].surveyVersion !== survey.__v) {
+                    return;
+                  }
+                  checkin.answers.forEach(function(answer){
+                    var question = answer.title;
+                    var timestamp = answer.timestamp;                         
+                    if (!(question in recentCheckins)) {
+                      recentCheckins[question] = [];
+                    }
+                    recentCheckins[question].push(answer.text);
+                    checkinTimes[question] = timestamp;                          
+                  });                  
+                });
+                callback();
+              });                  
+            });                  
+          } else {
+            callback();               
+          }
+      });
+    }], function(err) {
+      if(err) {
+        return next(err);
+      }      
 
-                        // Map most recent answers to question
-                        if(question in recentCheckins){                         
-                          if (!checkinTimes[question] || timestamp > checkinTimes[question]) {
-                            if (checkin.answers) {
-                              checkin.answers.forEach(function(answer){
-                                recentCheckins[question].push(answer.text);  
-                              });
-                            }
-                            checkinTimes[question] = timestamp;
-                          }                                
-                        } else {
-                          recentCheckins[question] = [];
-                          if (checkin.answers) {
-                            checkin.answers.forEach(function(answer){
-                              recentCheckins[question].push(answer.text);
-                            });                                
-                            checkinTimes[question] = timestamp;                                
-                          }                              
-                        }
-
-                      });
-                      
-                      callback();
-                    });
-                  
-                  
-                  
-                  });
-                  
-                } else {
-                    callback();               
-                }
-            });
-
-        }], function(err) {
-			if(err) {
-				next(err);
-			}      
-
-			res.render('dashboard/index.ejs', {
-				jsVars: renderVars,
+      res.render('dashboard/index.ejs', {
+        jsVars: renderVars,
         recentCheckins: recentCheckins,
         checkinTimes: checkinTimes
-			});
+      });
 		});
 	};
 

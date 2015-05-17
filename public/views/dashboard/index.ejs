@@ -5,27 +5,35 @@
 	</div>
   <%if(Object.keys(recentCheckins).length > 0){%>
     <div>
-      <h3>Most recent medication:</h3>
+      <h3>Medication List</h3>
       <table class="table">
         <tr>
           <%var answerCount%>
           <%for(attr in recentCheckins){%>
           <%if(!answerCount){answerCount = recentCheckins[attr].length}%>
           <th><%=attr%></th>
-          <%}%>
+          <%}%>         
         </tr>
-
+        
+        <% if (answerCount > 0) { %>
         <%for(var i = 0; i < answerCount; i++){%>
         <tr>
           <%for(attr in recentCheckins){%>
-          <td><%=recentCheckins[attr][i]%> reported <%=: checkinTimes[attr] | fromNow %></td>
-
-          <%}%>
+            <td><%=recentCheckins[attr][i]%></td>
+          <%}%>          
         </tr>
         <%}%>
+        <% } else {%>
+          <tr>  
+            <td>
+              No medications have been recorded.
+            </td>
+          </tr>
+        <% } %>
       </table>
     </div>
-  <%}%>
+  <% } %>
+  <!--
   <div class='plots'>
 		<div class='week'>
 			<div class='legend'>Checkin scores this week</div>
@@ -52,5 +60,6 @@
 
 		<div class='clear'></div>
 	</div>
-	<div class='notice'></div>
+	-->
+  <div class='notice'></div>
 </div>

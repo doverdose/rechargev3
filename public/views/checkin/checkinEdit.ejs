@@ -53,7 +53,6 @@
 
             // foreach template, change data[i] to a new index
             for(var i = 0; i < nrOfTemplates; i ++){
-
                 $(templates[i]).find("[name]").each(function(index){
                   var newVal = this.name.replace(i, currentIndex);
                   this.name = newVal;
@@ -62,10 +61,7 @@
                   if(this.name.indexOf("[group]") >= 0) {
                     this.value = nrOfIterations;
                   }
-                });
-              
-                
-
+                });              
                 currentIndex++;
             }
 
@@ -124,6 +120,7 @@
 		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 		<input type="hidden" name="id" value="<%= checkin.id || '' %>">
 		<input type="hidden" name="surveyID" value="<%= survey._id || '' %>">
+    <input type="hidden" name="keyTemplate" value="<%= survey.keyTemplate || '' %>">    
     <% if(typeof assignedSurvey !== 'undefined') { %>
     <input type="hidden" name="assignedSurveyId" value="<%= assignedSurvey._id || '' %>">
     <% } %>

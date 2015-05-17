@@ -6,7 +6,9 @@
 			Surveys
 		</h2>
   	<div class="header-actions">
-			<button type="button" class="btn btn-primary js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey</button>
+      <!--
+			<button type="button" class="btn btn-primary js-checkinselector-btn" rel="popover" data-placement="bottom" data-tpl=".js-checkinselector-template"> Fill out a survey </button>
+      -->
 		</div>
 	</div>
 	<% Object.keys(schedules).forEach(function(key) { %>
@@ -53,8 +55,7 @@
 	<% }) %>
 
 
-	<% if(surveyData.length) { %>
-		<h4>Past surveys</h4>
+	<% if(surveyData.length) { %>	
 		<%
 			var scoreClass = 'warning';
 			if(totalScore > 10) {
@@ -92,13 +93,22 @@
 								</h3>
               </a>
               <p>
-                <%= survey.isCompleted ? "" : " (Not yet completed)" %>
+                <%= survey.isCompleted ? "" : "" %>
               </p>
 						</div>
-            <div class="col-xs-4">
+            <div class="col-xs-2">
               <% if (survey.isAssigned) { %>
-                Assigned
+                
              <% } %>
+            </div>
+            <div class="col-xs-2">
+              <form action="/checkin/new" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+                <input type="hidden" name="id" value="<%= survey.id %>">
+                <button type="submit" class="btn btn-primary">
+                  Fill out survey
+                </button>
+              </form>
             </div>
 					</div>
 				</div>
