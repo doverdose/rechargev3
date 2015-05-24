@@ -6,6 +6,12 @@
 			<%= survey.title %>
 		</h2>
 	</div>
+  <% if (flash) { %>
+    <div class="alert alert-dismissiable alert-info">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <p><strong><%= flash %></strong></p>
+    </div>
+  <% } %>
   <div>
     <h3>
       Your Responses

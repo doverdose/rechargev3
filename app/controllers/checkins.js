@@ -87,6 +87,9 @@ module.exports = (function () {
               return cTemp;
             });
           
+            // Set flash variable
+            templateVars.flash = req.flash().success;          
+            
             res.render('checkin/list.ejs', templateVars);
         });
     };
@@ -363,6 +366,9 @@ module.exports = (function () {
 
           Survey.findOne({_id:ids.survey}, function(err, survey){
             if(err) next(err);
+            
+            // Survey found, and responses have been saved. Flash thank you message
+            req.flash("success", "Thanks for answering our survey!");             
 
             if(survey.isWizardSurvey){
 
