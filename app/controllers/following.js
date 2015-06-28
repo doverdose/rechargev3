@@ -7,9 +7,10 @@ module.exports = (function() {
 		moment = require('moment'),
 		Checkin = mongoose.model('Checkin'),
 		User = mongoose.model('User'),
+    Survey = mongoose.model('Survey'),
 		async = require('async');
 
-	var getFollowigStream = function(userID, limit, skip, callback) {
+	var getFollowingStream = function(userID, limit, skip, callback) {
 		User.find({
 			_id: userID,
 			'following.approved': true
@@ -27,12 +28,12 @@ module.exports = (function() {
         Checkin.find({         
           'user_id': {$in: ids }          
 				}, {
-					'answers.title': true,
-					'answers.timestamp': true,
+					'survey_id': true,
+					'timestamp': true,
 					'user_id': true,
 				}, {
 					sort: {
-						'answer.timestamp': 1
+						'timestamp': 1
 					},
 					limit: limit,
 					skip: skip
@@ -42,20 +43,24 @@ module.exports = (function() {
 					}
 					async.map(results, function(item, callback) {
           	var transformed = {};
-						transformed.title = item.answers.map(function (ans) {
-              return ans.title;
-            });
-						transformed.date = moment(item.answers[0].timestamp).fromNow();
-
-						User.findById(item.user_id, function(err, user) {
-							if(err) {
-								callback(err, null);
-							}
-							transformed.user = {
-								name: user.name
-							};
-							callback(null, transformed);
-						});
+						transformed.date = moment(item.timestamp).fromNow();
+           
+            
+            User.findById(item.user_id, function(err, user) {
+                if(err) {
+                  callback(err, null);
+                }
+                transformed.user = {
+                  name: user.name
+                };
+                Survey.findById(item.survey_id, function(err, survey) {
+                  if (err) {
+                    callback (err, null);
+                  }
+                  transformed.title = survey.title;
+                  callback(null, transformed);
+                });                
+            });                           
 					}, function(err, results) {
 						if (err) {
 							callback(err, null);
@@ -68,7 +73,7 @@ module.exports = (function() {
 	};
 
 	var index = function(req, res, next) {
-		getFollowigStream(req.user._id, 20, 0, function(err, results) {
+		getFollowingStream(req.user._id, 10, 0, function(err, results) {
 			if(err) {
 				next(err);
 			}
@@ -80,7 +85,7 @@ module.exports = (function() {
 
 	return {
 		index: index,
-		getFollowigStream: getFollowigStream
+		getFollowingStream: getFollowingStream
 	};
 
 }());

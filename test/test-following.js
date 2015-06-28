@@ -104,9 +104,9 @@ describe('Following', function () {
 		});
 	});
 
-	describe('#getFollowigStream()', function () {
+	describe('#getFollowingStream()', function () {
 		it('should return 3 checkins', function(done) {
-			following.getFollowigStream(userData1.id, 20, 0, function(err, results) {
+			following.getFollowingStream(userData1.id, 20, 0, function(err, results) {
 				should.not.exist(err);
 				results.length.should.equal(3);
 				done();
@@ -114,7 +114,7 @@ describe('Following', function () {
 		});
 
 		it('should return 0 checkins', function(done) {
-			following.getFollowigStream(userData3.id, 20, 0, function(err, results) {
+			following.getFollowingStream(userData3.id, 20, 0, function(err, results) {
 				should.not.exist(err);
 				results.length.should.equal(0);
 				done();
