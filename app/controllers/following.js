@@ -17,23 +17,22 @@ module.exports = (function() {
 			if (err) {
 				callback(err, null);
 			}
-			async.map(results, function(item, callback) {
-				callback(null, item.id);
-			}, function(err, ids) {
-				if(err) {
+      async.map(results[0].following, function(item, callback) {         
+        callback(null, item.id);  
+			}, function(err, ids) {        
+        if(err) {
 					callback(err, null);
 				}
-				Checkin.find({
-					user_id: {
-						$in: ids
-					}
+
+        Checkin.find({         
+          'user_id': {$in: ids }          
 				}, {
-					title: true,
-					timestamp: true,
-					user_id: true,
+					'answers.title': true,
+					'answers.timestamp': true,
+					'user_id': true,
 				}, {
 					sort: {
-						timestamp: 1
+						'answer.timestamp': 1
 					},
 					limit: limit,
 					skip: skip
@@ -42,9 +41,11 @@ module.exports = (function() {
 						callback(err, null);
 					}
 					async.map(results, function(item, callback) {
-						var transformed = {};
-						transformed.title = item.title;
-						transformed.date = moment(item.timestamp).fromNow();
+          	var transformed = {};
+						transformed.title = item.answers.map(function (ans) {
+              return ans.title;
+            });
+						transformed.date = moment(item.answers[0].timestamp).fromNow();
 
 						User.findById(item.user_id, function(err, user) {
 							if(err) {

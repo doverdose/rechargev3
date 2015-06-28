@@ -260,17 +260,18 @@ module.exports = (function() {
                   // for now, redirect to dashboard always upon login
                   res.redirect('/dashboard');
                 //}
-
-                CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                  res.render('checkin/checkinEdit.ejs', {
-                    checkin: {},
-                    user: req.user,
-                    templates: templates,
-                    survey: template,
-                    assignedSurvey: assignedSurvey,
-                    dropdownDataSource: dropdownItems
+                if (template) {
+                  CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                    res.render('checkin/checkinEdit.ejs', {
+                      checkin: {},
+                      user: req.user,
+                      templates: templates,
+                      survey: template,
+                      assignedSurvey: assignedSurvey,
+                      dropdownDataSource: dropdownItems
+                    });
                   });
-                });
+                }
               });
             }
             else{
@@ -282,16 +283,18 @@ module.exports = (function() {
                       // for now, redirect to dashboard always upon login
                       res.redirect('/dashboard');
                     //}
-                    CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                      res.render('checkin/checkinEdit.ejs', {
-                        checkin: {},
-                        user: req.user,
-                        templates: templates,
-                        survey: template,
-                        assignedSurvey:assignedSurvey,
-                        dropdownDataSource: dropdownItems
+                    if (template) {
+                      CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
+                        res.render('checkin/checkinEdit.ejs', {
+                          checkin: {},
+                          user: req.user,
+                          templates: templates,
+                          survey: template,
+                          assignedSurvey:assignedSurvey,
+                          dropdownDataSource: dropdownItems
+                        });
                       });
-                    });
+                    }
                   });
                 }
                 else{

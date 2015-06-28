@@ -7,11 +7,14 @@
 	<% for(var i = 0; i < results.length; i++) { %>
 		<div class='following-checkin'>
 			<div class='following-detail'>
-				<%= results[i].user.name %> has cheked in for <%= results[i].title %>
+				<%= results[i].user.name %> has checked in for <%= results[i].title %>
 			</div>
 			<div class='following-timestamp'>
 				<%= results[i].date %>
 			</div>
 		</div>
 	<% } %>
+  <% if (results.length == 0) { %>
+    <span> There are no updates from those you are following. </span>
+  <% } %>
 </div>
