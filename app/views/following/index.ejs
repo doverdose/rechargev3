@@ -4,14 +4,32 @@
 		<h2>Following</h2>
 	</div>
 
+  <div>
+    <%= meds.recentCheckins['Medication']%>
+  </div>
+  
 	<% for(var i = 0; i < results.length; i++) { %>
 		<div class='following-checkin'>
 			<div class='following-detail'>
-				<%= results[i].user.name %> has checked in for <%= results[i].title %>
-			</div>
-			<div class='following-timestamp'>
-				<%= results[i].date %>
-			</div>
+        <strong><%= results[i].user.name %></strong> answered <strong><%= results[i].title %></strong> with the following responses <%= results[i].date %>:
+			</div>		
+      <% var score = 0; 
+        for (var j = 0; j < results[i].answers.length; j++) { %>
+          <div>
+            <small>
+              <strong>
+                <%= results[i].answers[j].title %>:
+              </strong>
+              <%= results[i].answers[j].text %>
+            </small>
+          </div>                          
+        <% score += results[i].answers[j].score;
+      } %>
+      <div class="following-timestamp">        
+        <small>
+          Response score: <%= score %>
+        </small>         
+      </div>      
 		</div>
 	<% } %>
   <% if (results.length == 0) { %>

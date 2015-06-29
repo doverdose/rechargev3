@@ -61,6 +61,7 @@ module.exports = (function() {
             },
             function (callback) {
               // get checkin details and calculate checkin score
+              var totalScore = 0;                
               Checkin.find({
                 user_id: user_id
               }, function (err, checkins) {
@@ -68,11 +69,12 @@ module.exports = (function() {
                   return next(err);
                 }
                 
-                var totalScore = 0;
                 checkins.forEach(function(c){
-                  totalScore += c.score || 0;
+                  c.answers.forEach(function(answer){
+                    totalScore += answer.score || 0;                    
+                  });
                 });
-                                
+                
                 templateVars.totalScore = totalScore;
                 templateVars.checkins = checkins.reverse();
                                 
@@ -153,53 +155,7 @@ module.exports = (function() {
               });              
               return currSurvey;         
             });            
-            
-            // Only add surveys with titles to templateVars, with the following structure for survey data
-            /*
-              surveyData = {
-                id: String
-                title: String
-                checkinTemplates: [{
-                  _id: String                
-                  title: String
-                  answers: [{
-                    text: String
-                    id: ObjectId
-                  }]
-                  checkins: [{
-                    _id: ObjectId
-                    user_id: ObjectId
-                    template_id: String
-                    type: String
-                    title: String
-                    question: String
-                    tips: String
-                    score: Number
-                    survey_id: String
-                    surveyVersion: Number
-                    timestamp: ISODate
-                    pastAnswers: [{
-                      text: String
-                      _id: ObjectId
-                      timestamp: ISODate
-                    }]
-                    answer: [{
-                      text: String
-                      _id: ObjectId
-                      timestamp: ISODate
-                    }]
-                    _v: Number
-                  }]
-                }]
-                isCompleted: Boolean
-                isAssigned: Boolean
-                assignments: {
-                  showDate: ISODate
-                  isDone: Boolean
-                }
-              }
-            */            
-            
+                         
             templateVars.surveyData = [];
             templateVars.surveyIds = [];
             surveyData.forEach(function(survey){
@@ -333,8 +289,69 @@ module.exports = (function() {
  
   };
   
+  var getMeds = function(user_id, next) {
+    var recentCheckins = {};
+    var checkinTimes = {};
+    Survey.findOne({isWizardSurvey:true},function(err,survey){
+          if(err){return next(err)}
+          if (survey !== null) {
+
+            CheckinTemplate.find({_id: {$in: survey.checkinTemplates}}).select('title').exec(function(err, checkinTemplates){
+              if (err) {next(err)}
+
+              // Reorder keys in recentCheckin object to match survey.checkinTemplates ordering
+              for (var i=0; i < survey.checkinTemplates.length; i++) {
+                for (var j = 0; j < checkinTemplates.length; j++) {
+                  if (checkinTemplates[j].id === survey.checkinTemplates[i]) {
+                    recentCheckins[checkinTemplates[j].title] = [];
+                    break;
+                  }
+                } 
+              }                    
+
+              Checkin.find({
+                user_id: user_id,
+                survey_id: survey._id
+              })
+                .exec(function(err, checkins) {
+                if (err) {
+                  return next(err);
+                }                      
+
+                checkins = checkins.reverse();
+
+                checkins.forEach(function(checkin){                                                                        
+                  if (checkin.answers[0].surveyVersion !== survey.__v) {
+                    return;
+                  }
+                  checkin.answers.forEach(function(answer){
+                    var question = answer.title;
+                    var timestamp = answer.timestamp;                         
+                    if (!(question in recentCheckins)) {
+                      recentCheckins[question] = [];
+                    }
+                    recentCheckins[question].push(answer.text);
+                    checkinTimes[question] = timestamp;                          
+                  });                  
+                });                                      
+                next({
+                  recentCheckins: recentCheckins,
+                  checkinTimes: checkinTimes
+                });
+              });                  
+            });                  
+          } else {            
+            next({
+              recentCheckins: recentCheckins,
+              checkinTimes: checkinTimes
+            });               
+          }
+      });
+  }
+  
   return {
-    listSurveys: listSurveys  
+    listSurveys: listSurveys,
+    getMeds: getMeds
   };
   
 }());

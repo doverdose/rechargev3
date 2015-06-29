@@ -147,10 +147,11 @@ module.exports = (function () {
     };
   
     // formatAnswers: accepts posted data and groups checkins by survey iteration
-    var formatAnswers = function (req, cb) {
+    var formatAnswers = function (req, score, cb) {
       var data = req.body.data;      
       var dataMap = {};
       var currTime = moment();
+      var answerScore = score || 0;
       var ids = {
         survey: req.body.surveyID
       };
@@ -224,7 +225,7 @@ module.exports = (function () {
               text: answer,
               template_id: currData.id,
               question: currQuestion,
-              score: 0,
+              score: answerScore,
               title: currTitle,
               type: currType,
               group_id: groupID,
@@ -336,6 +337,7 @@ module.exports = (function () {
     
     var update = function (req, res, next) {
       var functions = [];
+      var score = 1;
                                        
       // Format id object
       var ids = {
@@ -345,7 +347,7 @@ module.exports = (function () {
         keyTemplate: req.body.keyTemplate     
       };
 
-      formatAnswers(req, function(groupedResponses){
+      formatAnswers(req, score, function(groupedResponses){
         // For each survey iteration answered, create set of datastore functions and add to function array
         for (var group in groupedResponses) {
           functions.push((function (objKey, answers) {

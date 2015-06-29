@@ -68,6 +68,11 @@
 							<a href="/checkin">Surveys</a>
 						</li>
 					<% } %>
+          <% if(!user.permissions.admin) { %>
+            <li>
+              <a href="/following">Following</a> 
+            </li>
+          <% } %>
 					<li>
 						<a href="/settings/profile">Settings</a>
 					</li>
