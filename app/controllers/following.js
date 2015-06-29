@@ -28,16 +28,18 @@ module.exports = (function() {
         
         ids.forEach(function(user_id) {
           helper.getMeds(user_id, function(meds){            
-            getFollowingCheckins(user_id, limit, skip, meds, callback);          
           });
-        });                
+        });
+        
+        getFollowingCheckins(ids, limit, skip, {}, callback);          
+          
 			});
 		});
 	};
 
   var getFollowingCheckins = function(user_id, limit, skip, meds, callback) {
     Checkin.find({         
-      'user_id': user_id          
+      'user_id': {$in: user_id}          
     }, {
       'survey_id': true,
       'timestamp': true,
