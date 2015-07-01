@@ -3,30 +3,63 @@
 	<div class="page-header">
 		<h2>Following</h2>
 	</div>
-
+  <%var recentCheckins%>
 	<% for(var i = 0; i < results.length; i++) { %>
-		<div class='following-checkin'>
-			<div class='following-detail'>
-        <strong><%= results[i].user.name %></strong> answered <strong><%= results[i].title %></strong> with the following responses <%= results[i].date %>:
-			</div>		
-      <% var score = 0; 
-        for (var j = 0; j < results[i].answers.length; j++) { %>
-          <div>
-            <small>
-              <strong>
-                <%= results[i].answers[j].title %>:
-              </strong>
-              <%= results[i].answers[j].text %>
-            </small>
-          </div>                          
-        <% score += results[i].answers[j].score;
-      } %>
-      <div class="following-timestamp">        
-        <small>
-          Response score: <%= score %>
-        </small>         
-      </div>      
-		</div>
+    <div>
+      <h3>Medication List</h3>
+      <table class="table">
+        <tr>
+          <%var answerCount%>
+          <%recentCheckins = results[i].meds.recentCheckins%>
+          <%for(attr in recentCheckins){%>
+            <%answerCount = recentCheckins[attr].length%>
+            <th><%=attr%></th>
+          <%}%>         
+        </tr>
+        
+        <% if (answerCount > 0) { %>
+        <%for(var x = 0; x < answerCount; x++){%>
+        <tr>
+          <%for(attr in recentCheckins){%>
+            <td><%=recentCheckins[attr][x]%></td>
+          <%}%>          
+        </tr>
+        <%}%>
+        <% } else {%>
+          <tr>  
+            <td>
+              No medications have been recorded.
+            </td>
+          </tr>
+        <% } %>
+      </table>
+    </div>
+  
+    <h3>Checkins</h3>
+    <% for(var j= 0; j < results[i].checkins.length; j++) { %>
+      <div class='following-checkin'>
+        <div class='following-detail'>
+          <strong><%= results[i].checkins[j].user.name %></strong> answered <strong><%= results[i].checkins[j].title %></strong> with the following responses <%= results[i].checkins[j].date %>:
+        </div>		
+        <% var score = 0; 
+          for (var k = 0; k < results[i].checkins[j].answers.length; k++) { %>
+            <div>
+              <small>
+                <strong>
+                  <%= results[i].checkins[j].answers[k].title %>:
+                </strong>
+                <%= results[i].checkins[j].answers[k].text %>
+              </small>
+            </div>                          
+          <% score += results[i].checkins[j].answers[k].score;
+        } %>
+        <div class="following-timestamp">        
+          <small>
+            Response score: <%= score %>
+          </small>         
+        </div>      
+      </div>
+   <% } %>
 	<% } %>
   <% if (results.length == 0) { %>
     <span> There are no updates from those you are following. </span>
