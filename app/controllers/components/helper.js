@@ -323,16 +323,17 @@ module.exports = (function() {
                 checkins.forEach(function(checkin){                                                                        
                   if (checkin.answers[0].surveyVersion !== survey.__v) {
                     return;
+                  } else {
+                    checkin.answers.forEach(function(answer){
+                      var question = answer.title;
+                      var timestamp = answer.timestamp;                         
+                      if (!(question in recentCheckins)) {
+                        recentCheckins[question] = [];
+                      }
+                      recentCheckins[question].push(answer.text);
+                      checkinTimes[question] = timestamp;                          
+                    });
                   }
-                  checkin.answers.forEach(function(answer){
-                    var question = answer.title;
-                    var timestamp = answer.timestamp;                         
-                    if (!(question in recentCheckins)) {
-                      recentCheckins[question] = [];
-                    }
-                    recentCheckins[question].push(answer.text);
-                    checkinTimes[question] = timestamp;                          
-                  });                  
                 });                                      
                 next({
                   recentCheckins: recentCheckins,

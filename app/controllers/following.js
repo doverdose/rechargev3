@@ -17,29 +17,43 @@ module.exports = (function() {
 			'following.approved': true
 		}, 'following.id' , function(err, results) {
 			if (err) {
-				callback(err, null);
+				callback(err, null, null);
 			}
       async.map(results[0].following, function(item, callback) {         
         callback(null, item.id);  
 			}, function(err, ids) {        
         if(err) {
-					callback(err, null);
+					callback(err, null, null);
 				}
-        
-        ids.forEach(function(user_id) {
-          helper.getMeds(user_id, function(meds){            
+                
+        async.map(ids, function(id, callback){
+          var transformed = {}
+          helper.getMeds(id, function(meds){
+            transformed.meds = meds;
+            getFollowingCheckins([id], limit, skip, function(err, results) {
+              if (err) {
+                callback(err, null);
+              } else {
+                transformed.checkins = results;
+                callback(err, transformed);
+              }
+            });    
           });
-        });
-        
-        getFollowingCheckins(ids, limit, skip, {}, callback);          
-          
+        }, function(err, results){
+          if (err) {
+            callback(err, null);
+          } else {            
+            callback(null, results);
+          }
+        });                        
 			});
 		});
 	};
 
-  var getFollowingCheckins = function(user_id, limit, skip, meds, callback) {
+  // Passes back an array of checkins given user ids
+  var getFollowingCheckins = function(user_ids, limit, skip, callback) {
     Checkin.find({         
-      'user_id': {$in: user_id}          
+      'user_id': {$in: user_ids}          
     }, {
       'survey_id': true,
       'timestamp': true,
@@ -53,7 +67,7 @@ module.exports = (function() {
       skip: skip
     }, function(err, results) {
       if (err) {
-        callback(err, null, null);
+        callback(err, null);
       }
       async.map(results, function(item, callback) {
         var transformed = {};
@@ -86,22 +100,21 @@ module.exports = (function() {
         });                           
       }, function(err, results) {
         if (err) {
-          callback(err, null, null);
-        }        
-        
-        callback(null, results, meds);
+          callback(err, null);
+        }                       
+        callback(null, results);
       });
     });
   }
   
 	var index = function(req, res, next) {
-		getFollowingStream(req.user._id, 10, 0, function(err, results, meds) {
+		getFollowingStream(req.user._id, 10, 0, function(err, results) {
 			if(err) {
 				next(err);
 			}
+      console.log(results);
 			res.render('following/index.ejs', {
-				results: results,
-        meds: meds
+				results: results
 			});
 		});
 	};
