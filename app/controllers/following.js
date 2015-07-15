@@ -25,19 +25,26 @@ module.exports = (function() {
         if(err) {
 					callback(err, null, null);
 				}
-                
+               
         async.map(ids, function(id, callback){
           var transformed = {}
-          helper.getMeds(id, function(meds){
-            transformed.meds = meds;
-            getFollowingCheckins([id], limit, skip, function(err, results) {
-              if (err) {
-                callback(err, null);
-              } else {
-                transformed.checkins = results;
-                callback(err, transformed);
-              }
-            });    
+          User.findById(id, function(err, user) {            
+            if (err) {
+              callback(err, null);
+            } else {
+              transformed.user = user;
+              helper.getMeds(id, function(meds){
+                transformed.meds = meds;
+                getFollowingCheckins([id], limit, skip, function(err, results) {
+                  if (err) {
+                    callback(err, null);
+                  } else {
+                    transformed.checkins = results;
+                    callback(err, transformed);
+                  }
+                });    
+              });              
+            }
           });
         }, function(err, results){
           if (err) {
@@ -112,8 +119,7 @@ module.exports = (function() {
 			if(err) {
 				next(err);
 			}
-      console.log(results);
-			res.render('following/index.ejs', {
+      res.render('following/index.ejs', {
 				results: results
 			});
 		});

@@ -3,10 +3,12 @@
 	<div class="page-header">
 		<h2>Following</h2>
 	</div>
+  
   <%var recentCheckins%>
 	<% for(var i = 0; i < results.length; i++) { %>
     <div>
-      <h3>Medication List</h3>
+      <h3><%= results[i].user.name %></h3>
+      <h4><em>Medication List</em></h4>
       <table class="table">
         <tr>
           <%var answerCount%>
@@ -28,14 +30,14 @@
         <% } else {%>
           <tr>  
             <td>
-              No medications have been recorded.
+              <em>No medications have been recorded.</em>
             </td>
           </tr>
         <% } %>
       </table>
     </div>
   
-    <h3>Checkins</h3>
+    <h4><em>Checkins</em></h4>
     <% for(var j= 0; j < results[i].checkins.length; j++) { %>
       <div class='following-checkin'>
         <div class='following-detail'>
@@ -59,9 +61,12 @@
           </small>         
         </div>      
       </div>
-   <% } %>
+    <% } %>
+    <% if (results[i].checkins.length === 0) { %>
+      <span><em>There are no checkins from <%= results[i].user.name %>. </em></span>
+    <% } %>
 	<% } %>
   <% if (results.length == 0) { %>
-    <span> There are no updates from those you are following. </span>
+    <span><em>There are no updates from those you are following.</em></span>
   <% } %>
 </div>

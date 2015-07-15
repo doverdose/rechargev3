@@ -210,7 +210,6 @@ module.exports = (function() {
             });
           }          
         });
-
 			});
 
 	};
