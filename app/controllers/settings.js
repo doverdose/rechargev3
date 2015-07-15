@@ -40,17 +40,23 @@ module.exports = (function() {
 				var approved = [];
 				providers.forEach(function(provider, i) {
 
-					provider.patients.forEach(function(patient) {
-
-						if(patient.approved === true) {
-							approved[i] = true;
-						} else {
-							approved[i] = false;
-						}
-
+					provider.patients.every(function(patient) {
+            
+						if(patient.id === req.user.id) {
+              if (patient.approved === true) {
+                approved[i] = true;
+              } else {
+                approved[i] = false;
+              }
+              return false;
+            } else {
+              return true;
+            }                        
 					});
 
 				});
+        
+        console.log(approved);
 
 				res.render('settings/providers.ejs', {
 					title: 'Providers',

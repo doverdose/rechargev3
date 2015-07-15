@@ -5,7 +5,8 @@ module.exports = (function() {
 	'use strict';
 
 	var mongoose = require('mongoose'),
-		User = mongoose.model('User');
+		User = mongoose.model('User'),
+    async = require('async');
 
 	/* Remove user from provider
 	 */
@@ -150,23 +151,28 @@ module.exports = (function() {
 					return next(new Error('Failed to load Provider ' + req.body.providerId));
 				}
 
+        //console.log(req.user.id);
+        //console.log("Sponsored patients below")
 				// find yourself in the provider's patients
-				provider.patients.forEach(function(p) {
+				async.each(provider.patients, function(p, callback) {          
 					if(p.id === req.user.id) {
-						p.approved = true;
-						return false;
+            p.approved = true;						
 					}
-				});
-
-				provider.save(function(err) {
-					if (err) {
-						return next(err);
-					}
-
-					// redirect patient to dashboard
-					res.redirect(req.session.lastUrl || '/settings/providers');
-				});
-
+          callback();
+				}, function(err) {
+          if (err) { 
+            return next(err);
+          } else {
+            provider.save(function(err) {
+              if (err) {
+                return next(err);
+              } else {
+                res.redirect(req.session.lastUrl || '/settings/providers');
+              }
+            });                          
+          }
+        });
+			
 			});
 
 	};
@@ -186,22 +192,24 @@ module.exports = (function() {
 				}
 
 				// find yourself in the provider's patients
-				provider.patients.every(function(p) {
+  		  async.each(provider.patients, function(p, callback) {
 					if(p.id === req.user.id) {
-						p.approved = false;
-						return false;
+						p.approved = false;						
 					}
-					return true;
-				});
-
-				provider.save(function(err) {
-					if (err) {
-						return next(err);
-					}
-
-					// redirect patient to dashboard
-					res.redirect(req.session.lastUrl || '/settings/providers');
-				});
+					callback();
+				}, function(err){
+          if (err) {
+            return next(err);
+          } else {
+            provider.save(function(err){
+              if (err) {
+                return next(err);
+              } else {
+                res.redirect(req.session.lastUrl || '/settings/providers');
+              }
+            });
+          }          
+        });
 
 			});
 
