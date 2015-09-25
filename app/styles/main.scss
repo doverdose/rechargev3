@@ -63,6 +63,7 @@ body .select2-container {
 		}
 	}
 
+  
 	.navbar-brand {
 		margin: 0 auto;
 	}
@@ -345,13 +346,13 @@ body .select2-container {
 .site-footer {
 	display: block;
 	margin-top: emCalc(40);
-	background: $color1;
+	background: $white;
 	padding: emCalc(0);
 
-	color: lighten($color1, 30%);
+	color: lighten($black, 30%);
 
 	p {
-		color: lighten($color1, 20%);
+		color: lighten($black, 20%);
 	}
 }
 

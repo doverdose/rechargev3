@@ -2,57 +2,59 @@
  */
 
 module.exports = function(app, config, passport, env) {
-	'use strict';
+	'use strict'
 
-	var express = require('express'),
-		MongoStore = require('connect-mongo')(express),
-		flash = require('connect-flash'),
-		engine = require('ejs-locals');
-
+	var express         = require('express')
+  var MongoStore      = require('connect-mongo')(express)
+  var flash           = require('connect-flash')
+	var	engine          = require('ejs-locals')
+  var methodOverride  = require('method-override')
+  
 	app.configure(function() {
-		app.engine('html', engine);
-		app.engine('ejs', engine);
+		
+    app.engine('html', engine)
+		app.engine('ejs', engine)
 
 		// set views path, template engine and default layout
 		if(env === 'development' || env ==='nitrous') {
-			app.set('views', config.root + '/app/views');
+			app.set('views', config.root + '/app/views')
 		} else {
-			app.set('views', config.root + '/public/views');
+			app.set('views', config.root + '/public/views')
 		}
 		
-		var ejs = require('ejs'),
-			moment = require('moment');
+		var ejs     = require('ejs')
+		var moment  = require('moment')
 
 		ejs.filters.fromNow = function(date){
-			return moment(date).fromNow();
+			return moment(date).fromNow()
 		};
     
-    app.set('view engine', 'ejs');    
+    app.set('view engine', 'ejs')   
 
 		app.use(express.logger('dev'));
 
 		if(env === 'development' || env === 'nitrous') {
 			app.use(require('connect-livereload')({
 				port: 4002
-			}));
+			}))
 		}
 
 		if(env === 'development' || env === 'nitrous') {
-			app.use(express.static(config.root + '/app'));
-			app.use(express.static(config.root + '/.tmp'));
+			app.use(express.static(config.root + '/app'))
+			app.use(express.static(config.root + '/.tmp'))
 		}
 
-		app.use(express.static(config.root + '/public'));
+		app.use(express.static(config.root + '/public'))
 
 		// testing
 		app.set('test-uri', 'http://54.213.21.154:8080/');
 
 		// cookieParser should be above session
-		app.use(express.cookieParser());
+		app.use(express.cookieParser())
 
 		// bodyParser should be above methodOverride
-		app.use(express.bodyParser());
-		app.use(express.methodOverride());
+		app.use(express.bodyParser())
+		app.use(methodOverride())
 
 		// express/mongo session storage
 		app.use(

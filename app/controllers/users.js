@@ -238,73 +238,7 @@ module.exports = (function() {
 		if(req.user.permissions.provider || req.user.permissions.admin) {
 			res.redirect('/admin');
 		} else {
-      
-      // if the person has some assigned surveys in the queue, redirect him to the first one found
-      // same as if he would navigate to /checkin/new
-
-      Medication.find({}, function (err, dropdownItems) {
-        if (err) {
-          next(err);
-        }
-
-        if (dropdownItems) {
-          dropdownItems = getStringValuesFromItemsArray(dropdownItems);
-        }
-        
-        AssignedSurvey.findOne({userId:req.user.id, isDone:false, showDate:{$ne:null, $lt:new Date()}},{},function(err,assignedSurvey){
-          if(err){}
-          else{
-            if(assignedSurvey){
-              Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                //if (!template) {
-                  // for now, redirect to dashboard always upon login
-                  res.redirect('/dashboard');
-                //}
-                if (template) {
-                  CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                    res.render('checkin/checkinEdit.ejs', {
-                      checkin: {},
-                      user: req.user,
-                      templates: templates,
-                      survey: template,
-                      assignedSurvey: assignedSurvey,
-                      dropdownDataSource: dropdownItems
-                    });
-                  });
-                }
-              });
-            }
-            else{
-              // try again for all the assignedSurvey items that have showDate = null
-              AssignedSurvey.findOne({userId: req.user.id, isDone:false, showDate:null},"", function(err, assignedSurvey){
-                if(assignedSurvey){
-                  Survey.findOne({_id: assignedSurvey.surveyId}, function (err, template) {
-                    //if (!template) {
-                      // for now, redirect to dashboard always upon login
-                      res.redirect('/dashboard');
-                    //}
-                    if (template) {
-                      CheckinTemplate.find({_id: { $in: template.checkinTemplates}}, function (err, templates) {
-                        res.render('checkin/checkinEdit.ejs', {
-                          checkin: {},
-                          user: req.user,
-                          templates: templates,
-                          survey: template,
-                          assignedSurvey:assignedSurvey,
-                          dropdownDataSource: dropdownItems
-                        });
-                      });
-                    }
-                  });
-                }
-                else{
-                  res.redirect('/dashboard');
-                }
-              });
-            }
-          }
-        });
-      });
+      res.redirect('/checkin');      
 		}
 	};
 

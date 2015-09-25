@@ -10,6 +10,7 @@
     "ejs-locals": "~1",
     "email-templates": "~1",
     "express": "~3",
+    "method-override": "^2.3.5",
     "moment": "~2",
     "mongodb": "*",
     "mongoose": "~3.8",
