@@ -39,7 +39,6 @@ module.exports = (function() {
     }
 
 	var autoAssign = function(req, res, next) {
-		console.log(req.body);
 		demo.autoAssign(req.body.userId, req.body.surveyId, function() {
 			res.redirect('/user/' + req.body.userId);
 		});
@@ -655,6 +654,16 @@ module.exports = (function() {
 
 	};
 
+  /** Find surveys assigned to user
+  Inputs:
+    - user_id: String representing the data object id. If non-string type is provided, error object will be returned
+  Output:
+    - results: Array of string ids
+  **/
+    
+  
+  
+  
 
 	return {
 		authCallback: login,
