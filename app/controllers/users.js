@@ -661,7 +661,9 @@ module.exports = (function() {
     - results: Array of string ids
   **/
     
-  
+  var getAssignedSurveys = function (req, res, next) {
+    
+  }
   
   
 
