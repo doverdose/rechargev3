@@ -654,18 +654,7 @@ module.exports = (function() {
 
 	};
 
-  /** Find surveys assigned to user
-  Inputs:
-    - user_id: String representing the data object id. If non-string type is provided, error object will be returned
-  Output:
-    - results: Array of string ids
-  **/
-    
-  var getAssignedSurveys = function (req, res, next) {
-    
-  }
-  
-  
+
 
 	return {
 		authCallback: login,

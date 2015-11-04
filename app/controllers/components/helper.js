@@ -2,14 +2,14 @@
 
 module.exports = (function() {
 
-  var mongoose = require('mongoose'),
-        async = require('async'),
-        moment = require('moment'),
-        Schedule = mongoose.model('Schedule'),
-        Checkin = mongoose.model('Checkin'),
-        Survey = mongoose.model('Survey'),
-        AssignedSurvey = mongoose.model('AssignedSurvey'),
-        CheckinTemplate = mongoose.model('CheckinTemplate');
+  var mongoose         = require('mongoose')
+  var async            = require('async')
+  var moment           = require('moment')
+  var Schedule         = mongoose.model('Schedule')
+  var Checkin          = mongoose.model('Checkin')
+  var Survey           = mongoose.model('Survey')
+  var AssignedSurvey   = mongoose.model('AssignedSurvey')
+  var CheckinTemplate  = mongoose.model('CheckinTemplate')
   
   var listSurveys = function (user_id, next) {
     
@@ -350,9 +350,40 @@ module.exports = (function() {
       });
   }
   
+    /** Find surveys assigned to user
+  Inputs:
+    - user_id: String representing the data object id. If non-string type is provided, error object will be returned
+  Output:
+    - results: Array of string ids, or err object if error.
+  **/
+    
+  var getAssignedSurveys = function (userId, callback) {
+    if (typeof (userId) != "string") {
+      callback(new TypeError("userId must be a string"), null)
+      return
+    }
+    
+    AssignedSurvey.find({userId: userId}, function(err, userAssignedSurveys) {
+      if (err) {
+        callback(err, null)
+        return
+      }
+      
+      var results = []
+      for (aSurvey in userAssignedSurveys) {
+        results.push(aSurvey.userId)
+      }
+      
+      callback(null, results)
+    })
+  }
+  /* end getAssignedSurveys */
+  
+  
   return {
     listSurveys: listSurveys,
-    getMeds: getMeds
-  };
+    getMeds: getMeds,
+    getAssignedSurveys: getAssignedSurveys
+  }
   
 }());
