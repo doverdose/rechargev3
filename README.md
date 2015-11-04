@@ -74,3 +74,6 @@ The scheduler should be run in a Cron job with:
 
 	node scheduler.js
 
+## Dev notes
+
+In nitrous Node.js workspace, must install bower and grunt-cli via npm, and mongodb via apt-get install
