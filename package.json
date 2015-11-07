@@ -19,7 +19,7 @@
     "node-schedule": "~0.1",
     "nodemailer": "0.7.1",
     "nodemailer-mailgun-transport": "~1",
-    "passport": "~0",
+    "passport": "0.2.2",
     "passport-local": "~0",
     "q": "~0",
     "request": "~2",

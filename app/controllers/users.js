@@ -3,15 +3,15 @@
 module.exports = (function() {
 	'use strict';
 
-	var mongoose = require('mongoose'),
-		demo = require('./components/demo'),
-    helper = require('./components/helper'),
-    User = mongoose.model('User'),
-        AssignedSurvey = mongoose.model('AssignedSurvey'),
-        CheckinTemplate = mongoose.model('CheckinTemplate'),
-		    Checkin = mongoose.model('Checkin'),
-        Survey = mongoose.model('Survey'),
-        Medication = mongoose.model('Medication');
+	var mongoose = require('mongoose')
+	var	demo = require('./components/demo')
+  var helper = require('./components/helper')
+  var User = mongoose.model('User')
+  var AssignedSurvey = mongoose.model('AssignedSurvey')
+  var CheckinTemplate = mongoose.model('CheckinTemplate')
+  var Checkin = mongoose.model('Checkin')
+  var Survey = mongoose.model('Survey')
+  var Medication = mongoose.model('Medication')
 
     var getStringValuesFromItemsArray = function (items) {
         var stringValues = [];
@@ -208,7 +208,7 @@ module.exports = (function() {
 	var login = function (req, res, next) {
 		// update last_login date
 		if(req.user) {
-
+      
 			User.findOne({
 				_id: req.user._id
 			}, function(err, u) {
@@ -251,6 +251,7 @@ module.exports = (function() {
 			title: 'Login',
 			message: req.flash('error')
 		});
+    
 	};
 
 	/**
