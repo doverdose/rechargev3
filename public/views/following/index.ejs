@@ -7,34 +7,7 @@
   <%var recentCheckins%>
 	<% for(var i = 0; i < results.length; i++) { %>
     <div>
-      <h3><%= results[i].user.name %></h3>
-      <h4><em>Medication List</em></h4>
-      <table class="table">
-        <tr>
-          <%var answerCount%>
-          <%recentCheckins = results[i].meds.recentCheckins%>
-          <%for(attr in recentCheckins){%>
-            <%answerCount = recentCheckins[attr].length%>
-            <th><%=attr%></th>
-          <%}%>         
-        </tr>
-        
-        <% if (answerCount > 0) { %>
-        <%for(var x = 0; x < answerCount; x++){%>
-        <tr>
-          <%for(attr in recentCheckins){%>
-            <td><%=recentCheckins[attr][x]%></td>
-          <%}%>          
-        </tr>
-        <%}%>
-        <% } else {%>
-          <tr>  
-            <td>
-              <em>No medications have been recorded.</em>
-            </td>
-          </tr>
-        <% } %>
-      </table>
+      <h3><%= results[i].user.name %></h3>      
     </div>
   
     <h4><em>Checkins</em></h4>
@@ -63,7 +36,7 @@
       </div>
     <% } %>
     <% if (results[i].checkins.length === 0) { %>
-      <span><em>There are no checkins from <%= results[i].user.name %>. </em></span>
+      <span><em>There are no survey responses from <%= results[i].user.name %>. </em></span>
     <% } %>
 	<% } %>
   <% if (results.length == 0) { %>

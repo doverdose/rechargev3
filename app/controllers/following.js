@@ -11,19 +11,20 @@ module.exports = (function() {
     helper = require('./components/helper'),
 		async = require('async');
 
-	var getFollowingStream = function(userID, limit, skip, callback) {
-		User.find({
+	var getFollowingStream = function(userID, limit, skip, callback) {	
+    // Find the ids associated with followers who have been approved
+    User.find({
 			_id: userID,
 			'following.approved': true
 		}, 'following.id' , function(err, results) {
 			if (err) {
-				callback(err, null, null);
+				callback(err, null);
 			}
       async.map(results[0].following, function(item, callback) {         
         callback(null, item.id);  
 			}, function(err, ids) {        
         if(err) {
-					callback(err, null, null);
+					callback(err, null);
 				}
                
         async.map(ids, function(id, callback){
@@ -33,17 +34,14 @@ module.exports = (function() {
               callback(err, null);
             } else {
               transformed.user = user;
-              helper.getMeds(id, function(meds){
-                transformed.meds = meds;
-                getFollowingCheckins([id], limit, skip, function(err, results) {
-                  if (err) {
-                    callback(err, null);
-                  } else {
-                    transformed.checkins = results;
-                    callback(err, transformed);
-                  }
-                });    
-              });              
+              getFollowingCheckins([id], limit, skip, function(err, results) {
+                if (err) {
+                  callback(err, null);
+                } else {
+                  transformed.checkins = results;
+                  callback(err, transformed);
+                }
+              });    
             }
           });
         }, function(err, results){
