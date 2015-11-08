@@ -6,14 +6,7 @@
 		<div class="list-group">
 			<a href="/settings/profile" class="list-group-item">
 				<h4 class="list-group-item-heading">
-					<%= user.name %>
-					<small class="list-group-item-text">
-						<% if(user.permissions.provider) { %>
-							Supporter
-						<% } else {%>
-							Patient
-						<% } %>
-					</small>
+					<%= user.name %>					
 				</h4>
 			</a>
 			<a href="/settings/profile" class="list-group-item <%= activePage == '/settings/profile' && 'active' %>">Profile</a>
