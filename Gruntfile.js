@@ -30,7 +30,7 @@ module.exports = function (grunt) {
 			},
 			express: {
 				files: [
-					'<%= yeoman.app %>/{controllers,models}/*.js',
+					'<%= yeoman.app %>/{controllers,models}/**/*.js',
 					'config/{,*/}*.js'
 				],
 				tasks: [ 'express:dev' ],

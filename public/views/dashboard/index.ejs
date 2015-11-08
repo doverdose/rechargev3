@@ -3,63 +3,7 @@
 	<div class="page-header">
 		<h2>Dashboard</h2>
 	</div>
-  <%if(Object.keys(recentCheckins).length > 0){%>
-    <div>
-      <h3>Medication List</h3>
-      <table class="table">
-        <tr>
-          <%var answerCount%>
-          <%for(attr in recentCheckins){%>
-          <%if(!answerCount){answerCount = recentCheckins[attr].length}%>
-          <th><%=attr%></th>
-          <%}%>         
-        </tr>
-        
-        <% if (answerCount > 0) { %>
-        <%for(var i = 0; i < answerCount; i++){%>
-        <tr>
-          <%for(attr in recentCheckins){%>
-            <td><%=recentCheckins[attr][i]%></td>
-          <%}%>          
-        </tr>
-        <%}%>
-        <% } else {%>
-          <tr>  
-            <td>
-              No medications have been recorded.
-            </td>
-          </tr>
-        <% } %>
-      </table>
-    </div>
-  <% } %>
-  <!--
-  <div class='plots'>
-		<div class='week'>
-			<div class='legend'>Checkin scores this week</div>
-			<div id='week-results'>
-			</div>
-			<div id="week-results-no">No data available yet.</div>
-		</div>
-
-		<div class='clear'></div>
-
-		<div class='month'>
-			<div class='legend'>Checkin scores this month</div>
-			<div id='month-results'>
-			</div>
-			<div id="month-results-no">No data available yet.</div>
-		</div>
-
-		<div class='year'>
-			<div class='legend'>Checkin scores this year</div>
-			<div id='year-results'>
-			</div>
-			<div id="year-results-no">No data available yet.</div>
-		</div>
-
-		<div class='clear'></div>
-	</div>
-	-->
+  
+  You have completed <%= done %> out of <%= active %> surveys. <a href="/checkin" class="btn btn-primary">Go to Surveys</a>
   <div class='notice'></div>
 </div>

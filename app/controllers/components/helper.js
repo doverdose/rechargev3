@@ -350,11 +350,22 @@ module.exports = (function() {
       });
   }
   
-    /** Find surveys assigned to user
+  
+  /** Find who user is following
   Inputs:
-    - user_id: String representing the data object id. If non-string type is provided, error object will be returned
+    - user_id: String representing user object id. If non-string type is provided, TypeError is returned
   Output:
-    - results: Array of string ids, or err object if error.
+    - results: Array of string
+  **/
+  var getUserFollowing = function(userId, callback) {
+    
+  }
+  
+  /** Find surveys assigned to user
+  Inputs:
+    - user_id: String representing the data object id. If non-string type is provided, TypeError is returned
+  Output:
+    - results: String objects, or err object if error.
   **/
     
   var getAssignedSurveys = function (userId, callback) {
@@ -362,18 +373,12 @@ module.exports = (function() {
       callback(new TypeError("userId must be a string"), null)
       return
     }
-    
-    AssignedSurvey.find({userId: userId}, function(err, userAssignedSurveys) {
+        
+    AssignedSurvey.find({userId: userId}, function(err, results) {
       if (err) {
         callback(err, null)
         return
-      }
-      
-      var results = []
-      for (aSurvey in userAssignedSurveys) {
-        results.push(aSurvey.userId)
-      }
-      
+      }         
       callback(null, results)
     })
   }
@@ -383,7 +388,8 @@ module.exports = (function() {
   return {
     listSurveys: listSurveys,
     getMeds: getMeds,
-    getAssignedSurveys: getAssignedSurveys
+    getAssignedSurveys: getAssignedSurveys,
+    getUserFollowing: getUserFollowing
   }
   
 }());
