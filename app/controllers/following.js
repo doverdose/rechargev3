@@ -18,13 +18,21 @@ module.exports = (function() {
 			'following.approved': true
 		}, 'following.id' , function(err, results) {
 			if (err) {
-				callback(err, null);
+				callback(err, null)
+        return
 			}
+           
+      if(typeof(results[0]) == 'undefined') {
+        callback(null, [])
+        return
+      }
+      
       async.map(results[0].following, function(item, callback) {         
         callback(null, item.id);  
 			}, function(err, ids) {        
         if(err) {
-					callback(err, null);
+					callback(err, null)
+          return
 				}
                
         async.map(ids, function(id, callback){

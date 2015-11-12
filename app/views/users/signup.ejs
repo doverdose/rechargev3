@@ -18,14 +18,7 @@
 
 	<form role="form" action="/users" method="post" class="js-form-numpad">
 		<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-
-		<div class="form-group">
-			<label for="type">Account type</label>
-			<select class="form-control" name="type" id="type">
-				<option value="patient">Patient</option>
-				<option value="provider">Provider</option>
-			</select>
-		</div>
+    <input type="hidden" name="type" value="patient">   
 
 		<div class="form-group">
 			<label for="name">Full name</label>
