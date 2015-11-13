@@ -105,6 +105,7 @@ module.exports = (function() {
                     templateVars.rationalized[aSurvey.surveyId] = {
                       userId: aSurvey.userId,
                       surveyId: aSurvey.surveyId,
+                      assignedSurveyId: aSurvey._id,
                       assignments: [{
                         showDate: aSurvey.showDate,
                         isDone: aSurvey.isDone
@@ -130,6 +131,7 @@ module.exports = (function() {
             var surveyData = Object.keys(templateVars.rationalized).map(function(aSurveyId, index){              
               var currSurvey = {
                 id: aSurveyId,
+                assignedSurveyId: templateVars.rationalized[aSurveyId].assignedSurveyId,
                 title: "",
                 checkinTemplates: [],
                 isCompleted: false,

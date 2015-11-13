@@ -121,10 +121,9 @@
 		<input type="hidden" name="id" value="<%= checkin.id || '' %>">
 		<input type="hidden" name="surveyID" value="<%= survey._id || '' %>">
     <input type="hidden" name="keyTemplate" value="<%= survey.keyTemplate || '' %>">    
-    <% if(typeof assignedSurvey !== 'undefined') { %>
-    <input type="hidden" name="assignedSurveyId" value="<%= assignedSurvey._id || '' %>">
-    <% } %>
-
+    <% if(typeof assignedSurveyId !== 'undefined') { %>
+      <input type="hidden" name="assignedSurveyId" value="<%= assignedSurveyId || '' %>">
+    <% } %>    
     <div id="iteration-0" class="iteration">
       <div class="panel panel-default">
         <div class="panel-body">

@@ -326,7 +326,9 @@ module.exports = (function () {
                 callback(err);
                 return;
               }                                      
-              AssignedSurvey.update({id: ids.assignedSurvey}, {isDone:true}, function(err, num){});
+              AssignedSurvey.update({id: ids.assignedSurvey}, {isDone:true}, function(err, num){
+                
+              });
               callback();
             });  
           });                                                                
@@ -346,7 +348,7 @@ module.exports = (function () {
         assignedSurvey: req.body.assignedSurveyId,
         keyTemplate: req.body.keyTemplate     
       };
-
+      
       formatAnswers(req, score, function(groupedResponses){
         // For each survey iteration answered, create set of datastore functions and add to function array
         for (var group in groupedResponses) {
@@ -613,12 +615,14 @@ module.exports = (function () {
 
           CheckinTemplate.find({
             _id: { $in: survey.checkinTemplates}
-          }, function (err, templates) {                  
+          }, function (err, templates) {                 
+            var assignedSurveyId = req.body.assignedSurveyId || "";
             res.render('checkin/checkinEdit.ejs', {
               checkin: {},
               templates: templates,
               survey: survey,
-              dropdownDataSource: dropdownItems                    
+              dropdownDataSource: dropdownItems,
+              assignedSurveyId: assignedSurveyId
             });
           });
         });

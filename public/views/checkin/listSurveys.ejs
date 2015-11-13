@@ -104,7 +104,10 @@
             <div class="col-xs-2">
               <form action="/checkin/new" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrf_token %>">
-                <input type="hidden" name="id" value="<%= survey.id %>">
+                <input type="hidden" name="id" value="<%= survey.id %>">                
+                <% if (survey.assignedSurveyId) { %>
+                  <input type="hidden" name="assignedSurveyId" value="<%= survey.assignedSurveyId %>">
+                <% } %>
                 <button type="submit" class="btn btn-primary">
                   Fill out survey
                 </button>
