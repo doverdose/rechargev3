@@ -325,9 +325,9 @@ module.exports = (function () {
               if (err) {
                 callback(err);
                 return;
-              }                                      
-              AssignedSurvey.update({id: ids.assignedSurvey}, {isDone:true}, function(err, num){
-                
+              }
+
+              AssignedSurvey.update({_id: ids.assignedSurvey}, {isDone:true}, function(err, num){
               });
               callback();
             });  
