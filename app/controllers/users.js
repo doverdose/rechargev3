@@ -13,6 +13,7 @@ module.exports = (function() {
   var Survey = mongoose.model('Survey')
   var Medication = mongoose.model('Medication')
 
+  // Extract property values from mongoose object
     var getStringValuesFromItemsArray = function (items) {
         var stringValues = [];
         var tempString = "";
@@ -89,11 +90,10 @@ module.exports = (function() {
     });
   };
 
+  // Assign survey based on recurrent and duration in request
     var assignSurvey = function(req, res, next) {
-        //do something here
-
-        var surveyId = req.body.surveyId,
-            userId = req.body.userId;
+        var surveyId = req.body.surveyId
+        var userId = req.body.userId
 
         //find survey in DB, so you can check if it has its "duration" and "recurrence" fields set
         Survey.findOne({_id:surveyId}, function(err, survey){
@@ -205,6 +205,7 @@ module.exports = (function() {
         });
     };
 
+  // Attempt to login user and redirect
 	var login = function (req, res, next) {
 		// update last_login date
 		if(req.user) {
@@ -241,10 +242,7 @@ module.exports = (function() {
 		}
 	};
 
-	/**
-	* Login
-	*/
-
+  // Redirect to login logic
 	var signin = function (req, res) {
     console.log("redirecting to users/login");
 		res.render('users/login', {
@@ -254,10 +252,7 @@ module.exports = (function() {
     
 	};
 
-	/**
-	* Sign-up
-	*/
-
+	// Render sign up view
 	var signup = function (req, res) {
 		res.render('users/signup', {
 			title: 'Sign up',
@@ -265,10 +260,7 @@ module.exports = (function() {
 		});
 	};
 
-
-	/**
-	* Create new user
-	*/
+  // Create new user
 	var create = function (req, res, next) {
 		var user = new User(req.body);
 		user.provider = 'local';
@@ -321,18 +313,13 @@ module.exports = (function() {
 		});
 	};
 
-
-	/**
-	* Logout
-	*/
-
+  // Logout user and redirect to login page
 	var logout = function (req, res) {
 		req.logout();
 		res.redirect('/login');
 	};
-
-	/* Find user by id */
-
+  
+  // Find user and attempt to load profile
 	var user = function (req, res, next, id) {
 		User.findOne({ _id : id })
 			.exec(function (err, user) {
@@ -388,13 +375,12 @@ module.exports = (function() {
 
 				if(user.permissions.provider) {
 
-					// get list of provider's patients
+					// find end users only
 					var patientConditions = {
 						'permissions.admin': { $ne: true },
 						'permissions.provider': { $ne: true }
 					};
 
-					// get your own patients
 					var patientIds = [];
 					user.patients.forEach(function(patient){
 						patientIds.push(patient.id);
@@ -404,7 +390,7 @@ module.exports = (function() {
 					// get current providers patients
 					User.find(patientConditions, function(err, patients) {
 						if (err) {
-							//
+							return next(err)
 						} else {
 							providerPatients = patients;
 
