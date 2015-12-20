@@ -18,29 +18,29 @@
 
 <% for(var i = 0; i < yourPatients.length; i++) { %>
 	<div class="row stats">
-		<div class="col-xs-4">
+		<div class="col-xs-2">
 			<a href="/user/<%= yourPatients[i].id %>" style='line-height: 35px;'>
 				<%= yourPatients[i].name %>
 			</a>
 		</div>
-		<div class="col-xs-6 text-right">
+		<div class="col-xs-9 text-right">
 
       <form action="/user/assignSurvey" method="post">
         <input type="hidden" name="_csrf" value="<%= csrf_token %>">
         <input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">
         <input type="hidden" name="userId" id="userId" value="<%=yourPatients[i].id%>">
 
-        <select name='surveyId' class="form-control" style='float: left;width: 150px;'>
+        <select name='surveyId' class="form-control" style='float: left;max-width: 70%;'>
 
           <% for(var j = 0; j < surveys.length; j++) { %>
           <option value="<%=surveys[j].id%>"><%= surveys[j].title %></option>
           <% }%>
         </select>
 
-        <button type="submit" class="btn btn-primary">Assign survey!</button>
+        <button type="submit" class="btn btn-primary" style='max-width:30%'>Assign survey</button>
       </form>
 		</div>
-		<div class="col-xs-2 text-right">
+		<div class="col-xs-1 text-right">
 			<form action="/provider/user/remove" method="post">
 				<input type="hidden" name="_csrf" value="<%= csrf_token %>">
 				<input type="hidden" name="providerId" id="providerId" value="<%= user.id %>">

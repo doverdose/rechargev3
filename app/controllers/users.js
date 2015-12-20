@@ -6,6 +6,7 @@ module.exports = (function() {
 	var mongoose = require('mongoose')
 	var	demo = require('./components/demo')
   var helper = require('./components/helper')
+  var _ = require('lodash')
   var User = mongoose.model('User')
   var AssignedSurvey = mongoose.model('AssignedSurvey')
   var CheckinTemplate = mongoose.model('CheckinTemplate')
@@ -339,30 +340,19 @@ module.exports = (function() {
 	/* View user */
 
 	var view = function (req, res, next) {
-		var providerPatients = [],
-			allPatients = [],
-			patientIds = [],
-      userCheckins = [];
+		var ownUsers = []
+		var	otherUsers = []
+    var userCheckins = []
 
-		if(req.user.permissions.provider || req.user.permissions.admin) {
-
-			// if provider, only see your own patients
-			if(req.user.permissions.provider) {
-				req.user.patients.forEach(function(patient){
-					patientIds.push(patient.id);
-				});
-
-				if(patientIds.indexOf(req.params.id) === -1) {
-					return next(new Error('You can only see your own profile'));
-				}
-			}
-
-		} else {
-			// if patient, see only your profile
-			if (req.user.id !== req.params.id) {
-				return next(new Error('You can only see your own profile'));
-			}
-		}
+    if(req.user.permissions.provider) {
+      if (_.pluck(req.user.patients,"id").indexOf(req.params.id) === -1) {        
+        // if provider, only see your own patients			      
+        return next(new Error('You can only see your own profile'))		
+      }
+    } else if (!req.user.permissions.admin && (req.user.id !== req.params.id)) {
+      // if patient, see only your profile
+      return next(new Error('You can only see your own profile'))
+    }
 
 		User.findOne({ _id : req.params.id })
 			.exec(function (err, user) {
@@ -374,25 +364,21 @@ module.exports = (function() {
 				}
 
 				if(user.permissions.provider) {
-
 					// find end users only
 					var patientConditions = {
 						'permissions.admin': { $ne: true },
 						'permissions.provider': { $ne: true }
-					};
+					}
 
-					var patientIds = [];
-					user.patients.forEach(function(patient){
-						patientIds.push(patient.id);
-					});
-					patientConditions._id = { $in: patientIds };
+					var patientIds = _.pluck(user.patients, "id")
+					patientConditions._id = { $in: patientIds }
 
 					// get current providers patients
-					User.find(patientConditions, function(err, patients) {
+					User.find(patientConditions, "name", function(err, patients) {
 						if (err) {
 							return next(err)
 						} else {
-							providerPatients = patients;
+							ownUsers = patients;
 
 							// get all possible patients
 							// those that are not already added to the provider
@@ -400,19 +386,19 @@ module.exports = (function() {
 								'permissions.admin': { $ne: true },
 								'permissions.provider': { $ne: true },
 								'_id': { $nin: patientIds }
-							}, function(err, patients) {
+							}, "name", function(err, others) {
 								if (err) {
 									next(err);
 								} else {
-									allPatients = patients;
+									otherUsers = others
 
 									res.render('users/view.ejs', {
 										title: 'Details',
                     viewer: req.user,
 										profile: user,
-										providerPatients: providerPatients,
-										allPatients: allPatients
-									});
+										providerPatients: ownUsers,
+										allPatients: otherUsers
+									})
 
 								}
 							});
@@ -420,7 +406,7 @@ module.exports = (function() {
 						}
 					});
 				} else {
-						// Find checkins
+						// User is not a provider, find checkins
             helper.listSurveys(req.params.id, function(templateVars) {
                 res.render('users/view.ejs', {
                     title: 'Details',
