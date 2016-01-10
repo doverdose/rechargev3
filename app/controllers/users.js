@@ -343,86 +343,84 @@ module.exports = (function() {
 		var ownUsers = []
 		var	otherUsers = []
     var userCheckins = []
-
-    if(req.user.permissions.provider) {
-      if (_.pluck(req.user.patients,"id").indexOf(req.params.id) === -1) {        
+    var vieweeId = req.params.id
+    var viewer = req.user
+    
+    if(viewer.permissions.provider) {
+      if (_.pluck(viewer.patients,"id").indexOf(vieweeId) === -1) {        
         // if provider, only see your own patients			      
         return next(new Error('You can only see your own profile'))		
       }
-    } else if (!req.user.permissions.admin && (req.user.id !== req.params.id)) {
+    } else if (!viewer.permissions.admin && (viewer.id !== vieweeId)) {
       // if patient, see only your profile
       return next(new Error('You can only see your own profile'))
     }
 
-		User.findOne({ _id : req.params.id })
-			.exec(function (err, user) {
-				if (err) {
-					return next(err);
-				}
-				if (!user) {
-					return next(new Error('Failed to load User ' + req.params.id));
-				}
+		User.findOne({ _id : vieweeId })
+      .exec(function (err, viewee) {
+      if (err) {
+        return next(err)
+      }
+      if (!viewee) {
+        return next(new Error('Failed to load User with id: ' + vieweeId));
+      }
 
-				if(user.permissions.provider) {
-					// find end users only
-					var patientConditions = {
-						'permissions.admin': { $ne: true },
-						'permissions.provider': { $ne: true }
-					}
+      if(viewee.permissions.provider) {
+        // find end users only
+        var patientFilter = {
+          'permissions.admin': { $ne: true },
+          'permissions.provider': { $ne: true }
+        }
 
-					var patientIds = _.pluck(user.patients, "id")
-					patientConditions._id = { $in: patientIds }
+        var patientIds = _.pluck(viewee.patients, "id")
+        patientFilter._id = { $in: patientIds }
 
-					// get current providers patients
-					User.find(patientConditions, "name", function(err, patients) {
-						if (err) {
-							return next(err)
-						} else {
-							ownUsers = patients;
+        // get current providers patients
+        User.find(patientFilter, "name", function(err, vieweePatients) {
+          if (err) {
+            return next(err)
+          } else {
+            ownUsers = vieweePatients
 
-							// get all possible patients
-							// those that are not already added to the provider
-							User.find({
-								'permissions.admin': { $ne: true },
-								'permissions.provider': { $ne: true },
-								'_id': { $nin: patientIds }
-							}, "name", function(err, others) {
-								if (err) {
-									next(err);
-								} else {
-									otherUsers = others
+            // get all possible patients
+            // those that are not already added to the provider
+            User.find({
+              'permissions.admin': { $ne: true },
+              'permissions.provider': { $ne: true },
+              '_id': { $nin: patientIds }
+            }, "name", function(err, others) {
+              if (err) {
+                next(err)
+              } else {
+                otherUsers = others
 
-									res.render('users/view.ejs', {
-										title: 'Details',
-                    viewer: req.user,
-										profile: user,
-										providerPatients: ownUsers,
-										allPatients: otherUsers
-									})
-
-								}
-							});
-
-						}
-					});
-				} else {
-						// User is not a provider, find checkins
-            helper.listSurveys(req.params.id, function(templateVars) {
                 res.render('users/view.ejs', {
-                    title: 'Details',
-                    viewer: req.user,
-                    profile: user,
-                    surveys: templateVars.surveys,
-                    surveyTemplates: templateVars.surveyTemplates,
-                    surveyData: templateVars.surveyData,
-                    checkins: templateVars.checkinTemplates
-                });
-            }); 
-				}
-        
-			});
-
-	};
+                  title: 'Details',
+                  viewer: viewer,
+                  profile: user,
+                  providerPatients: ownUsers,
+                  allPatients: otherUsers
+                })
+              }
+            })
+          }
+        })
+      } else {
+        // User is not a provider, find checkins
+        helper.listSurveys(vieweeId, function(templateVars) {
+          res.render('users/view.ejs', {
+            title: 'Details',
+            viewer: viewer,
+            profile: viewee,
+            surveys: templateVars.surveys,
+            surveyTemplates: templateVars.surveyTemplates,
+            surveyData: templateVars.surveyData,
+            checkins: templateVars.checkinTemplates
+          })
+        })
+      }       
+    })
+	}
 
 	/* New user
 	*/

@@ -39,6 +39,8 @@
 Surveys
 </h3>
 
+<% console.log(surveyData) %>
+
 <div class="list-group large-list">
 <%if(viewer.patients && (viewer.patients.map(function(e) { return e.id; }).indexOf(profile.id) > -1)) {
 	  for (var i = 0; i < surveyData.length; i++) {
