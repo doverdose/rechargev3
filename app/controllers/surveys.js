@@ -3,11 +3,11 @@
 module.exports = (function() {
 	'use strict';
 
-	var mongoose = require('mongoose'),
-		Survey = mongoose.model('Survey'),
-		CheckinTemplate = mongoose.model('CheckinTemplate'),
-        AssignedSurvey = mongoose.model('AssignedSurvey'),
-        User = mongoose.model('User');
+	var mongoose = require('mongoose')
+  var Survey = mongoose.model('Survey')
+	var	CheckinTemplate = mongoose.model('CheckinTemplate')
+  var AssignedSurvey = mongoose.model('AssignedSurvey')
+  var User = mongoose.model('User')
 
 	var addTemplate = function(req, res, next) {
 		Survey.findOne({

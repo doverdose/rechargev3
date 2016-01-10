@@ -40,18 +40,16 @@ module.exports = (function() {
     // Get survey activity
     async.parallel([
       function (callback){
-        helper.getAssignedSurveys(req.user.id, function(err, results) {
+        helper.getAssignedSurveys(req.user.id, function(err, assignedSurveys) {
           if (err) {
             next(err)
           }          
-          callback(null, results)
+          callback(null, assignedSurveys)
         })
       }
     ],
-    function(err, results) {
-      if (err) {
-        next(err)
-      }
+    function(err, assignedSurveys) {
+      if (err) { next(err) }
       
       var activeCt = 0
       var doneCt = 0

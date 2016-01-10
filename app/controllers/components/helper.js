@@ -13,15 +13,63 @@ module.exports = (function() {
   var CheckinTemplate  = mongoose.model('CheckinTemplate')
   
   
-  // Get survey responses, grouped by survey, for the user with the provided id. Does not check for permissions. If the user cannot be found, returns and error
-  var getSurveyResponses = function (user_id, next) {
-                                      
-  
-                                      
-                                      
-                                      
-                                      
-                                      
+  // Get survey responses, grouped by survey, for the user with the provided id. Does not check for permissions. If the survey cannot be found, or survey responses with given user_id exists, returns an error
+  var getSurveyResponses = function (survey_id, user_id, flash, next) {
+    var templateVars = {}
+    
+    async.parallel([
+      function(callback){
+        Survey.findOne({_id:survey_id},function(err,foundSurvey){
+          if(err){return next(err)}
+
+          templateVars.survey = foundSurvey
+
+          CheckinTemplate.find({_id: {$in:foundSurvey.checkinTemplates}}, function(err, checkinTemplates){
+            if(err){return next(err)}
+            templateVars.checkinTemplates = checkinTemplates
+            callback()
+          })
+        })
+      },
+      function(callback){
+        Checkin.find({
+          user_id: user_id,
+          survey_id: survey_id
+        })
+          .sort({timestamp:-1})
+          .exec(function (err, checkins) {
+          
+          if (err) { return next(err) }
+
+          templateVars.checkins = checkins
+          callback()
+        })
+      }
+    ], function(err){
+      // Cluster checkins by template, sort by most recent first
+      templateVars.checkinsByTemplate = templateVars.checkinTemplates.map( function(checkinTemplate){
+        var cTemp = {
+          _id: checkinTemplate._id,
+          question: checkinTemplate.question,
+          title: checkinTemplate.title,
+          answers: checkinTemplate.answers,
+          checkins: []
+        } 
+
+        templateVars.checkins.forEach(function(checkin){
+          if (checkin.template_id === checkinTemplate.id){
+            cTemp.checkins.push(checkin)
+          }
+        })          
+        
+        return cTemp
+      })
+
+      // Set flash variable
+      templateVars.flash = flash
+
+      next(templateVars)
+    })                                                                           
   }
   
   var listSurveys = function (user_id, next) {
@@ -363,8 +411,7 @@ module.exports = (function() {
             });               
           }
       });
-  }
-  
+  }  
   
   /** Find who user is following
   Inputs:
@@ -383,18 +430,19 @@ module.exports = (function() {
     - results: String objects, or err object if error.
   **/
     
-  var getAssignedSurveys = function (userId, callback) {
+  var getAssignedSurveys = function (user_Id, callback) {
     if (typeof (userId) != "string") {
       callback(new TypeError("userId must be a string"), null)
       return
     }
         
-    AssignedSurvey.find({userId: userId}, function(err, results) {
+    AssignedSurvey.find({userId: user_Id}, "_id", function(err, assignedSurveys) {
       if (err) {
         callback(err, null)
         return
-      }         
-      callback(null, results)
+      }
+            
+      callback(null, assignedSurveys)
     })
   }
   /* end getAssignedSurveys */
@@ -404,6 +452,7 @@ module.exports = (function() {
     listSurveys: listSurveys,
     getMeds: getMeds,
     getAssignedSurveys: getAssignedSurveys,
+    getSurveyResponses: getSurveyResponses,
     getUserFollowing: getUserFollowing
   }
   

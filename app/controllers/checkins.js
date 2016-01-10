@@ -33,66 +33,15 @@ module.exports = (function () {
 
     var listSurveys = function (req, res, next) {
         helper.listSurveys(req.user._id, function(templateVars){
-          res.render('checkin/listSurveys.ejs', templateVars);
-        });        
-    };
+          res.render('checkin/listSurveys.ejs', templateVars)
+        })        
+    }
 
     var list = function (req, res, next) {
-        var templateVars = {};
-
-        async.parallel([
-            function(callback){
-                Survey.findOne({_id:req.params.id},function(err,survey){
-                    if(err){return next(err)}
-                  
-                    templateVars.survey = survey;
-
-                    CheckinTemplate.find({_id: {$in:survey.checkinTemplates}}, function(err, checkinTemplates){
-                        if(err){return next(err)}
-                      
-                        templateVars.checkinTemplates = checkinTemplates;
-                        callback();
-                    });
-                });
-            },
-            function(callback){
-                Checkin.find({
-                    user_id: req.user._id,
-                    survey_id: req.params.id
-                }).sort({timestamp:-1}).exec(function (err, checkins) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    templateVars.checkins = checkins;
-                    callback();
-                });
-            }
-        ],function(err){
-            // Cluster checkins by template, sort by most recent first
-            templateVars.checkinsByTemplate = templateVars.checkinTemplates.map( function(checkinTemplate){
-              var cTemp = {
-                _id: checkinTemplate._id,
-                question: checkinTemplate.question,
-                title: checkinTemplate.title,
-                answers: checkinTemplate.answers,
-                checkins: []
-              }; 
-              
-              templateVars.checkins.forEach(function(checkin){
-                if (checkin.template_id === checkinTemplate.id){
-                  cTemp.checkins.push(checkin);
-                }
-              });                
-              return cTemp;
-            });
-          
-            // Set flash variable
-            templateVars.flash = req.flash().success;          
-            
-            res.render('checkin/list.ejs', templateVars);
-        });
-    };
+        helper.getSurveyResponses(req.params.id, req.user._id, req.flash().success, function(templateVars){
+          res.render('checkin/list.ejs', templateVars)
+        })                    
+    }
 
     var parseForm = function (form) {
         var newAnswers = [];
