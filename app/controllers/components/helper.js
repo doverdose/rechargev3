@@ -8,8 +8,21 @@ module.exports = (function() {
   var Schedule         = mongoose.model('Schedule')
   var Checkin          = mongoose.model('Checkin')
   var Survey           = mongoose.model('Survey')
+  var User             = mongoose.model('User')
   var AssignedSurvey   = mongoose.model('AssignedSurvey')
   var CheckinTemplate  = mongoose.model('CheckinTemplate')
+  
+  
+  // Get survey responses, grouped by survey, for the user with the provided id. Does not check for permissions. If the user cannot be found, returns and error
+  var getSurveyResponses = function (user_id, next) {
+                                      
+  
+                                      
+                                      
+                                      
+                                      
+                                      
+  }
   
   var listSurveys = function (user_id, next) {
     
