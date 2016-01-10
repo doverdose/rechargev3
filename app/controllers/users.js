@@ -349,7 +349,7 @@ module.exports = (function() {
     if(viewer.permissions.provider) {
       if (_.pluck(viewer.patients,"id").indexOf(vieweeId) === -1) {        
         // if provider, only see your own patients			      
-        return next(new Error('You can only see your own profile'))		
+        return next(new Error('You can only see profiles of yourself and users you follow'))		
       }
     } else if (!viewer.permissions.admin && (viewer.id !== vieweeId)) {
       // if patient, see only your profile
@@ -397,7 +397,7 @@ module.exports = (function() {
                 res.render('users/view.ejs', {
                   title: 'Details',
                   viewer: viewer,
-                  profile: user,
+                  viewee: user,
                   providerPatients: ownUsers,
                   allPatients: otherUsers
                 })
@@ -411,7 +411,7 @@ module.exports = (function() {
           res.render('users/view.ejs', {
             title: 'Details',
             viewer: viewer,
-            profile: viewee,
+            viewee: viewee,
             surveys: templateVars.surveys,
             surveyTemplates: templateVars.surveyTemplates,
             surveyData: templateVars.surveyData,
