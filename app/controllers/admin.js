@@ -4,14 +4,15 @@
 module.exports = (function() {
 	'use strict';
 
-	var mongoose = require('mongoose'),
-		async = require('async'),
-		User = mongoose.model('User'),
-		Survey = mongoose.model('Survey'),
-		CheckinTemplate = mongoose.model('CheckinTemplate'),
-		Schedule = mongoose.model('Schedule'),
-        Medication = mongoose.model('Medication');
-
+	var mongoose = require('mongoose')
+	var	async = require('async')
+	var	User = mongoose.model('User')
+	var	Survey = mongoose.model('Survey')
+	var	CheckinTemplate = mongoose.model('CheckinTemplate')
+	var	Schedule = mongoose.model('Schedule')
+  var Medication = mongoose.model('Medication')
+  var helper = require('./components/helper')
+  
 	var admin = function(req, res, next) {
 
 		var templateVars = {};
@@ -151,34 +152,40 @@ module.exports = (function() {
 						return;
 					}
 
-                    var assignableSurveys = [];
-                    surveys.forEach(function(survey){
-                        if(!survey.isGenerated){
-                            assignableSurveys.push(survey);
-                        }
-                    });
+          var assignableSurveys = [];
+          surveys.forEach(function(survey){
+              if(!survey.isGenerated){
+                  assignableSurveys.push(survey);
+              }
+          });
 
-                    if(req.user.permissions.admin){
-                        templateVars.surveys = surveys;
+          if(req.user.permissions.admin){
+              templateVars.surveys = surveys;
 
-                    } else{
-                        templateVars.surveys = assignableSurveys;
-                    }
+          } else{
+              templateVars.surveys = assignableSurveys;
+          }
 					callback();
 				});
 			},
-            function(callback) {
+      function(callback) {
 //                get full medication list
-                Medication.find({
-                }, function(err, items) {
-                    if (err) {
-                        callback(err);
-                        return;
-                    }
-                    templateVars.medication = items;
-                    callback();
-                });
-            }
+          Medication.find({
+          }, function(err, items) {
+              if (err) {
+                  callback(err);
+                  return;
+              }
+              templateVars.medication = items;
+              callback();
+          });
+      },
+			function(callback) {
+				helper.getCheckinHistory(10, function(err, results){
+					templateVars.history = results
+					callback()
+				})
+			}
 		], function(err) {
 
 			if (err) {

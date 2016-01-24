@@ -413,16 +413,6 @@ module.exports = (function() {
       });
   }  
   
-  /** Find who user is following
-  Inputs:
-    - user_id: String representing user object id. If non-string type is provided, TypeError is returned
-  Output:
-    - results: Array of string
-  **/
-  var getUserFollowing = function(userId, callback) {
-    
-  }
-  
   /** Find surveys assigned to user
   Inputs:
     - user_id: String representing the data object id. If non-string type is provided, TypeError is returned
@@ -447,13 +437,46 @@ module.exports = (function() {
   }
   /* end getAssignedSurveys */
   
+  /** Find who user is following
+  Inputs:
+    - user_id: String representing user object id. If non-string type is provided, TypeError is returned
+  Output:
+    - results: Array of string
+  **/
+  var getUserFollowing = function(userId, callback) {
+    
+  }
+  /* end getUserFollowing */
+  
+  /* Find most recent checkins
+  Inputs:
+    - count: Int representing number of checkins to return. If argument is not Int, TypeError is returned.
+  Outputs:
+    - results: Array of checkin objects
+  */
+  var getCheckinHistory = function(count, callback) {
+    if (typeof count !== "number") {
+      callback(new TypeError("count must be numeric"), null)
+      return
+    }
+    
+    callback(null, [{
+      time: "Now",
+			user: "Me",
+			survey: "First survey",
+			checkinId: 123
+    }])
+    
+  } 
+  /* end getHistory */
   
   return {
     listSurveys: listSurveys,
     getMeds: getMeds,
     getAssignedSurveys: getAssignedSurveys,
     getSurveyResponses: getSurveyResponses,
-    getUserFollowing: getUserFollowing
+    getUserFollowing: getUserFollowing,
+    getCheckinHistory: getCheckinHistory
   }
   
 }());

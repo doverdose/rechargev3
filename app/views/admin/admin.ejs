@@ -21,6 +21,9 @@
     <li>
         <a href="#medication-list" data-toggle="tab">Medication List</a>
     </li>
+    <li>
+    		<a href="#history" data-toggle="tab">History</a>
+    </li>
 </ul>
 
 <div class="tab-content">
@@ -314,7 +317,26 @@
         <% } %>
 
     </div>
-
+		<div class="tab-pane" id="history">
+			<% if(typeof history === "undefined" || !history.length) { %>
+				<h4 class="text-muted text-center">No history found.</h4>
+			<% } else { %>
+				<table class="table">
+					<tr>
+						<th>Time</th>
+						<th>User</th>
+						<th>Survey</th>
+					</tr>
+					<% for (var i = 0; i<history.length; i++) { %>
+						<tr>
+							<td><%= history[i].time %></td>
+							<td><%= history[i].user %></td>
+							<td><a href="checkins/<%= history[i].checkinId %>"><%= history[i].survey %></a></td>
+						</tr>
+					<% } %>
+				</table>
+			<% } %>
+		</div>
 </div>
 
 
