@@ -1,0 +1,52 @@
+	<div class="page-header">
+		<h2>
+			<%= survey.title %>
+		</h2>
+	</div>
+  <% if (flash) { %>
+    <div class="alert alert-dismissiable alert-info">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <p><strong><%= flash %></strong></p>
+    </div>
+  <% } %>
+  <div>
+    <h3>
+      Your Responses
+    </h3>
+    
+  </div>
+	<% if(checkins.length) { %>
+		<div class="list-group large-list">
+			<% checkins.forEach(function(checkin) { %>
+        <% if (checkin.answers[0]) {%>
+          <div class="list-group-item">
+            <div class="row">              
+              <% checkin.answers.forEach(function(answer){ %>
+              <div><h4> <%= answer.question %> </h4></div>
+                <% if (answer.text) { %>
+                  <div class= "list-group">
+                    <%= answer.text %>
+                  </div>
+                <% } %>
+              <% }) %>
+              <div class= "list-group">
+                <strong class="text-right">
+                  <%=: checkin.answers[0].timestamp | fromNow %>
+                </strong>
+              </div>
+            </div>
+          </div>  
+      <% } else { %>
+        <div class="list-group-item">
+          <div class="row">
+            <div class="col-xs-8">              
+              <h3 class="question"> <%= checkinTemplate.question %> </h3>
+            </div>
+          </div>
+        </div>
+       <% } %>
+     <% }) %>
+		</div>
+	<% } else { %>
+		<h4 class="text-center text-muted">You haven't made any check-ins for this survey</h4>
+	<% } %>
