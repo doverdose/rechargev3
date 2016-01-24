@@ -10,9 +10,9 @@
 </div>
 
 <h3>
-	<%= profile.username %>
+	<%= viewee.username %>
 	<small>
-		<% if(profile.permissions.provider) { %>
+		<% if(viewee.permissions.provider) { %>
 			Superuser
 		<% } else {%>
 			User
@@ -25,13 +25,13 @@
 		<span class="fn n">
 			<strong>Full name: </strong>
 			<span class="given-name">
-				<%= profile.name %>
+				<%= viewee.name %>
 			</span>
 		</span>
 	</li>
 	<li>
 		<strong>Email: </strong>
-		<a class="email" href="mailto:<%= profile.email %>"><%= profile.email %></a>
+		<a class="email" href="mailto:<%= viewee.email %>"><%= viewee.email %></a>
 	</li>
 </ul>
 
@@ -40,10 +40,7 @@ Surveys
 </h3>
 
 <div class="list-group large-list">
-<%if(viewer.patients && (viewer.patients.map(function(e) { return e.id; }).indexOf(profile.id) > -1)) {
-	  for (var i = 0; i < surveyData.length; i++) {
-      // Print survey links 
- %>
+  <% for (var i = 0; i < surveyData.length; i++) { // Print survey links %>
     <div class="list-group-item">
       <div class="row">
         <div class="col-xs-12">
@@ -58,35 +55,28 @@ Surveys
           <div>
             <%
             for (var j = 0; j < surveyData[i].checkinTemplates.length; j++) {
-            // Print checkin links
-            %>
-              <a href="/checkintemplate/<%= surveyData[i].checkinTemplates[j]._id %>">
-                <h4>
-                  <%= surveyData[i].checkinTemplates[j].title %>  
-                </h4>
-              </a>
-              <p>
-             <% if (surveyData[i].checkinTemplates[j].checkins.length && surveyData[i].checkinTemplates[j].checkins[0].answers[0]) {
-             %>
-                <%= surveyData[i].checkinTemplates[j].checkins[0].answers[0].text %> 
-             <% } %>
-              </p>            
-            <%
-            }  
-            %>
+              // Print checkin links
+              %>
+            <a href="/checkintemplate/<%= surveyData[i].checkinTemplates[j]._id %>">
+              <h4>
+                <%= surveyData[i].checkinTemplates[j].title %>  
+              </h4>
+            </a>
+            <p>
+              <% if (surveyData[i].checkinTemplates[j].checkins.length && surveyData[i].checkinTemplates[j].checkins[0].answers[0]) { %>
+              <%= surveyData[i].checkinTemplates[j].checkins[0].answers[0].text %> 
+              <% } %>
+            </p>            
+            <% } %>
           </div>                                                       
         </div>
       </div>
     </div>
- <% }
-                                                                                                          
-  } else { %>
-	  No surveys available
-<%} %>
-  </div>
+  <% } %>
+</div>
 
 
-<% if((user.permissions.admin || user.permissions.provider) && profile.permissions.provider) { %>
+<% if((user.permissions.admin || user.permissions.provider) && viewee.permissions.provider) { %>
 
 	<div class="row stats">
 		<div class="col-xs-6">
@@ -110,7 +100,7 @@ Surveys
 			<div class="col-xs-6 text-right">
 				<form action="/provider/user/remove" method="post">
 					<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-					<input type="hidden" name="providerId" id="providerId" value="<%= profile.id %>">
+					<input type="hidden" name="providerId" id="providerId" value="<%= viewee.id %>">
 					<input type="hidden" name="userId" id="userId" value="<%= providerPatients[i].id %>">
 
 					<button type="submit" class="btn btn-danger">Remove</button>
@@ -126,7 +116,7 @@ Surveys
 	<div class="js-template js-usersearch-template">
 		<form action="/provider/user/add" method="post">
 			<input type="hidden" name="_csrf" value="<%= csrf_token %>">
-			<input type="hidden" name="providerId" id="providerId" value="<%= profile.id %>">
+			<input type="hidden" name="providerId" id="providerId" value="<%= viewee.id %>">
 
 			<div class="form-group">
 				<label for="userId">Search for users</label>
