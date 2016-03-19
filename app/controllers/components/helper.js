@@ -421,7 +421,7 @@ module.exports = (function() {
   **/
     
   var getAssignedSurveys = function (user_Id, callback) {
-    if (typeof (userId) != "string") {
+    if (typeof (user_Id) != "string") {
       callback(new TypeError("userId must be a string"), null)
       return
     }

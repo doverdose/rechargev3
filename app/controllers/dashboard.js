@@ -40,7 +40,7 @@ module.exports = (function() {
     // Get survey activity
     async.parallel([
       function (callback){
-        helper.getAssignedSurveys(req.user.id, function(err, assignedSurveys) {
+      	helper.getAssignedSurveys(req.user.id, function(err, assignedSurveys) {
           if (err) {
             next(err)
           }          
@@ -48,7 +48,7 @@ module.exports = (function() {
         })
       }
     ],
-    function(err, assignedSurveys) {
+    function(err, results) {
       if (err) { next(err) }
       
       var activeCt = 0
