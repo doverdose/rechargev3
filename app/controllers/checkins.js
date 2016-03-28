@@ -613,11 +613,18 @@ module.exports = (function () {
                     if (dropdownItems) {
                         dropdownItems = getStringValuesFromItemsArray(dropdownItems);
                     }
+                    
+                    var choice = false
+                    if (c.type) {
+                      choice = c.type.indexOf('choice') !== -1
+                    }
+                    
+                    console.log(c)
 
                     res.render('checkin/editView.ejs', {
                         c: c,
                         template: template,
-                        choice: (c.type.indexOf('choice') !== -1),
+                        choice: choice,
                         dropdownDataSource: dropdownItems
                     });
                 });

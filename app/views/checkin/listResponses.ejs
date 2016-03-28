@@ -33,6 +33,13 @@
                 <strong class="text-right">
                   <%=: checkin.answers[0].timestamp | fromNow %>
                 </strong>
+                <form role="form" action="/checkin/edit" method="post">
+                  <input type="hidden" name="id" value="<%= checkin.id || '' %>">
+                  <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+              		<button type="submit" class="btn btn-primary btn-lg js-btn-submit">
+              			Edit Response
+              		</button>
+                </form>
               </div>
             </div>
           </div>  
